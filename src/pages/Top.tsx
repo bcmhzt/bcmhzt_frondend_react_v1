@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
-import HeaderNoLogin from "../components/HeaderNoLogin";
-import Footer from "../components/Footer";
+import Header from "../components/Header";
+// import Footer from "../components/Footer";
 import { useAuth } from "../contexts/AuthContext";
+import DevelopBanner from "../components/DevelopBanner";
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -10,6 +11,7 @@ if (debug === 'true') {
 }
 
 const Top = () => {
+
 
   const auth = useAuth();
   const isLogin = auth?.isLogin;
@@ -21,14 +23,13 @@ const Top = () => {
 
   return (
     <>
-    {/* <pre>{JSON.stringify(isLogin, null, 2)}</pre> */}
-    <HeaderNoLogin />
+      <Header />
+      <DevelopBanner />
       
-      <Link to="/about" className="btn btn-primary">About</Link>
-      <ul>
-        <li><Link to="/list">List</Link></li>
-      </ul>
-    <Footer />
+
+      
+
+
     </>
   );
 };
