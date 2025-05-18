@@ -1,0 +1,100 @@
+.language-selector {
+  margin-left: auto;
+  margin-right: 10px;
+  margin-top: 10px;
+  display: block;
+  width: 200px;
+}
+
+.create-account {
+  text-align: right;
+}
+
+.verify-email {
+  font-family: "Poppins", sans-serif;
+  font-weight: 200;
+  margin: 0 auto;
+  // background: #ff0;
+  width: 500px;
+  margin-top: 50px;
+  text-align: center;
+  @media (max-width: 575px) { width: 90%; }
+  @media (min-width: 576px) and (max-width: 768px) { width: 80%; }
+  @media (min-width: 769px) { width: 500px; }
+    .http-status {
+        font-size: 60px;
+        color: #333;
+    }
+    .message-title {
+        font-size: 30px;
+        color: #333;
+    }
+    .submessage {
+        font-size: 20px;
+        color: #333;
+    }
+    .description {
+      text-align: left;
+      padding: 0px 50px;
+    }
+    .passwod-input {
+      // background: #ff0;
+      input {
+        border: 1px solid #bbb;
+      }
+      button {
+        border: 1px solid #bbb;
+      }
+      input::placeholder {
+        color: #888;
+        font-size: 12px;
+      }
+    }
+
+}
+
+.login {
+    
+    .card {
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 400;
+            font-style: normal;
+        }
+        form {
+            .form-group {
+                .form-control {
+                    // background: #f00;
+                    border: 1px solid #888;
+                    
+                }
+                input::placeholder {
+                    color: #c1c1c1;
+                    font-size: 12px;
+                  }
+
+            }
+            a.forgotPassword:link, a.forgotPassword:visited {
+                color: #457B9D;
+                text-decoration: none;
+            }
+            a.forgotPassword:hover {
+                text-decoration: underline;
+            }
+        }
+        .create-account 
+        {
+            text-align: center;
+            font-size: 1rem;
+            font-weight: 400;
+            font-style: normal;
+            a:link, a:visited {
+                color: #457B9D;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

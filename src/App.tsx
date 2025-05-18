@@ -1,26 +1,45 @@
+// App.tsx
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import routes from "./routes";
+import { AuthProvider } from './contexts/AuthContext';
 
 function App() {
+  console.log("ENV:", process.env.REACT_APP_ENV);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <BrowserRouter>
+      <Routes>
+        
+
+        {routes.publicRoutes.map(({ path, component: Component }) => (
+          <Route key={path} path={path} element={<Component />} />
+        ))}
+        
+        <Route
+          element={
+            <AuthProvider>
+              <Outlet />
+            </AuthProvider>
+          }
         >
-          Learn React
-        </a>
-      </header>
-    </div>
+          {routes.privateRoutes.map(({ path, component: Component }) => (
+            <Route key={path} path={path} element={<Component />} />
+          ))}
+        </Route>
+
+        {['local', 'dev', 'test'].includes(process.env.REACT_APP_ENV || '') &&
+          routes.devRoutes.map(({ path, component: Component }) => (
+            <Route key={path} path={path} element={<Component />} />
+          ))
+        }
+
+        <Route path={routes.notFound.path} element={<routes.notFound.component />} />
+        
+      </Routes>
+    </BrowserRouter>
   );
 }
 
 export default App;
+
+

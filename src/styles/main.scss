@@ -1,0 +1,44 @@
+@import "~bootstrap/scss/bootstrap";
+@import './initial.scss';
+@import './header.scss';
+@import './footer.scss';
+@import './register.scss';
+
+
+// @media (max-width: 575px) { margin-top: 30px; }
+// @media (min-width: 576px) and (max-width: 768px) { margin-top: 30px; }
+// @media (min-width: 769px) and (max-width: 992px) { margin-top: 30px; }
+// @media (min-width: 993px) and (max-width: 1200px) { margin-top: 30px; }
+// @media (min-width: 1200px) and (max-width: 1399px) { margin-top: 30px; }
+// @media (min-width: 1400px) { margin-top: 30px; }
+
+/* parameter */
+$footer-height: 70px;
+
+body {
+  font-size: 14px;
+  line-height: 23px;;
+  .bc-left {
+    background-color: #fff;
+    margin-top: 10px;
+    margin-bottom: $footer-height+10;
+  }
+  .bc-right {
+    background-color: #f1f1f1;
+    margin-top: 10px;
+    margin-bottom: $footer-height+10;
+  }
+  a {
+    @include link;
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: $footer-height;
+    background: #333;
+  }
+  
+}
+

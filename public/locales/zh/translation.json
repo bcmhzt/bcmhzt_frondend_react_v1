@@ -1,0 +1,64 @@
+{
+  "site_title": "Bacmhzt (Bākùmùcí)",
+  "welcome": "欢迎",
+  "greeting": "你好，{{nickname}}！",
+  "description": "为成年人提供一个安全可靠的交友平台。在这里，您可以与拥有共同兴趣和价值观的人建立认真的关系或新的联系。我们注重隐私，提供简单易用的功能，帮助您找到理想的伴侣。",
+  "button": {
+    "save": "保存",
+    "cancel": "取消"
+  },
+  "register": {
+    "title": "注册新账号",
+    "email": "电子邮件",
+    "placeholder_email": "请输入电子邮件",
+    "password": "密码",
+    "placeholder_password": "请输入密码",
+    "confirm_password": "确认密码",
+    "placeholder_confirm_password": "请再次输入密码",
+    "loading_message": "注册中...",
+    "submit": "注册后继续",
+    "to_login": "已经有账户了？",
+    "email_validation_error1": "请输入电子邮件地址",
+    "email_validation_error2": "请输入有效的电子邮件地址",
+    "email_validation_error3": "该电子邮件地址已被注册",
+    "email_validation_error4": "尝试次数过多",
+    "password_validation_error1": "密码必须至少8个字符",
+    "password_validation_error2": "密码必须包含至少一个大写字母",
+    "password_validation_error3": "密码必须包含至少一个小写字母",
+    "password_validation_error4": "密码必须包含至少一个数字",
+    "password_validation_error5": "密码必须包含至少一个特殊字符（!@#$%^&*）",
+    "password_validation_error6": "两次密码输入不一致",
+    "referral_message": "没有推荐密钥。目前只接受通过推荐进行的新注册。必须由注册会员推荐",
+    "is_too_many_access": "访问受限。请稍候再试",
+    "system_error1": "系统发生错误，请联系管理员"
+  },
+  "verifyemail": {
+    "title": "输入您的代码",
+    "message": "请输入发送到您邮箱的6位验证码。",
+    "authenticating": "验证",
+    "input_verification_code": "请输入6位验证码。",
+    "input_password": "请输入密码。",
+    "input_password_not_match": "密码不匹配。",
+    "input_password_policy": "密码必须至少包含8个字符、包括大写字母、小写字母、数字和符号。"
+  },
+  "login": {
+    "title": "登录",
+    "email": "电子邮件",
+    "placeholder_email": "请输入电子邮件地址",
+    "password": "密码",
+    "placeholder_password": "请输入密码",
+    "forgot_password": "忘记密码？",
+    "submit": "登录",
+    "to_register": "还没有账户？立即注册",
+    "login_error1": "邮箱验证尚未完成",
+    "login_error2": "邮箱地址未验证，请检查您的邮箱。",
+    "login_error3": "登录失败",
+    "loading": "正在登录 ..."
+  },
+  "forgotmypassword": {
+    "title": "忘记密码了？",
+    "email": "邮箱",
+    "enter_your_email": "请输入您的邮箱地址",
+    "submit": "发送重置密码邮件"
+  }
+}

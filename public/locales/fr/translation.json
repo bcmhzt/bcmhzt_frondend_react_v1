@@ -1,0 +1,63 @@
+{
+  "welcome": "Bienvenue",
+  "greeting": "Bonjour, {{nickname}} !",
+  "description": "Nous offrons un espace de rencontre sûr et sécurisé pour les adultes. Un site de rencontre où vous pouvez établir des relations sérieuses ou de nouvelles connexions avec des personnes partageant vos intérêts et vos valeurs. Nous mettons l'accent sur la confidentialité et proposons des fonctionnalités simples et conviviales pour vous aider à trouver votre partenaire idéal.",
+  "button": {
+    "save": "Enregistrer",
+    "cancel": "Annuler"
+  },
+  "register": {
+    "title": "Rejoignez-nous",
+    "email": "E-mail",
+    "placeholder_email": "Entrez votre adresse e-mail",
+    "password": "Mot de passe",
+    "placeholder_password": "Entrez votre mot de passe",
+    "confirm_password": "Confirmez le mot de passe",
+    "placeholder_confirm_password": "Confirmez votre mot de passe",
+    "loading_message": "En cours d'inscription...",
+    "submit": "Enregistrez-vous pour continuer",
+    "to_login": "Vous avez déjà un compte ?",
+    "email_validation_error1": "Veuillez entrer votre adresse e-mail",
+    "email_validation_error2": "Veuillez entrer une adresse e-mail valide",
+    "email_validation_error3": "Cette adresse e-mail est déjà enregistrée",
+    "email_validation_error4": "Trop de tentatives",
+    "password_validation_error1": "Le mot de passe doit contenir au moins 8 caractères",
+    "password_validation_error2": "Le mot de passe doit contenir au moins une lettre majuscule",
+    "password_validation_error3": "Le mot de passe doit contenir au moins une lettre minuscule",
+    "password_validation_error4": "Le mot de passe doit contenir au moins un chiffre",
+    "password_validation_error5": "Le mot de passe doit contenir au moins un caractère spécial (!@#$%^&*)",
+    "password_validation_error6": "Les mots de passe ne correspondent pas",
+    "referral_message": "Aucune clé de parrainage n'est disponible. Actuellement, nous n'acceptons que les nouvelles inscriptions par parrainage. Vous devez être recommandé par un membre déjà inscrit.",
+    "is_too_many_access": "L'accès est actuellement restreint. Veuillez accéder à nouveau dans quelques instants.",
+    "system_error1": "Une erreur système s'est produite. Veuillez contacter l'administrateur"
+  },
+  "verifyemail": {
+    "title": "Saisissez votre code",
+    "message": "Entrez le code de vérification à 6 chiffres envoyé à votre e-mail.",
+    "authenticating": "Authentification",
+    "input_verification_code": "Entrez le code à 6 chiffres.",
+    "input_password": "Entrez votre mot de passe.",
+    "input_password_not_match": "Le mot de passe ne correspond pas.",
+    "input_password_policy": "Le mot de passe doit comporter au moins 8 caractères, incluant des lettres majuscules et minuscules, des chiffres et des symboles."
+  },
+  "login": {
+    "title": "Connexion",
+    "email": "E-mail",
+    "placeholder_email": "Entrez votre adresse e-mail",
+    "password": "Mot de passe",
+    "placeholder_password": "Entrez votre mot de passe",
+    "forgot_password": "Mot de passe oublié ?",
+    "submit": "Se connecter",
+    "to_register": "Vous n'avez pas encore de compte ?",
+    "login_error1": "La vérification de l'e-mail n'est pas terminée",
+    "login_error2": "L'adresse e-mail n'a pas été vérifiée. Veuillez vérifier vos e-mails.",
+    "login_error3": "Échec de la connexion",
+    "loading": "Connexion en cours ..."
+  },
+  "forgotmypassword": {
+    "title": "Mot de passe oublié ?",
+    "email": "Email",
+    "enter_your_email": "Veuillez entrer votre adresse électronique",
+    "submit": "Envoyer le lien de réinitialisation"
+  }
+}

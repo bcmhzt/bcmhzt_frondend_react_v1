@@ -21,3 +21,13 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# our wokrs
+works
+
+# Cloud Functions
+functions/.works
+functions/.env
+
+# utility
+.vscode/

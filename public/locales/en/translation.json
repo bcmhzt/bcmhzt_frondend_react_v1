@@ -1,0 +1,116 @@
+{
+  "site_title": "Bacmhzt (Bakumutsu)",
+  "welcome": "Welcome",
+  "greeting": "Hello, {{nickname}}!",
+  "description": "Providing a safe and secure meeting place for adults. A dating site where you can build serious relationships or new connections with someone who shares your interests and values. We prioritize privacy and offer simple, user-friendly features to help you find your ideal partner.",
+  "button": {
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "register": {
+    "title": "Join us",
+    "email": "Email",
+    "placeholder_email": "Enter your email",
+    "password": "Password",
+    "placeholder_password": "Enter your password",
+    "confirm_password": "Confirm Password",
+    "placeholder_confirm_password": "Enter your password again",
+    "loading_message": "Signing up...",
+    "submit": "Sign up and continue",
+    "to_login": "Already have an account ?",
+    "email_validation_error1": "Please enter your email address",
+    "email_validation_error2": "Please enter your valid email address",
+    "email_validation_error3": "This email address is already registered",
+    "email_validation_error4": "Too Many Attempts",
+    "password_validation_error1": "The password must be at least 8 characters long",
+    "password_validation_error2": "The password must contain at least one uppercase letter",
+    "password_validation_error3": "The password must contain at least one lowercase letter",
+    "password_validation_error4": "The password must contain at least one number",
+    "password_validation_error5": "The password must contain at least one special character (!@#$%^&*)",
+    "password_validation_error6": "Passwords do not match",
+    "referral_message": "You do not have a referral key. We are currently only accepting new registrations by referral. You must be introduced by an already registered member.",
+    "is_too_many_access": "Access is restricted. Please wait a moment and try again.",
+    "system_error1": "A system error has occurred. Please contact the administrator"
+  },
+  "verifyemail": {
+    "title": "Input your code",
+    "message": "Enter the 6-digit verification code sent to your email.",
+    "authenticating": "Authenticate",
+    "input_verification_code": "Enter the 6-digit code",
+    "input_password": "Enter your password",
+    "input_password_not_match": "Password does not match",
+    "input_password_policy" : "Password must be at least 8 characters long, including uppercase and lowercase letters, numbers, and symbols"
+  },
+  "login": {
+    "title": "Login",
+    "email": "Email",
+    "placeholder_email": "Enter your email",
+    "password": "Password",
+    "placeholder_password": "Enter your password",
+    "forgot_password": "Forgot Password",
+    "submit": "Login",
+    "to_register": "Do you have an account yet?",
+    "login_error1": "Email verification is not complete",
+    "login_error2": "The email address has not been verified. Please check your email.",
+    "login_error3": "Login failed",
+    "loading": "under login ..."
+  },
+  "forgotmypassword": {
+    "title": "Forgot your password?",
+    "email": "Email",
+    "enter_your_email": "Enter your email address",
+    "submit": "Send password reset email"
+  },
+  "cardregist": {
+    "title": "Register your card",
+    "card_number": "Card Number",
+    "expiration_date": "Expiration Date",
+    "placeholder_expiration_date": "MM/YY",
+    "security_code": "Security Code (CVC)",
+    "submit": "Register",
+    "placeholder_security_code": "999",
+    "card_validation_error1": "Invalid card number.",
+    "card_validation_error2": "Invalid card number.",
+    "card_validation_error3": "Invalid card expiration date.",
+    "card_validation_error4": "The card has expired.",
+    "card_validation_error5": "Invalid card security code."
+  },
+  "account": {
+    "test": "test",
+    "title": "Account",
+    "main-contants": {
+      "main-contants": "Main Contants",
+      "dashboard": "Dashboard",
+      "people": "People",
+      "search": "Search",
+      "notice": "Notice",
+      "community": "Community",
+      "chat": "Chat"
+    },
+    "component1_display_name1": "My Account",
+    "component2_display_name2": "Credit Card",
+    "component3_display_name3": "Settings",
+    "component4_display_name4": "component4",
+    "component5_display_name5": "component5",
+
+    "account_page": {
+      "myaccount_profile": "Profile",
+      "myaccount_profile_nickname": "Nickname",
+      "myaccount_profile_email": "Email",
+      "myaccount_profile_password": "Password",
+      "myaccount_profile_password_reset": "Password Reset",
+      "myaccount_profile_status": "Status",
+      "myaccount_profile_created_at": "created at",
+
+      "myaccount_settings": "Basic Settings Item",
+      "myaccount_settings_favorite": "Notification when someone liked you",
+      "myaccount_settings_match": "Notification when you matched with someone",
+      "myaccount_settings_news&app": "Notification of news and application information",
+      "myaccount_settings_replied": "Notification when someone replied to you",
+
+      "myaccount_langage": "Langage settings",
+      "myaccount_data_download": "Data download",
+      "myaccount_data_download_message": "Download your own submission data."
+    }
+  }
+}

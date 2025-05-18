@@ -1,0 +1,115 @@
+{
+  "site_title": "Bacmhzt (バクムーツ)",
+  "welcome": "ようこそ",
+  "greeting": "こんにちは、{{nickname}}さん!",
+  "description": "大人のための安心で安全な出会いの場を提供します。共通の趣味や価値観を持つ相手と、真剣な交際や新たなつながりを築ける出会い系サイト。プライバシーを重視し、シンプルで使いやすい機能で、あなたの理想のパートナーを見つけるお手伝いをします。",
+  "button": {
+    "save": "保存",
+    "cancel": "キャンセル"
+  },
+
+  "register": {
+    "title": "新規アカウント登録",
+    "email": "Eメール",
+    "placeholder_email": "Emailを入力してください",
+    "password": "パスワード",
+    "placeholder_password": "パスワードを入力してください",
+    "confirm_password": "パスワード（確認）",
+    "placeholder_confirm_password": "パスワードをもう一度入力してください",
+    "loading_message": "登録中...",
+    "submit": "登録して次に進む",
+    "to_login": "すでにアカウントを持っている方",
+    "email_validation_error1": "Eメールアドレスを入力してください",
+    "email_validation_error2": "有効なEメールアドレスを入力してください",
+    "email_validation_error3": "このメールアドレスはすでに登録されています",
+    "email_validation_error4": "リクエスト回数が超過しました",
+    "password_validation_error1": "Tパスワードは8文字以上である必要があります",
+    "password_validation_error2": "パスワードには少なくとも1つの大文字を含める必要があります",
+    "password_validation_error3": "パスワードには少なくとも1つの小文字を含める必要があります",
+    "password_validation_error4": "パスワードには少なくとも1つの数字を含める必要があります",
+    "password_validation_error5": "パスワードには少なくとも1つの特殊文字を含める必要があります (!@#$%^&*",
+    "password_validation_error6": "パスワードが一致しません",
+    "referral_message": "紹介鍵がありません。現在、リファラルでの新規登録のみを受け付けています。すでに登録済みのメンバーに紹介してもらう必要があります。",
+    "is_too_many_access": "アクセス制限がかかっています。しばらく時間をおいてから再度お試しください。",
+    "system_error1": "システムに不具合が生じています。管理者にお問い合わせしてください"
+  },
+  "verifyemail": {
+    "title": "認証コード入力",
+    "message": "あなたのメールに送信された６桁の認証コードを入力してください。",
+    "authenticating": "認証する",
+    "input_verification_code": "6桁のコードを入力してください",
+    "input_password": "パスワードを入力してください",
+    "input_password_not_match": "パスワードが一致しません",
+    "input_password_policy" : "パスワードは、大文字、小文字、数字、記号を含む8文字以上である必要があります"
+  },
+  "login": {
+    "title": "ログイン",
+    "email": "Eメール",
+    "placeholder_email": "Eメールを入力してください",
+    "password": "パスワード",
+    "placeholder_password": "パスワードを入力してください",
+    "forgot_password": "パスワードを忘れてしまった",
+    "submit": "ログイン",
+    "to_register": "新規でアカウントを作成する方はこちら",
+    "login_error1": "メール認証が完了していません",
+    "login_error2": "メールアドレスが確認されていません。メールを確認してください。",
+    "login_error3": "ログインできませんでした",
+    "loading": "ログイン中..."
+  },
+  "forgotmypassword": {
+    "title": "パスワードを忘れた",
+    "email": "Eメール",
+    "enter_your_email": "Eメールアドレスを入力してください",
+    "submit": "パスワードリセットメールを送信"
+  },
+  "cardregist": {
+    "title": "クレジットカード登録",
+    "card_number": "カード番号",
+    "expiration_date": "有効期限",
+    "placeholder_expiration_date": "MM/YY",
+    "security_code": "CVC",
+    "submit": "カード登録",
+    "placeholder_security_code": "999",
+    "card_validation_error1": "カード番号に不備があります。",
+    "card_validation_error2": "カード番号が無効です。",
+    "card_validation_error3": "カードの有効期限に不備があります。",
+    "card_validation_error4": "カードの有効期間の満了年が過ぎています。",
+    "card_validation_error5": "カードのセキュリティコードに不備があります。"
+  },
+  "account": {
+    "test": "テスト",
+    "title": "アカウント",
+    "main-contants": {
+      "main-contants": "コンテンツ",
+      "dashboard": "ダッシュボード",
+      "people": "メンバーを探す",
+      "search": "投稿",
+      "notice": "通知",
+      "community": "コミュニティ",
+      "chat": "チャット"
+    },
+    "component1_display_name1": "私のアカウント",
+    "component2_display_name2": "クレジットカード",
+    "component3_display_name3": "各種設定",
+    "component4_display_name4": "コンポーネント4",
+    "component5_display_name5": "コンポーネント5",
+    "account_page": {
+      "myaccount_profile": "プロフィール",
+      "myaccount_profile_nickname": "ニックネーム",
+      "myaccount_profile_email": "Emailアドレス",
+      "myaccount_profile_password": "パスワード",
+      "myaccount_profile_password_reset": "パスワード変更",
+      "myaccount_profile_status": "ステータス",
+      "myaccount_profile_created_at": "アカウント作成日",
+      "myaccount_settings": "設定",
+      "myaccount_settings_favorite": "いいねされたときの通知",
+      "myaccount_settings_match": "マッチしたときの通知",
+      "myaccount_settings_news&app": "ニュース・アプリケーション情報の通知",
+      "myaccount_settings_replied": "自分の投稿に返信がついたときの通知",
+
+      "myaccount_langage": "言語設定",
+      "myaccount_data_download": "データダウンロード",
+      "myaccount_data_download_message": "ご自身の投稿データをダウンロードします。"
+    }
+  }
+}
