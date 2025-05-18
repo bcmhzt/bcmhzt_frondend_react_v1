@@ -1,8 +1,9 @@
 // App.tsx
 import React from 'react';
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import routes from "./routes";
 import { AuthProvider } from './contexts/AuthContext';
+import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   console.log("ENV:", process.env.REACT_APP_ENV);
@@ -10,7 +11,6 @@ function App() {
     <BrowserRouter>
       <Routes>
         
-
         {routes.publicRoutes.map(({ path, component: Component }) => (
           <Route key={path} path={path} element={<Component />} />
         ))}
@@ -18,7 +18,7 @@ function App() {
         <Route
           element={
             <AuthProvider>
-              <Outlet />
+              <PrivateRoute />
             </AuthProvider>
           }
         >
@@ -27,7 +27,7 @@ function App() {
           ))}
         </Route>
 
-        {['local', 'dev', 'test'].includes(process.env.REACT_APP_ENV || '') &&
+        {['local', 'dev', 'test', 'stg'].includes(process.env.REACT_APP_ENV || '') &&
           routes.devRoutes.map(({ path, component: Component }) => (
             <Route key={path} path={path} element={<Component />} />
           ))

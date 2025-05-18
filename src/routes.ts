@@ -6,6 +6,8 @@ import About from "./pages/About";
 import Register from './pages/auth/Register';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import Login from './pages/auth/Login';
+import ForgotMyPassword from './pages/auth/ForgotMyPassword';
+// import PasswordReset from './pages/auth/PasswordReset';
 /** privateRoutes */
 import Dashboard from "./pages/Dashboard";
 
@@ -37,7 +39,9 @@ const routes: RoutesObject = {
     { path: "/about", component: About },
     { path: "/register", component: Register },
     { path: "/verifyemail/:hash", component: VerifyEmail },
-    { path: "/login", component: Login }
+    { path: "/login", component: Login },
+    { path: "/forgotmypassword", component: ForgotMyPassword }
+    // { path: "/passwordreset/:hash", component: PasswordReset },
   ],
   privateRoutes: [
     { path: "/develop/authenticate", component: DevAuthenticate },
