@@ -7,6 +7,22 @@ type script: Version 4.9.5
 % npx tsc -v
 Version 4.9.5
 
+## Develop command
+
+インストール時は`--legacy-peer-deps`をつける。
+```
+% npm install xxxxxx --legacy-peer-deps
+```
+
+### Delete cache & restart
+
+```
+% npm cache clean --force
+% rm -f package-lock.json
+% rm -fR node_modules
+% npm install --legacy-peer-deps
+% npm start
+```
 
 # Rules
 

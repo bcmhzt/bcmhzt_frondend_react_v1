@@ -1,43 +1,96 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ja">
   <head>
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-34DXL9VYR0"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-34DXL9VYR0');
+    </script>
+
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
-    <meta
-      name="description"
-      content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-    <!--
-      manifest.json provides metadata used when your web app is installed on a
-      user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
-    -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
-    <!--
-      Notice the use of %PUBLIC_URL% in the tags above.
-      It will be replaced with the URL of the `public` folder during the build.
-      Only files inside the `public` folder can be referenced from the HTML.
+    
+    <link rel="canonical" href="https://app.bcmhzt.net/">
 
-      Unlike "/favicon.ico" or "favicon.ico", "%PUBLIC_URL%/favicon.ico" will
-      work correctly both with client-side routing and a non-root public URL.
-      Learn how to configure a non-root public URL by running `npm run build`.
-    -->
-    <title>React App</title>
+    <!-- favicon new style-->
+    <link rel="apple-touch-icon" type="image/png" href="/assets/images/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" href="/assets/images/favicon/icon-192x192.png">
+    <!-- favicon old style-->
+    <meta name="msapplication-square70x70logo" content="/site-tile-70x70.png">
+    <meta name="msapplication-square150x150logo" content="/site-tile-150x150.png">
+    <meta name="msapplication-wide310x150logo" content="/site-tile-310x150.png">
+    <meta name="msapplication-square310x310logo" content="/site-tile-310x310.png">
+    <meta name="msapplication-TileColor" content="#0078d7">
+    <link rel="shortcut icon" type="image/vnd.microsoft.icon" href="/assets/images/favicon/favicon.ico">
+    <link rel="icon" type="image/vnd.microsoft.icon" href="/assets/images/favicon/favicon.ico">
+    <link rel="apple-touch-icon" sizes="57x57" href="/assets/images/favicon/apple-touch-icon-57x57.png">
+    <link rel="apple-touch-icon" sizes="60x60" href="/assets/images/favicon/apple-touch-icon-60x60.png">
+    <link rel="apple-touch-icon" sizes="72x72" href="/assets/images/favicon/apple-touch-icon-72x72.png">
+    <link rel="apple-touch-icon" sizes="76x76" href="/assets/images/favicon/apple-touch-icon-76x76.png">
+    <link rel="apple-touch-icon" sizes="114x114" href="/assets/images/favicon/apple-touch-icon-114x114.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="/assets/images/favicon/apple-touch-icon-120x120.png">
+    <link rel="apple-touch-icon" sizes="144x144" href="/assets/images/favicon/apple-touch-icon-144x144.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="/assets/images/favicon/apple-touch-icon-152x152.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/apple-touch-icon-180x180.png">
+    <link rel="icon" type="image/png" sizes="36x36" href="/assets/images/favicon/android-chrome-36x36.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/images/favicon/android-chrome-48x48.png">
+    <link rel="icon" type="image/png" sizes="72x72" href="/assets/images/favicon/android-chrome-72x72.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/android-chrome-96x96.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon/android-chrome-128x128.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="/assets/images/favicon/android-chrome-144x144.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="/assets/images/favicon/android-chrome-152x152.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon/android-chrome-256x256.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="/assets/images/favicon/android-chrome-384x384.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon/android-chrome-512x512.png">
+    <link rel="icon" type="image/png" sizes="36x36" href="/assets/images/favicon/icon-36x36.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="/assets/images/favicon/icon-48x48.png">
+    <link rel="icon" type="image/png" sizes="72x72" href="/assets/images/favicon/icon-72x72.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="/assets/images/favicon/icon-96x96.png">
+    <link rel="icon" type="image/png" sizes="128x128" href="/assets/images/favicon/icon-128x128.png">
+    <link rel="icon" type="image/png" sizes="144x144" href="/assets/images/favicon/icon-144x144.png">
+    <link rel="icon" type="image/png" sizes="152x152" href="/assets/images/favicon/icon-152x152.png">
+    <link rel="icon" type="image/png" sizes="160x160" href="/assets/images/favicon/icon-160x160.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/assets/images/favicon/icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="196x196" href="/assets/images/favicon/icon-196x196.png">
+    <link rel="icon" type="image/png" sizes="256x256" href="/assets/images/favicon/icon-256x256.png">
+    <link rel="icon" type="image/png" sizes="384x384" href="/assets/images/favicon/icon-384x384.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/assets/images/favicon/icon-512x512.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/icon-16x16.png">
+    <link rel="icon" type="image/png" sizes="24x24" href="/assets/images/favicon/icon-24x24.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/icon-32x32.png">
+    <link rel="manifest" href="/assets/images/favicon/manifest.json">
+    <!-- top big images -->
+    <link rel="preload" href="/assets/background/bcmhzt1.webp" as="image">
+    <link rel="preload" href="/assets/background/bcmhzt2.webp" as="image">
+    <link rel="preload" href="/assets/background/bcmhzt3.webp" as="image">
+    <link rel="preload" href="/assets/background/bcmhzt4.webp" as="image">
+    <link rel="preload" href="/assets/background/bcmhzt5.webp" as="image">
+    <title>バクムーツ | Bacmhzt</title>
+    <meta name="description" content="大人のための安心な出会いの場を提供します。共通の趣味や価値観を持つ相手と、真剣な交際や新たなつながりを築けるSNSサイト。プライバシーを重視し、シンプルで使いやすい機能で、あなたの理想のパートナーを見つけるお手伝いをします。ナイススケベ！" />
+
+    <!-- OGP -->
+    <meta property="og:url" content="https://app.bcmhzt.net/"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="Bcmhzt | バクムーツ"/>
+    <meta property="og:description" content="大人のための安心な出会いの場を提供します。共通の趣味や価値観を持つ相手と、真剣な交際や新たなつながりを築けるSNSサイト。プライバシーを重視し、シンプルで使いやすい機能で、あなたの理想のパートナーを見つけるお手伝いをします。ナイススケベ！"/>
+    <meta property="og:site_name" content="Bcmhzt | バクムーツ"/>
+    <meta property="og:image" content="https://app.bcmhzt.net/bcmhzt.png"/>
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="bcmhzt@bcmhzt" />
+    <meta name="twitter:title" content="Bcmhzt | バクムーツ" />
+    <meta name="twitter:description" content="大人のための安心な出会いの場を提供します。共通の趣味や価値観を持つ相手と、真剣な交際や新たなつながりを築けるSNSサイト。プライバシーを重視し、シンプルで使いやすい機能で、あなたの理想のパートナーを見つけるお手伝いをします。ナイススケベ！" />
+    <meta name="twitter:image" content="https://app.bcmhzt.net/bcmhzt.png" />
+
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
-    <!--
-      This HTML file is a template.
-      If you open it directly in the browser, you will see an empty page.
-
-      You can add webfonts, meta tags, or analytics to this file.
-      The build step will place the bundled scripts into the <body> tag.
-
-      To begin the development, run `npm start` or `yarn start`.
-      To create a production bundle, use `npm run build` or `yarn build`.
-    -->
   </body>
 </html>
