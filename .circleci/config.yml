@@ -1,54 +1,114 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:node:.
 version: 2.1
+
 orbs:
-  node: circleci/node@5
+  browser-tools: circleci/browser-tools@1.1
+  node: circleci/node@5.0.2
+
 jobs:
-  test-node:
-    # Install node dependencies and run tests
-    executor: node/default
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          name: Run tests
-          command: npm test --passWithNoTests
-  build-node:
-    # Build node project
-    executor: node/default
-    steps:
-      - checkout
-      - node/install-packages:
-          pkg-manager: npm
-      - run:
-          command: npm run build
-      - run:
-          name: Create the ~/artifacts directory if it doesn't exist
-          command: mkdir -p ~/artifacts
-      # Copy output to artifacts dir
-      - run:
-          name: Copy artifacts
-          command: cp -R build dist public .output .next .docusaurus ~/artifacts 2>/dev/null || true
-      - store_artifacts:
-          path: ~/artifacts
-          destination: node-build
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
+  dev:
     docker:
-      - image: cimg/base:stable
+      - image: cimg/node:lts
+    working_directory: ~/repo
+    environment:
+      REACT_APP_ENV: dev
+      REACT_APP_DEBUG: true
+      REACT_APP_URL: https://app-dev.bcmhzt.net
+      REACT_APP_API_ENDPOINT: https://auth-f47860e99cd9f4b0001a45ef233.bcmhzt.net/api
+      REACT_APP_BACKEND: https://auth-f47860e99cd9f4b0001a45ef233.bcmhzt.net
+      REACT_APP_FIREBASE_STORAGE_BASE_URL: https://firebasestorage.googleapis.com/v0/b/bcmhzt-b25e9.appspot.com/o/
+      REACT_APP_FIRESTORE_DATABASE: bacmhzt-prod-firestore-messages
+      REACT_APP_MICROCMS_SERVICE_DOMAIN: os3pztnrl7
+      REACT_APP_MICROCMS_APIKEY: wfUmebd264LkcRElQgPQoKzRyb27Rcs6EZrB
+      REACT_APP_VAPID_KEY: BJrishZkvKcB5ZGorRCWry4NpuLSoR3mYK5pu6p7dsEpvNtpoLBE0aPWPQ-v8MNBCXLChjbdxog6SX4qgWtgVHY
     steps:
-      # Replace this with steps to deploy to users
+      - checkout
+      - run: "echo dev deploy!"
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8"
+      - run: "sudo apt-get update && sudo apt-get install -y rsync"
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: "Clear npm cache"
+          command: "npm cache clean --force"
+      - run:
+          name: "Remove node_modules"
+          command: "rm -rf node_modules"
+      - run:
+          name: "Install dependencies"
+          command: "npm install --legacy-peer-deps"
+      - run:
+          name: "Build React app with verbose output"
+          command: "npm run build --verbose"  # ここで詳細なログを取得
+      - run:
+          name: "Add SSH Host Key"
+          command: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -p 2222 ssh.lolipop.jp >> ~/.ssh/known_hosts
+            cat ~/.ssh/known_hosts
+      - run:
+          name: "Move .htaccess for dev"
+          command: mv ~/repo/htaccess.dev ~/repo/build/.htaccess
+      - run:
+          name: Deploy to server
+          command: |
+            rsync -av --delete --exclude-from='rsync-exclude.txt' -L --ignore-missing-args -o StrictHostKeyChecking=no -o ConnectTimeout=10 -e 'ssh -p 2222' ~/repo/build/ pinoko.jp-roughlang@ssh.lolipop.jp:~/web/bcmhzt.net/frontend/dev/public/
+
+  prod:
+    docker:
+      - image: cimg/node:lts
+    working_directory: ~/repo
+    environment:
+      REACT_APP_ENV: prod
+      REACT_APP_DEBUG: false
+      REACT_APP_URL: https://app.bcmhzt.net
+      REACT_APP_API_ENDPOINT: https://auth-c767e7f200dfe4c78f6297867c7.bcmhzt.net/api
+      REACT_APP_BACKEND: https://auth-c767e7f200dfe4c78f6297867c7.bcmhzt.net
+      REACT_APP_FIREBASE_STORAGE_BASE_URL: https://firebasestorage.googleapis.com/v0/b/bcmhzt-b25e9.appspot.com/o/
+      REACT_APP_FIRESTORE_DATABASE: bacmhzt-prod-firestore-messages
+      REACT_APP_MICROCMS_SERVICE_DOMAIN: os3pztnrl7
+      REACT_APP_MICROCMS_APIKEY: wfUmebd264LkcRElQgPQoKzRyb27Rcs6EZrB
+      REACT_APP_VAPID_KEY: BJrishZkvKcB5ZGorRCWry4NpuLSoR3mYK5pu6p7dsEpvNtpoLBE0aPWPQ-v8MNBCXLChjbdxog6SX4qgWtgVHY
+    steps:
+      - checkout
+      - run: "echo prod deploy!"
+      - add_ssh_keys:
+          fingerprints:
+            - "SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8"
+      - run: "sudo apt-get update && sudo apt-get install -y rsync"
+      - run:
+          name: "Clear npm cache"
+          command: "npm cache clean --force"
+      - run:
+          name: "Remove node_modules"
+          command: "rm -rf node_modules"
+      - run:
+          name: "Install dependencies"
+          command: "npm install --legacy-peer-deps"
+      - run:
+          name: "Build React app with verbose output"
+          command: "npm run build --verbose"  # ここで詳細なログを取得
+      - run:
+          name: "Add SSH Host Key"
+          command: |
+            mkdir -p ~/.ssh
+            ssh-keyscan -p 2222 ssh.lolipop.jp >> ~/.ssh/known_hosts
+            cat ~/.ssh/known_hosts
+      - run:
+          name: "Move .htaccess for prod"
+          command: mv ~/repo/htaccess.main ~/repo/build/.htaccess
+      - run:
+          name: Deploy to server
+          command: |
+            rsync -av --delete --exclude-from='rsync-exclude.txt' -L --ignore-missing-args -o StrictHostKeyChecking=no -o ConnectTimeout=10 -e 'ssh -p 2222' ~/repo/build/ pinoko.jp-roughlang@ssh.lolipop.jp:~/web/bcmhzt.net/frontend/prod/public/
+
 workflows:
-  build-and-test:
+  deploy-workflow:
     jobs:
-      - test-node
-      - build-node:
-          requires:
-            - test-node
-    # - deploy:
-    #     requires:
-    #       - build-node
+      - dev:
+          filters:
+            branches:
+              only: dev
+      - prod:
+          filters:
+            branches:
+              only: main
