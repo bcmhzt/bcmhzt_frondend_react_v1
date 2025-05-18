@@ -1,13 +1,14 @@
 import { Link } from "react-router-dom";
 import bcmhztLogo from '../assets/images/icon/bcmhzt-logo.png';
+import TopHeaderBar from "./TopHeaderBar";
 // import dummyAvatar from '../assets/images/dummy/dummy-avatar.png';
 
 const HeaderNoLogin = () => {
 
   return (
     <>
-      <div className="topbar"></div>
-
+      <TopHeaderBar />
+      
       <div className="header">
         <div className="header-section">
 
@@ -19,10 +20,10 @@ const HeaderNoLogin = () => {
           </ul>
         </div>
 
-        <div className="member-section">
+        {/* <div className="member-section">
           <a href="/register" className="btn btn-sm btn-primary bcmhzt-btn mr10">Sign up</a>
           <a href="/login" className="btn btn-sm btn-primary bcmhzt-btn-gray mr5">Login</a>
-        </div>
+        </div> */}
       </div>
     </>
   );

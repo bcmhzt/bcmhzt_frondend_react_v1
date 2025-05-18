@@ -5,7 +5,7 @@ import Footer from "../components/Footer";
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
-  console.log("[src/pages/Archtect.tsx:8] debug:", debug);
+  console.log("[src/pages/Archtect.tsx:xx] debug:", debug);
 }
 
 /**

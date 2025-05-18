@@ -7,6 +7,7 @@ import LanguageSelector from '../utility/LanguageSelector';
 import { useAuth } from "../contexts/AuthContext";
 // import useCommon from "../hooks/useCommon";
 import {getImageWithSuffix} from "../utility/GetUseImage";
+import TopHeaderBar from "./TopHeaderBar";
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -53,7 +54,7 @@ const Header = () => {
 
   return (
     <>
-      <div className="topbar"></div>
+      <TopHeaderBar />
 
       <div className="header">
         
