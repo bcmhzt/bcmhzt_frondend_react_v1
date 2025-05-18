@@ -153,7 +153,7 @@ const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, index: number) 
       <HeaderNoLogin />
       <LanguageSelector />
 
-      <div className="login container d-flex justify-content-center mt80">
+      <div className="login container d-flex justify-content-center mt20">
         <div className="card p-2 verify-email" style={{ width: '100%', maxWidth: '400px' }}>
           <div className="card-body mt30">
             <h5 className="card-title message-title">
