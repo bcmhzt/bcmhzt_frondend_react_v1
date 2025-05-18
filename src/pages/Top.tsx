@@ -61,7 +61,7 @@ const Top = () => {
       </HelmetProvider>
 
       <Header />
-      {/* <DevelopBanner /> */}
+      <DevelopBanner />
       <VisualBackground />
 
       {/* 年齢認証モーダル */}
