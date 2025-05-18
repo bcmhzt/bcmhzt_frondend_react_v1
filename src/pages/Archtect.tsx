@@ -21,7 +21,7 @@ if (debug === 'true') {
 const Archtect = () => {
   return (
     <div className="app-body">
-      <div className="topbar"></div>
+
       <Header />
       <div className="container bc-app">
         <div className="row">

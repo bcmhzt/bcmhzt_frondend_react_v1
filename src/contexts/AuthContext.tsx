@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextType | null>(null);
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
-  console.log("[src/contexts/AuthContext.js:34] debug:", debug);
+  console.log("[src/contexts/AuthContext.js:xx] debug:", debug);
 }
 
 export const useAuth = () => useContext(AuthContext);

@@ -1,9 +1,12 @@
 import routes from '../routes';
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import Header from "../components/Header";
+import Footer from "../components/Footer";
 
 const List = () => {
   return (
     <>
+      <Header />
       <h2>List</h2>
 
         <h3>Public</h3>
@@ -33,6 +36,7 @@ const List = () => {
             <Link to={route.path}>{route.path}</Link>
           </li>
         ))}
+      <Footer />
     </>
   );
 };

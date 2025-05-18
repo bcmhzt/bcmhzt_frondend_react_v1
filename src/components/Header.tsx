@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import bcmhztLogo from '../assets/images/icon/bcmhzt-logo.png';
 import dummyAvatar from '../assets/images/dummy/dummy-avatar.png';
-import { HouseDoor, List, ListUl, Power, XLg, Gear, WindowDock, Book, Easel, Mailbox, CodeSlash } from 'react-bootstrap-icons';
+import { HouseDoor, List, ListUl, Power, XLg, Gear, WindowDock, Book, Easel, Mailbox, CodeSlash, Braces } from 'react-bootstrap-icons';
 import LanguageSelector from '../utility/LanguageSelector';
 import { useAuth } from "../contexts/AuthContext";
 // import useCommon from "../hooks/useCommon";
@@ -169,12 +169,16 @@ const Header = () => {
               <Link to="/contact">お問い合わせ</Link>
             </li>
 
-            {env === "local" ? (
+            {(env === "local" || env === "test" || env === "dev") ? (
               <>
               <hr />
               <li>
                 <CodeSlash className="icon-lg" />
                 <Link to="/list">開発リストインデックス</Link>
+              </li>
+              <li>
+                <Braces className="icon-lg" />
+                <Link to="/develop/authenticate">開発パラメータ</Link>
               </li>
               <hr />
               </>

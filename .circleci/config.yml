@@ -86,7 +86,7 @@ jobs:
           command: "npm install --legacy-peer-deps"
       - run:
           name: "Build React app with verbose output"
-          command: "npm run build --verbose"  # ここで詳細なログを取得
+          command: "npm run build --verbose"
       - run:
           name: "Add SSH Host Key"
           command: |

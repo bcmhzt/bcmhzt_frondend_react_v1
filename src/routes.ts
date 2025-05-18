@@ -7,9 +7,10 @@ import Register from './pages/auth/Register';
 import VerifyEmail from './pages/auth/VerifyEmail';
 import Login from './pages/auth/Login';
 import ForgotMyPassword from './pages/auth/ForgotMyPassword';
-// import PasswordReset from './pages/auth/PasswordReset';
+import PasswordReset from './pages/auth/PasswordReset';
 /** privateRoutes */
 import Dashboard from "./pages/Dashboard";
+// import MetaAccount from "./pages/User/MetaAccount";
 
 
 /** devRoutes */
@@ -40,12 +41,13 @@ const routes: RoutesObject = {
     { path: "/register", component: Register },
     { path: "/verifyemail/:hash", component: VerifyEmail },
     { path: "/login", component: Login },
-    { path: "/forgotmypassword", component: ForgotMyPassword }
-    // { path: "/passwordreset/:hash", component: PasswordReset },
+    { path: "/forgotmypassword", component: ForgotMyPassword },
+    { path: "/passwordreset/:hash", component: PasswordReset }
   ],
   privateRoutes: [
     { path: "/develop/authenticate", component: DevAuthenticate },
-    { path: "/dashboard", component: Dashboard }
+    { path: "/dashboard", component: Dashboard },
+    // { path: "/metaaccount", component: MetaAccount }
   ],
   errorRoutes: [],
   devRoutes: [
