@@ -150,6 +150,7 @@ jobs:
             rsync -av --delete --exclude-from='rsync-exclude.txt' -L --ignore-missing-args -o StrictHostKeyChecking=no -o ConnectTimeout=10 -e 'ssh -p 2222' ~/repo/build/ pinoko.jp-roughlang@ssh.lolipop.jp:~/web/bcmhzt.net/frontend/prod/public/
 
 workflows:
+  version: 2
   deploy-workflow:
     jobs:
       - dev:
