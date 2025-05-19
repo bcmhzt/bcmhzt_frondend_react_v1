@@ -4,7 +4,7 @@ import { Helmet, HelmetProvider } from 'react-helmet-async';
 import Header from "../components/Header";
 import VisualBackground from '../components/VidualBackground';
 // import Footer from "../components/Footer";
-import { useAuth } from "../contexts/AuthContext";
+// import { useAuth } from "../contexts/AuthContext";
 import DevelopBanner from "../components/DevelopBanner";
 
 /* debug */
@@ -16,7 +16,7 @@ if (debug === 'true') {
 const Top = () => {
   const location = useLocation();
   const [showModal, setShowModal] = useState(false);
-  const auth = useAuth();
+  // const auth = useAuth();
 
   /**
    * 年齢認証モーダルの表示
@@ -30,10 +30,10 @@ const Top = () => {
   }, [location]);
 
   // const isLogin = false;
-  if (auth && auth.isLogin) {
-    window.location.replace("/dashboard");
-    return null;
-  }
+  // if (auth && auth.isLogin) {
+  //   window.location.replace("/dashboard");
+  //   return null;
+  // }
 
 
 

@@ -18,26 +18,6 @@ import {
 } from "firebase/auth";
 import axios from "axios";
 
-/**
- * 6c84d6f6 (hash)
- * [src/contexts/AuthContext.tsx:xx]
- * 
- * type: context
- * 
- * [Order] このコードでやっていること
- * - AuthContextTypeのインターフェイス指定
- * - AuthContextの作成
- * - useAuthの作成
- * - AuthProviderの作成
- * - useEffectでFirebaseのログイン状態を監視
- * - useEffectでFirebaseのトークンを監視
- * - useEffectでmyProfileImageの変更を監視
- * - logout関数の作成
- * - contextValueの作成
- * - AuthContext.Providerでラップ
- * - loadingがfalseのときにchildrenを表示
- */
-
 /* create context */
 interface AuthContextType {
   isLogin: boolean;
@@ -83,7 +63,7 @@ export const AuthProvider = ({
 
   useEffect(() => {
     if (debug === 'true') {
-      console.log("[src/contexts/AuthContext.js:66] useEffect called for login judgment.");
+      console.log("[src/contexts/AuthContext.js:56] useEffect called for login judgment.");
     }
     const env = process.env.REACT_APP_ENV;
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
@@ -99,17 +79,17 @@ export const AuthProvider = ({
      */
     const unsubAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (debug === 'true') {
-        console.log("[src/contexts/AuthContext.js:82] onAuthStateChanged called.");
+        console.log("[src/contexts/AuthContext.js:42] onAuthStateChanged called.");
       }
       setLoading(true);
       
       /* Firebaseにログインしている場合はトークンを取得する */
       if (debug === 'true') {
-        console.log('[src/contexts/AuthContext.js:88] check firebase user ', firebaseUser);
+        console.log('[src/contexts/AuthContext.js:48] check firebase user ', firebaseUser);
       }
       if (firebaseUser) {
         if (debug === 'true') {
-          console.log("[src/contexts/AuthContext.js:92] User is not log in Firebase. But user data keep in your browser. ", firebaseUser);
+          console.log("[src/contexts/AuthContext.js:52] User is not log in Firebase. But user data keep in your browser. ", firebaseUser);
         }
         setFirebaseCurrentUser(firebaseUser);
         setUid(firebaseUser.uid);
@@ -117,7 +97,7 @@ export const AuthProvider = ({
         try {
           const idToken = await firebaseUser.getIdToken();
           if (debug === 'true') {
-            console.log("[src/contexts/AuthContext.js:100] ID Token (JWT).", idToken);
+            console.log("[src/contexts/AuthContext.js:60] ID Token (JWT).", idToken);
           }
           setToken(idToken);
 
@@ -139,7 +119,7 @@ export const AuthProvider = ({
           
           if (debug === 'true') {
             /* Backendが起動していない（通信できていない）場合は、ここで止まる */
-            console.log("[src/contexts/AuthContext.js:122] API currentUserProfile. (user_profiles, user_details, users)", response.data);
+            console.log("[src/contexts/AuthContext.js:82] API currentUserProfile. (user_profiles, user_details, users)", response.data);
           }
           
           /**
@@ -154,8 +134,8 @@ export const AuthProvider = ({
           }
           /* nickname */
           if (debug === 'true') {
-            console.log('[src/contexts/AuthContext.js:137] nickname: ', myProfileImage);
-            console.log('[src/contexts/AuthContext.js:138] nickname: ', response.data.user_profile.nickname);
+            console.log('[src/contexts/AuthContext.js:97] nickname: ', myProfileImage);
+            console.log('[src/contexts/AuthContext.js:98] nickname: ', response.data.user_profile.nickname);
           }
    
           /*  最終ログイン判定 */
@@ -171,7 +151,7 @@ export const AuthProvider = ({
           setError(error);
 
           /* Backend APIと通信ができていないとき（ユーザー情報が取得できていない） */
-          console.error('[src/contexts/AuthContext.js:154] Error fetching data. ', error);
+          console.error('[src/contexts/AuthContext.js:117] Error fetching data. ', error);
           /* error 処理をもう少し詳しく書く */         
           if (env === 'prod') {
             window.location.href = '/error.html';
@@ -187,18 +167,19 @@ export const AuthProvider = ({
         setCurrentUserProfile([]);
         // setImageUrl(null);
         setError(null);
+        setIsLogin(false);
       }
       setLoading(false);
     });
     // ★ トークンの自動リフレッシュを検知
     const unsubIdToken = onIdTokenChanged(auth, async (firebaseUser) => {
       if (debug === 'true') {
-        console.log("[src/contexts/AuthContext.js:176] onIdTokenChanged called. firebaseUser:", firebaseUser);
+        console.log("[src/contexts/AuthContext.js:xx] onIdTokenChanged called. firebaseUser:", firebaseUser);
       }
       if (firebaseUser) {
         const newToken = await firebaseUser.getIdToken();
         if (debug === 'true') {
-          console.log("[src/contexts/AuthContext.js:181] onIdTokenChanged new token:", newToken);
+          console.log("[src/contexts/AuthContext.js:xx] onIdTokenChanged new token:", newToken);
         }
         setToken(newToken);
       } else {
@@ -218,8 +199,8 @@ export const AuthProvider = ({
   /* myProfileImageの変更を監視するuseEffectフック */
   useEffect(() => {
     if (debug === 'true') {
-      console.log('[src/contexts/AuthContext.js:201] myProfileImage: ', [myProfileImage]);
-      console.log('[src/contexts/AuthContext.js:202] API currentUserProfile: ', currentUserProfile);
+      console.log('[src/contexts/AuthContext.js:171] myProfileImage: ', [myProfileImage]);
+      console.log('[src/contexts/AuthContext.js:172] API currentUserProfile: ', currentUserProfile);
     }
   }, [ currentUserProfile, myProfileImage, isLogin ]);
 

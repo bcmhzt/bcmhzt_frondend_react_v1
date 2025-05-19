@@ -11,19 +11,14 @@ function App() {
   return (
     <BrowserRouter>
       <HelmetProvider>
+        <AuthProvider>
         <Routes>
           
           {routes.publicRoutes.map(({ path, component: Component }) => (
             <Route key={path} path={path} element={<Component />} />
           ))}
           
-          <Route
-            element={
-              <AuthProvider>
-                <PrivateRoute />
-              </AuthProvider>
-            }
-          >
+          <Route element={<PrivateRoute />}>
             {routes.privateRoutes.map(({ path, component: Component }) => (
               <Route key={path} path={path} element={<Component />} />
             ))}
@@ -38,6 +33,7 @@ function App() {
           <Route path={routes.notFound.path} element={<routes.notFound.component />} />
           
         </Routes>
+        </AuthProvider>
       </HelmetProvider>
     </BrowserRouter>
   );
