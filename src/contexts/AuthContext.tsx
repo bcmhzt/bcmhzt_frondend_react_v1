@@ -1,3 +1,4 @@
+/** 6c84d6f6 */
 import React, {
   createContext,
   useContext,
@@ -9,17 +10,23 @@ import React, {
 } from "react";
 import type { JSX } from "react";
 import { auth } from "../firebaseConfig";
-import { onAuthStateChanged, signOut, User } from "firebase/auth";
-import axios from 'axios';
+import {
+  onAuthStateChanged,
+  onIdTokenChanged,
+  signOut,
+  User,
+  // IdTokenResult,
+} from "firebase/auth";
+import axios from "axios";
 
 /* create context */
 interface AuthContextType {
   isLogin: boolean;
   currentUser: User | null;
-  currentUserProfile: any;      // 必要に応じて具体的な型に置き換えてください
+  currentUserProfile: any;
   token: string | null;
   uid: string | null;
-  imageUrl: string | null;
+  // imageUrl: string | null;
   myProfileImage: string | null;
   error: any;
   loading: boolean;
@@ -34,12 +41,16 @@ if (debug === 'true') {
   console.log("[src/contexts/AuthContext.js:xx] debug:", debug);
 }
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be inside AuthProvider");
+  return ctx;
+};
 
 export const AuthProvider = ({
   children,
 }: {
-  children: ReactNode;  // children に ReactNode 型を指定
+  children: ReactNode;
 }): JSX.Element => {
   const [isLogin, setIsLogin] = useState(false);
   const [currentUser, setFirebaseCurrentUser] = useState<User | null>(null);
@@ -47,7 +58,7 @@ export const AuthProvider = ({
   const [loading, setLoading] = useState(true);
   const [token, setToken] = useState<string | null>(null);
   const [uid, setUid] = useState<string | null>(null);
-  const [imageUrl, setImageUrl] = useState(null);
+  // const [imageUrl, setImageUrl] = useState(null);
   const [myProfileImage, setProfileImage] = useState<string | null>(null);
   const [error, setError] = useState<unknown>(null);
 
@@ -67,7 +78,7 @@ export const AuthProvider = ({
      * Firebase Authentication と bcmhztメンバーがuser_profilesのデータを取得できたときに
      * ログインと判断する
      */
-    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+    const unsubAuth = onAuthStateChanged(auth, async (firebaseUser) => {
       if (debug === 'true') {
         console.log("[src/contexts/AuthContext.js:42] onAuthStateChanged called.");
       }
@@ -155,13 +166,36 @@ export const AuthProvider = ({
         setToken(null);
         setUid(null);
         setCurrentUserProfile([]);
-        setImageUrl(null);
+        // setImageUrl(null);
         setError(null);
+        setIsLogin(false);
       }
       setLoading(false);
     });
-    return unsubscribe;
-  }, [isLogin, myProfileImage]);
+    // ★ トークンの自動リフレッシュを検知
+    const unsubIdToken = onIdTokenChanged(auth, async (firebaseUser) => {
+      if (debug === 'true') {
+        console.log("[src/contexts/AuthContext.js:xx] onIdTokenChanged called. firebaseUser:", firebaseUser);
+      }
+      if (firebaseUser) {
+        const newToken = await firebaseUser.getIdToken();
+        if (debug === 'true') {
+          console.log("[src/contexts/AuthContext.js:xx] onIdTokenChanged new token:", newToken);
+        }
+        setToken(newToken);
+      } else {
+        // ログアウト後は null
+        setToken(null);
+      }
+    });
+
+    // マウント解除時には両方のリスナーを解除
+    return () => {
+      unsubAuth();
+      unsubIdToken();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   
   /* myProfileImageの変更を監視するuseEffectフック */
   useEffect(() => {
@@ -181,7 +215,7 @@ export const AuthProvider = ({
     setToken(null);
     setUid(null);
     setCurrentUserProfile([]);
-    setImageUrl(null);
+    // setImageUrl(null);
     setError(null);
   }, []);
   
@@ -191,7 +225,7 @@ export const AuthProvider = ({
     currentUserProfile,
     token,
     uid,
-    imageUrl,
+    // imageUrl,
     myProfileImage,
     error,
     loading,
@@ -202,7 +236,7 @@ export const AuthProvider = ({
     currentUserProfile,
     token,
     uid,
-    imageUrl,
+    // imageUrl,
     myProfileImage,
     error,
     loading,
