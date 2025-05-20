@@ -214,7 +214,7 @@ const Register = () => {
             />
           </div>
 
-          <button type="submit" className="mt50 btn-bc-main btn btn-primary w-100 bcmhzt-btn-sm" disabled={isLoading || !isReferral}>
+          <button type="submit" className="mt50 bcmhzt-btn btn btn-primary w-100 bcmhzt-btn-sm" disabled={isLoading || !isReferral}>
           {isLoading ? (
             <>
               <Spinner animation="border" size="sm" className="me-2" />

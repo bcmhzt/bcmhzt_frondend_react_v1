@@ -10,7 +10,7 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // Loading & Auth
 import { LoadingProvider } from './contexts/LoadingContext';
-import { AuthProvider }   from './contexts/AuthContext';
+import { AuthProvider } from './contexts/AuthContext';
 
 const queryClient = new QueryClient();
 
@@ -20,12 +20,13 @@ const root = ReactDOM.createRoot(container!);
 root.render(
   <React.StrictMode>
     <QueryClientProvider client={queryClient}>
-      <LoadingProvider>
-        <AuthProvider>
+      <AuthProvider>
+        <LoadingProvider>
           <App />
-        </AuthProvider>
-      </LoadingProvider>
-      {(process.env.REACT_APP_ENV === 'local' || process.env.REACT_APP_ENV === 'dev') && (
+        </LoadingProvider>
+      </AuthProvider>
+      {(process.env.REACT_APP_ENV === 'local' ||
+        process.env.REACT_APP_ENV === 'dev') && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}
     </QueryClientProvider>

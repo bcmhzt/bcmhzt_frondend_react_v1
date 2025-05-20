@@ -225,10 +225,26 @@ export const AuthProvider = ({
 
 
   const logout = useCallback(async () => {
+
     if (debug === 'true') {
-      console.log("Logging out [AuthContext 07]:");
+      console.log("[src/contexts/AuthContext.tsx:230] Logging out:");
+      console.log('[src/contexts/AuthContext.tsx:231] Logout start');
     }
-    await signOut(auth);
+    
+    try {
+      await signOut(auth);
+      if (debug === 'true') {
+        console.log("[src/contexts/AuthContext.tsx:237] signOut OK");
+      }
+      setIsLogin(false);
+      if (debug === 'true') {
+        console.log("[src/contexts/AuthContext.tsx:241] setIsLogin to false");
+      }
+
+    } catch (e) {
+      console.error('[src/contexts/AuthContext.tsx:241] logout', e);
+    }
+
     setFirebaseCurrentUser(null);
     setToken(null);
     setUid(null);
