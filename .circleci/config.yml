@@ -61,8 +61,8 @@ jobs:
       REACT_APP_ENV: test
       REACT_APP_DEBUG: true
       REACT_APP_URL: https://app-test.bcmhzt.net
-      REACT_APP_API_ENDPOINT: https://auth-f47860e99cd9f4b0001a45ef233.bcmhzt.net/api
-      REACT_APP_BACKEND: https://auth-f47860e99cd9f4b0001a45ef233.bcmhzt.net
+      REACT_APP_API_ENDPOINT: https://auth-c767e7f200dfe4c78f6297867c7.bcmhzt.net/api
+      REACT_APP_BACKEND: https://auth-c767e7f200dfe4c78f6297867c7.bcmhzt.net
       REACT_APP_FIREBASE_STORAGE_BASE_URL: https://firebasestorage.googleapis.com/v0/b/bcmhzt-b25e9.appspot.com/o/
       REACT_APP_FIRESTORE_DATABASE: bacmhzt-prod-firestore-messages
       REACT_APP_MICROCMS_SERVICE_DOMAIN: os3pztnrl7
@@ -134,7 +134,7 @@ jobs:
           command: "npm install --legacy-peer-deps"
       - run:
           name: "Build React app with verbose output"
-          command: "npm run build --verbose"  # ここで詳細なログを取得
+          command: "npm run build --verbose"
       - run:
           name: "Add SSH Host Key"
           command: |
