@@ -32,8 +32,16 @@ const Header = () => {
   const currentUserProfile = auth?.currentUserProfile;
   const myProfileImage = auth?.myProfileImage;
   const isLogin = auth?.isLogin;
+  // const [shouldLogout, setShouldLogout] = useState(false);
   // const isLogin = false;
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    if (auth?.logout) {
+      await auth.logout(); // Firebaseからログアウト、AuthContextも更新
+      navigate("/login", { replace: true }); // 履歴を残さずloginへ遷移
+    }
+  };
 
   const handleToggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
@@ -188,10 +196,7 @@ const Header = () => {
               <Power className="icon-lg" />
               <span
                 style={{ cursor: "pointer" }}
-                onClick={() => {
-                  if (auth?.logout) {auth.logout()}
-                  navigate("/login");
-                }}
+                onClick={handleLogout}
               >ログアウト
               </span>
             </li>

@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+/** 81fdd56e */
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import HeaderNoLogin from '../../components/HeaderNoLogin';
@@ -6,11 +7,18 @@ import { Button, InputGroup, FormControl } from 'react-bootstrap';
 import { Eye, EyeSlash } from 'react-bootstrap-icons';
 import LanguageSelector from '../../utility/LanguageSelector';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from  "../../contexts/AuthContext";
+
 /**
- * @returns page: Login
- * [src/pages/Login.js:xx]
+ * 81fdd56e (hash)
+ * [src/pages/auth/Login.tsx:xx]
  * 
+ * type: page
+ * 
+ * [Order]
+ * - 各Componentの雛形
  */
+
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -22,6 +30,13 @@ const Login = () => {
   // const vapidKey = process.env.REACT_APP_VAPID_KEY;
   const { t } = useTranslation();
   const [loadingLogin, setLoadingLogin] = useState(false);
+  const loginAuth = useAuth();
+  // isLoginがtrueならダッシュボードにリダイレクト
+  useEffect(() => {
+    if (loginAuth?.isLogin) {
+      navigate("/dashboard");
+    }
+  }, [loginAuth?.isLogin, navigate]);
   
   interface HandleSubmitEvent extends React.FormEvent<HTMLFormElement> {}
 

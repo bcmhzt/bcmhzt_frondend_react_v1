@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 import { Helmet, HelmetProvider } from 'react-helmet-async';
 import Header from "../components/Header";
 import VisualBackground from '../components/VidualBackground';
@@ -74,22 +74,24 @@ const Top = () => {
               <p className="main-description">バクムーツは、身近な性と向き合う性癖マッチングサイトです。</p>
               <div className="register-button mb30">
                 <div className="mb20">
-                  <a
+                  <Link to="/register" className="reg btn bcmhzt-btn btn-primary w-100 text-center">新規アカウント登録</Link>
+                  {/* <a
                     href="/register"
                     className="reg btn bcmhzt-btn btn-primary w-100 text-center"
                   >
                     新規アカウント登録
-                  </a>
+                  </a> */}
                   <p className="comment">現在紹介制のみで登録が可能です。</p>
                 </div>
                 <div>
-                    <a
+                  <Link to="/login" className="log btn btn-primary w-100 text-center">すでにアカウントをお持ちの方</Link>
+                    {/* <a
                     href="/login"
                     className="log btn btn-primary w-100 text-center"
                     style={{ display: "block" }}
                     >
                     すでにアカウントをお持ちの方
-                    </a>
+                    </a> */}
                 </div>
               </div>
             </div>
