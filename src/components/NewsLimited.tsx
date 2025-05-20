@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from 'react-router-dom';
 import { createClient } from "microcms-js-sdk";
-import { Modal, Button } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
