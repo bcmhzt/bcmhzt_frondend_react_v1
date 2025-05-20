@@ -69,6 +69,31 @@ const Top = () => {
         <div className="row">
           <div className="col-md-6 col-lg-6 main-section mb50">
 
+            <div  className="register">
+              {/* <h2 className="main-title"><span className="bgbar">BCMHZT</span></h2> */}
+              <p className="main-description">バクムーツは、身近な性と向き合う性癖マッチングサイトです。</p>
+              <div className="register-button mb30">
+                <div className="mb20">
+                  <a
+                    href="/register"
+                    className="reg btn bcmhzt-btn btn-primary w-100 text-center"
+                  >
+                    新規アカウント登録
+                  </a>
+                  <p className="comment">現在紹介制のみで登録が可能です。</p>
+                </div>
+                <div>
+                    <a
+                    href="/login"
+                    className="log btn btn-primary w-100 text-center"
+                    style={{ display: "block" }}
+                    >
+                    すでにアカウントをお持ちの方
+                    </a>
+                </div>
+              </div>
+            </div>
+
             <div className="post-ogp">
               <div className="post-ogp-item">
                 <a href="https://seihekitecho.com/" target="_blank" rel="noopener noreferrer">
@@ -86,6 +111,16 @@ const Top = () => {
           </div>
         </div>
       </div>
+
+      <footer className="footer">
+        <div className="container">
+          <div className="row">
+            <div className="col-md-12 text-center">
+              <p>© 2023 BCMHZT. All rights reserved.</p>
+            </div>
+          </div>
+        </div>
+      </footer>
 
       {/* 年齢認証モーダル */}
       {showModal && (

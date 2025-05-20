@@ -224,3 +224,21 @@
         }
 
 
+.register-button {
+  // background: #ffd700;
+  .reg {
+    height: 60px;
+    padding: 20px 20px;
+    // vertical-align: middle;
+  }
+  .log {
+    height: 60px;
+    padding: 16px 20px;
+    background: #fff;
+    color: #555;
+    border: #888 2px solid;
+  }
+  .comment {
+    font-size: 12px;
+  }
+}
