@@ -73,7 +73,9 @@
 
 .sidebar {
   // background: #ffd700;
-  background: #fff;
+  background: #222;
+  opacity: 0.8;
+  color: #fff;
   position: fixed; // ← fixedに変更
   top: 55px;
   height: 100%;
@@ -86,6 +88,12 @@
   &.open {
     right: 0;
   }
+  .close-btn {
+    color: #fff !important;
+    .close-xlg {
+      color: #fff !important;
+    }
+  }
   .sidebar-menu {
     margin-top: 30px;
     ul {
@@ -94,7 +102,10 @@
         font-size: 20px;
         margin-bottom: 12px;
         a {
-          @include black-link;
+          @include white-link;
+        }
+        .icon-lg {
+          color: #dcdcdc !important;
         }
       }
     }

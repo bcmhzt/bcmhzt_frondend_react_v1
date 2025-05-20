@@ -26,7 +26,7 @@ const Footer = () => {
           <span className="withname">Dashboard</span>
         </div>
         <div className="item">
-          <Link to="/v1/members">
+          <Link to="/members">
             <People className="footer-icon" />
           </Link>
           <span className="withname">Members</span>

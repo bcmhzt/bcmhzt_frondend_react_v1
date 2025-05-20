@@ -65,7 +65,7 @@ const Header = () => {
             {isLogin ? (
               <>
                 <li><Link to="/dashboard">Dashboard</Link></li>
-                <li><Link to="/member">Members</Link></li>
+                <li><Link to="/members">Members</Link></li>
                 <li><Link to="/about">Usage</Link></li>
               </>
               ) : (

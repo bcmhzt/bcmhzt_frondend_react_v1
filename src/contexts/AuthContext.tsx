@@ -30,7 +30,7 @@ import axios from "axios";
  * - useAuthの作成
  * - AuthProviderの作成
  * - useEffectでFirebaseのログイン状態を監視
- * - useEffectでFirebaseのトークンを監視
+ * - useEffectでFirebaseのトークンを監視 (onIdTokenChanged)
  * - useEffectでmyProfileImageの変更を監視
  * - logout関数の作成
  * - contextValueの作成

@@ -6,6 +6,7 @@ import VisualBackground from '../components/VidualBackground';
 // import Footer from "../components/Footer";
 // import { useAuth } from "../contexts/AuthContext";
 import DevelopBanner from "../components/DevelopBanner";
+import NewsLimited from '../components/NewsLimited';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -63,6 +64,28 @@ const Top = () => {
       <Header />
       <DevelopBanner />
       <VisualBackground />
+
+      <div className="container mt30 mb80">
+        <div className="row">
+          <div className="col-md-6 col-lg-6 main-section mb50">
+
+            <div className="post-ogp">
+              <div className="post-ogp-item">
+                <a href="https://seihekitecho.com/" target="_blank" rel="noopener noreferrer">
+                  <img src="http://seihekitecho.com/wp-content/uploads/2025/02/9bfd185148e7f0e43fdeca5075b9460b.jpg" alt="ogp"/>
+                  <div className="post-ogp-title">性癖手帖</div>
+                  <div className="post-ogp-description">
+                    昔の人も変だった！？性癖の万華鏡。性癖って自由だ！歴史と世界の珍百景。性癖マニアのための時空を超えた手帖。常識のスキマに性癖あり。
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div className="col-md-6 col-lg-6 main-section mb50">
+            <NewsLimited />     
+          </div>
+        </div>
+      </div>
 
       {/* 年齢認証モーダル */}
       {showModal && (

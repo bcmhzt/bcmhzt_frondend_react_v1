@@ -189,4 +189,38 @@
   color: #000;
 }
 
+        .post-ogp {
+          .post-ogp-item {
+            background: #efefef;
+            border: #ccc 1px solid;
+            padding: 5px;
+            min-height: 102px;;
+            a {
+              color: #000;
+              text-decoration: none;
+            }
+
+            img {
+              float: left;
+              margin-right: 10px;
+              width: 100px;
+              height: 100px;
+              object-fit: cover;
+              aspect-ratio: 1/1;
+              margin-top: -5px;
+              margin-left: -5px;
+            }
+            .post-ogp-title {
+              font-size: 14px;
+              font-weight: bold;
+              margin-top: 5px;
+            }
+            .post-ogp-description {
+              font-size: 12px;
+              margin-top: 5px;
+              line-height: 18px;
+            }
+          }
+        }
+
 
