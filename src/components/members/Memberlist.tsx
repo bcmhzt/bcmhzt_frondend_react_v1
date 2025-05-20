@@ -1,13 +1,13 @@
 /** 7b0ecf65 */
 import React, { useState } from 'react';
 import {
-  PersonStanding,
-  PersonStandingDress,
-  PersonArmsUp,
-  PersonWalking,
+  // PersonStanding,
+  // PersonStandingDress,
+  // PersonArmsUp,
+  // PersonWalking,
   X,
-  CardText,
-  CardImage,
+  // CardText,
+  // CardImage,
   Search
 } from 'react-bootstrap-icons';
 import { useQuery } from "@tanstack/react-query";
@@ -58,9 +58,11 @@ const MemberList: React.FC = () => {
   const auth = useAuth();
   const token = auth?.token;
 
+  setPage(1);
+
   const {
     data,
-    isLoading,
+    // isLoading,
     isError,
     error,
   } = useQuery<MemberListData, Error>({
