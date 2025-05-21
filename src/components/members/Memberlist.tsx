@@ -79,7 +79,7 @@ async function fetchMembers(
 }
 
 const MemberList: React.FC = () => {
-  const [page, setPage] = useState(1);
+  // const [page, setPage] = useState(1);
   const auth = useAuth();
   const token = auth?.token;
   const [inputKeyword, setInputKeyword] = useState<string>('');
@@ -161,7 +161,7 @@ const MemberList: React.FC = () => {
   };
 
   const handleSearch = () => {
-    setPage(1);
+    // setPage(1);
     setSearchKeyword(inputKeyword);
     console.log(
       '[src/components/members/Memberlist.tsx:145] e.target.value:',
@@ -172,7 +172,7 @@ const MemberList: React.FC = () => {
   const handleClear = () => {
     setInputKeyword('');
     setSearchKeyword('');
-    setPage(1);
+    // setPage(1);
   };
 
   return (
