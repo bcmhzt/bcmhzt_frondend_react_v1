@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import bcmhztLogo from '../assets/images/icon/bcmhzt-logo.png';
 import dummyAvatar from '../assets/images/dummy/dummy-avatar.png';
 import {

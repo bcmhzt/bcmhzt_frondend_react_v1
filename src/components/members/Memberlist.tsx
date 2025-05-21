@@ -8,24 +8,24 @@ import {
   X,
   // CardText,
   // CardImage,
-  Search
+  Search,
 } from 'react-bootstrap-icons';
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { useAuth } from "../../contexts/AuthContext";
+import { useInfiniteQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
-  console.log("[src/components/members/Memberlist.tsx:xx] debug:", debug);
+  console.log('[src/components/members/Memberlist.tsx:xx] debug:', debug);
 }
 
 /**
  * 7b0ecf65 (hash)
  * [src/components/members/Memberlist.tsx:xx]
- * 
+ *
  * type: component
- * 
+ *
  * [Order]
  * - '/v1/get/members'APIからメンバーリストを取得（現在は降順）
  * - メンバー表示をページネーションを使って無限スクロール
@@ -33,23 +33,48 @@ if (debug === 'true') {
  */
 
 interface MemberListData {
-  title: string;
-  description: string;
+  id: number;
+  uid: string;
+  bcuid: string;
+  email: string;
+  nickname: string | null;
+  description: string | null;
+  profile_images: string | null;
+}
+
+interface MembersPage {
+  current_page: number;
+  last_page: number; // 追加: 総ページ数
+  data: MemberListData[];
+  // ページネーション情報なども必要なら追加
+}
+
+/** response data interface */
+export interface MemberListResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: {
+    members: MembersPage;
+  };
+  errors: any; // null かオブジェクトが返るので any か適宜型を定義
 }
 
 /** データ取得関数 */
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
-
-async function fetchArchtectData(page: number, token: string): Promise<MemberListData> {
-  // await new Promise<void>(r => setTimeout(r, 1500));   // テスト用遅延
-
+async function fetchMembers(
+  page: number,
+  token: string,
+  keyword: string
+): Promise<MemberListResponse> {
+  // テスト用遅延: await new Promise(r => setTimeout(r, 1500));
+  const body = keyword ? { keywords: keyword } : {};
   const res = await axios.post(
     `${apiEndpoint}/v1/get/members?page=${page}`,
-    {},
+    body,
     { headers: { Authorization: `Bearer ${token}` } }
   );
-
-  if (debug === 'true') console.log("[Memberlist] res:", res.data);
+  if (debug === 'true') console.log('[Memberlist] res:', res.data);
   return res.data;
 }
 
@@ -57,37 +82,101 @@ const MemberList: React.FC = () => {
   const [page, setPage] = useState(1);
   const auth = useAuth();
   const token = auth?.token;
-
-  setPage(1);
+  const [inputKeyword, setInputKeyword] = useState<string>('');
+  const [searchKeyword, setSearchKeyword] = useState<string>('');
 
   const {
     data,
-    // isLoading,
+    isLoading,
     isError,
     error,
-  } = useQuery<MemberListData, Error>({
-    queryKey: ["architectData", page, token],
-    queryFn: () => fetchArchtectData(page, token!),
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery<MemberListResponse, Error>({
+    queryKey: ['memberList', token, searchKeyword],
+    queryFn: ({ pageParam = 1 }) =>
+      fetchMembers(pageParam as number, token!, searchKeyword),
     retry: 1,
+    initialPageParam: 1,
+    getNextPageParam: (lastPage: MemberListResponse) => {
+      const { current_page, last_page } = lastPage.data.members;
+      return current_page < last_page ? current_page + 1 : undefined;
+    },
   });
-  // const currentUserProfile = auth?.currentUserProfile;
-  // const myProfileImage = auth?.myProfileImage;
-  // const isLogin = auth?.isLogin;
-  
 
-  console.log("[src/components/members/Memberlist.tsx:80] token:", token);
+  // Intersection Observer を保持する ref
+  const observerRef = React.useRef<IntersectionObserver | null>(null);
+
+  // 最後のアイテムに付与するコールバック ref
+  const lastItemRef = React.useCallback(
+    (node: HTMLLIElement | null) => {
+      if (!node) return;
+      // 既存のオブザーバーがあれば切断
+      observerRef.current?.disconnect();
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      });
+      observerRef.current.observe(node);
+    },
+    [hasNextPage, isFetchingNextPage, fetchNextPage]
+  );
 
   // デバッグ用
   React.useEffect(() => {
     if (data) {
-      console.log("[src/components/members/Memberlist.tsx:67] useQuery data:", data);
+      console.log(
+        '[src/components/members/Memberlist.tsx:67] useQuery data:',
+        data
+      );
     }
   }, [data]);
 
+  // グローバルオーバーレイに任せるので、ロード中は何も返さない
+  if (isLoading) {
+    return null;
+  }
+
+  // エラー時はページ内にメッセージ
+  if (isError) {
+    return (
+      <div className="alert alert-secondary" role="alert">
+        データが取得できませんでした: {error?.message}
+      </div>
+    );
+  }
+
+  // 取得したメンバー配列
+  const members: MemberListData[] =
+    data?.pages.flatMap((p) => p.data.members.data) ?? [];
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(
+      '[src/components/members/Memberlist.tsx:126] e.target.value:',
+      e.target.value
+    );
+    setInputKeyword(e.target.value);
+  };
+
+  const handleSearch = () => {
+    setPage(1);
+    setSearchKeyword(inputKeyword);
+    console.log(
+      '[src/components/members/Memberlist.tsx:145] e.target.value:',
+      inputKeyword
+    );
+  };
+
+  const handleClear = () => {
+    setInputKeyword('');
+    setSearchKeyword('');
+    setPage(1);
+  };
+
   return (
     <>
-    {isError && <div style={{color: 'red'}}>Error: {error?.message}</div>}
-    <pre>{JSON.stringify(error, null, 2)}</pre>
       {/* 検索ボックス */}
       <div className="member-search mb20">
         <div className="input-group">
@@ -95,34 +184,55 @@ const MemberList: React.FC = () => {
             type="text"
             className="form-control search-input"
             placeholder="メンバー検索"
-            // value={keywords}
-            // onChange={(e) => setKeywords(e.target.value)}
+            value={inputKeyword}
+            onChange={handleInputChange}
           />
-          {/* {keywords && ( */}
+          {inputKeyword && (
             <button
               className="btn clear-button"
               type="button"
-              onClick={() => {
-                // setKeywords("");
-                window.location.reload();
-              }}
+              onClick={handleClear}
             >
               <X size={16} />
             </button>
-          {/* )} */}
+          )}
           <button
             className="btn btn-primary bcmhzt-btn"
             type="button"
-            // onClick={handleSearch}
+            onClick={handleSearch}
           >
             <Search className="search-icon" />
           </button>
         </div>
       </div>
-      MemberList
-
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {/* 成功ステータス */}
+      success: {data?.pages[0].success.toString() ?? 'loading…'}
+      {/* 全件数 */}
+      <h2>MemberList (all: {members.length})</h2>
+      {/* メンバー一覧 */}
+      <ul className="list-unstyled">
+        {members.map((m, i) => (
+          <li
+            key={m.id}
+            className="mb-3"
+            ref={i === members.length - 1 ? lastItemRef : null}
+          >
+            <strong>{m.nickname ?? '(no nickname)'}</strong>
+            <br />
+            <small>{m.email}</small>
+            <br />
+            <p>{m.description ?? '(no description)'}</p>
+          </li>
+        ))}
+      </ul>
+      {/* 次ページ取得中のインジケーター */}
+      {isFetchingNextPage && (
+        <div className="text-center my-3">Loading more…</div>
+      )}
+      {/* デバッグ出力 */}
+      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
     </>
   );
 };
+
 export default MemberList;
