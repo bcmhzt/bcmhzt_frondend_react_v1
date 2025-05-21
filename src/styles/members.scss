@@ -9,6 +9,21 @@
 }
 
 .members, .member-profile {
+  // background: #ffd700;
+  .members-list {
+    list-style: none;
+    margin-left: -32px;
+    // background: #ffd700;
+    .member {
+      // background: #d2c67d;
+
+    }
+  }
+
+
+
+
+
   #member-tools {
     position: absolute;
     top: 33px;
@@ -138,7 +153,7 @@
 
   .member {
     width: 100%;
-    border: 1px solid #ccc;
+    // border: 1px solid #ccc;
     border-radius: 4px;
     margin-bottom: 15px;
     .member-header {

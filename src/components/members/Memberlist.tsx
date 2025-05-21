@@ -1,5 +1,6 @@
 /** 7b0ecf65 */
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import {
   // PersonStanding,
   // PersonStandingDress,
@@ -13,7 +14,8 @@ import {
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
-
+import { buildStorageUrl } from '../../utility/GetUseImage';
+import { getBcmhzt } from '../../utility/GetCommonFunctions';
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
@@ -84,6 +86,7 @@ const MemberList: React.FC = () => {
   const token = auth?.token;
   const [inputKeyword, setInputKeyword] = useState<string>('');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
+  const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL;
 
   const {
     data,
@@ -175,6 +178,18 @@ const MemberList: React.FC = () => {
     // setPage(1);
   };
 
+  // const buildStorageUrl = (url: string, path: string, suffix?: string) => {
+  //   // デフォルト画像パス
+  //   const defaultImage = '/assets/images/dummy/dummy_avatar.png';
+  //   if (!url || !path) return defaultImage;
+  //   const path_suffix = path.replace(
+  //     /([^/%]+)(\.[a-zA-Z0-9]+)(\?[^?]*)?$/,
+  //     (match, filename, ext, query) =>
+  //       `${filename}${suffix}${ext}${query || ''}`
+  //   );
+  //   return `${url}${path_suffix}?alt=media`;
+  // };
+
   return (
     <>
       {/* 検索ボックス */}
@@ -209,28 +224,70 @@ const MemberList: React.FC = () => {
       success: {data?.pages[0].success.toString() ?? 'loading…'}
       {/* 全件数 */}
       <h2>MemberList (all: {members.length})</h2>
+      <p>{getBcmhzt()}</p>
       {/* メンバー一覧 */}
-      <ul className="list-unstyled">
-        {members.map((m, i) => (
-          <li
-            key={m.id}
-            className="mb-3"
-            ref={i === members.length - 1 ? lastItemRef : null}
-          >
-            <strong>{m.nickname ?? '(no nickname)'}</strong>
-            <br />
-            <small>{m.email}</small>
-            <br />
-            <p>{m.description ?? '(no description)'}</p>
-          </li>
-        ))}
-      </ul>
-      {/* 次ページ取得中のインジケーター */}
-      {isFetchingNextPage && (
-        <div className="text-center my-3">Loading more…</div>
-      )}
+      <div className="members">
+        <ul className="members-list">
+          {members.map((m, i) => (
+            <li
+              key={m.id}
+              className="member"
+              ref={i === members.length - 1 ? lastItemRef : null}
+            >
+              <div className="card">
+                <div className="d-flex flex-row">
+                  <div className="avatar">
+                    <Link to="/member/bcuid">
+                      <img
+                        src={
+                          buildStorageUrl(
+                            storageUrl ?? '',
+                            m.profile_images ?? '',
+                            '_thumbnail'
+                          ) || '/assets/images/dummy/dummy_avatar.png'
+                        }
+                        alt="User Avatar"
+                        className="avatar-80"
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src =
+                            '/assets/images/dummy/dummy_avatar.png';
+                        }}
+                      />
+                    </Link>
+                  </div>
+                  <div className="nickname">
+                    {m.nickname ?? '(no nickname)'}
+                  </div>
+                  <div className="bcuid"> @ {m.bcuid ?? 'no bcuid?'}</div>
+                </div>
+                <div className="card-body">
+                  <p>
+                    url:{' '}
+                    {buildStorageUrl(
+                      storageUrl ?? '',
+                      m.profile_images ?? '',
+                      '_small'
+                    )}
+                  </p>
+                  <p>
+                    {m.profile_images ??
+                      '/assets/images/dummy/dummy_avatar.png'}
+                  </p>
+                  <p className="description">
+                    {m.description ?? '(no description)'}
+                  </p>
+                </div>
+              </div>
+            </li>
+          ))}
+        </ul>
+        {/* 次ページ取得中のインジケーター */}
+        {isFetchingNextPage && (
+          <div className="text-center my-3">Loading more…</div>
+        )}
+      </div>
       {/* デバッグ出力 */}
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
     </>
   );
 };
