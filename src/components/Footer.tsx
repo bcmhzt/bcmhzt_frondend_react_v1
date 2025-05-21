@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
 import {
   Bell,
   People,
@@ -10,12 +10,13 @@ import {
 const Footer = () => {
   return (
     <div className="footer">
-
       <div className="footer-pc">
         {/* ご利用規約
         プライバシーポリシー
         お問い合わせ */}
-        <span className="footer-copyright">Copyright © 2023 Bcmhzt All Rights Reserved.</span>
+        <span className="footer-copyright">
+          Copyright © 2023 Bcmhzt All Rights Reserved.
+        </span>
       </div>
 
       <div className="main-link">
@@ -32,7 +33,7 @@ const Footer = () => {
           <span className="withname">Members</span>
         </div>
         <div className="item">
-          <Link to="/v1/posts">
+          <Link to="/posts">
             <CardText className="footer-icon" />
           </Link>
           <span className="withname">Post</span>
@@ -52,9 +53,6 @@ const Footer = () => {
           <span className="withname">Message</span>
         </div>
       </div>
-
-
-
     </div>
   );
 };

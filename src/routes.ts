@@ -11,6 +11,7 @@ import PasswordReset from './pages/auth/PasswordReset';
 /** privateRoutes */
 import Dashboard from "./pages/Dashboard";
 import Members from "./pages/members/Members";
+import Posts from "./pages/posts/Posts";
 // import MetaAccount from "./pages/User/MetaAccount";
 
 
@@ -49,6 +50,7 @@ const routes: RoutesObject = {
     { path: "/develop/authenticate", component: DevAuthenticate },
     { path: "/dashboard", component: Dashboard },
     { path: "/members", component: Members },
+    { path: "/posts", component: Posts },
     // { path: "/metaaccount", component: MetaAccount }
   ],
   errorRoutes: [],

@@ -230,7 +230,7 @@ const MemberList: React.FC = () => {
         <div className="text-center my-3">Loading more…</div>
       )}
       {/* デバッグ出力 */}
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 };
