@@ -1,24 +1,24 @@
 /** 99999999 */
-import React from "react";
+import React from 'react';
 // import { Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import Header from "../components/Header";
-import Footer from "../components/Footer";
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 // import { LoadingOverlay } from "../components/LoadingOverlay";
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
-  console.log("[src/pages/Archtect.tsx:xx] debug:", debug);
+  console.log('[src/pages/Archtect.tsx:xx] debug:', debug);
 }
 
 /**
  * 99999999 (hash)
  * [src/pages/Archtect.tsx:xx]
- * 
+ *
  * type: page | component | hook | context ...
- * 
+ *
  * [Order] このコードでやっていること
  * - 各Componentの雛形
  */
@@ -33,21 +33,15 @@ interface ArchtectData {
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
 async function fetchArchtectData(): Promise<ArchtectData> {
   // テスト用に 1.5秒 の遅延を入れる
-  await new Promise<void>(resolve => setTimeout(resolve, 1500));
+  await new Promise<void>((resolve) => setTimeout(resolve, 1500));
   const response = await axios.get(`${apiEndpoint}/bcmhzt`);
   return response.data;
 }
 
 const Archtect: React.FC = () => {
-  
   // React Query でデータ＋ローディング／エラー状態を取得
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-  } = useQuery<ArchtectData, Error>({
-    queryKey: ["architectData"],
+  const { data, isLoading, isError, error } = useQuery<ArchtectData, Error>({
+    queryKey: ['architectData'],
     queryFn: fetchArchtectData,
     retry: 1,
   });
@@ -93,9 +87,9 @@ const Archtect: React.FC = () => {
         {data && (
           <div className="row">
             <div className="col-12 col-md-6 bc-left">
-              <pre>{JSON.stringify(data.title, null, 2)}</pre>
+              {/* <pre>{JSON.stringify(data.title, null, 2)}</pre> */}
               <h2>{JSON.stringify(data, null, 2)}</h2>
-              <p className="open-sans">{JSON.stringify(data, null, 2)}</p>
+              <p>{JSON.stringify(data, null, 2)}</p>
             </div>
             <div className="d-none d-md-block col-md-6 bc-right">
               barbarbarbarbarbarbarbarbarbarbarbarbarbar

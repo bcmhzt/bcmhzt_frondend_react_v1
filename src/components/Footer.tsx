@@ -39,14 +39,14 @@ const Footer = () => {
           <span className="withname">Post</span>
         </div>
         <div className="item">
-          <Link to="/v1/notice">
+          <Link to="/notice">
             <Bell className="footer-icon" />
           </Link>
           <span className="badge bg-primary">+99</span>
           <span className="withname">notice</span>
         </div>
         <div className="item">
-          <Link to="/v1/message">
+          <Link to="/messages">
             <Envelope className="footer-icon" />
           </Link>
           <span className="badge bg-primary">+99</span>
