@@ -16,6 +16,10 @@ import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import { getBcmhzt } from '../../utility/GetCommonFunctions';
+import GetGenderIcon from '../../components/commons/GetGenderIcon';
+//src/utility/GetCommonFunctions.tsx
+// src/components/commons/GetGenderIcon.tsx
+
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
@@ -42,6 +46,8 @@ interface MemberListData {
   nickname: string | null;
   description: string | null;
   profile_images: string | null;
+  user_details_location?: string | null;
+  user_details_gender?: string | null;
 }
 
 interface MembersPage {
@@ -146,7 +152,7 @@ const MemberList: React.FC = () => {
   if (isError) {
     return (
       <div className="alert alert-secondary" role="alert">
-        データが取得できませんでした: {error?.message}
+        データが取得できませんでした。リロードしてください。 ({error?.message})
       </div>
     );
   }
@@ -235,7 +241,7 @@ const MemberList: React.FC = () => {
               ref={i === members.length - 1 ? lastItemRef : null}
             >
               <div className="card">
-                <div className="d-flex flex-row">
+                <div className="profile-header d-flex flex-row">
                   <div className="avatar">
                     <Link to="/member/bcuid">
                       <img
@@ -257,8 +263,12 @@ const MemberList: React.FC = () => {
                   </div>
                   <div className="nickname">
                     {m.nickname ?? '(no nickname)'}
+                    <span className="bcuid">@{m.bcuid ?? 'no bcuid?'}</span>
+                    <div className="location">
+                      {m.user_details_location ?? 'no location'}
+                      <GetGenderIcon genderId={m.user_details_gender ?? ''} />
+                    </div>
                   </div>
-                  <div className="bcuid"> @ {m.bcuid ?? 'no bcuid?'}</div>
                 </div>
                 <div className="card-body">
                   <p>
@@ -287,7 +297,7 @@ const MemberList: React.FC = () => {
         )}
       </div>
       {/* デバッグ出力 */}
-      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
+      <pre>{JSON.stringify(data, null, 2)}</pre>
     </>
   );
 };

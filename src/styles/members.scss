@@ -15,8 +15,23 @@
     margin-left: -32px;
     // background: #ffd700;
     .member {
-      // background: #d2c67d;
-
+      .card {
+        .profile-header {
+          // background: #ffd700;
+          .nickname {
+            font-size: 18px;
+            padding: 10px;
+            .bcuid {
+              font-size: 14px;
+              color: #888;
+            }
+            .location {
+              font-size: 14px;
+              color: #333;
+            }
+          }
+        }
+      }
     }
   }
 
