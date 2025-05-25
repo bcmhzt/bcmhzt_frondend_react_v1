@@ -29,7 +29,7 @@ export const buildStorageUrl = (url: string, path: string, suffix?: string) => {
   if (!url || !path) return defaultImage;
   const path_suffix = path.replace(
     /([^/%]+)(\.[a-zA-Z0-9]+)(\?[^?]*)?$/,
-    (match, filename, ext, query) => `${filename}${suffix}${ext}${query || ''}`
+    (match, filename, ext, query) => `${filename}${suffix}.jpg${query || ''}`
   );
   return `${url}${path_suffix}?alt=media`;
 };

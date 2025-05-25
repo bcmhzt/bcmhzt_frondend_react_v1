@@ -1,0 +1,196 @@
+// src/pages/MyProfile.js
+// src/components/MyProfileDetails.js
+// src/components/MyProfileBase.js
+
+.myprofile {
+  /* src/components/MyAvatar.js */
+  .avatar-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  
+    img.user-avatar {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 1px solid #c1c1c1;
+      object-fit: cover;
+    }
+    .edit-avatar {
+      font-size: 14px;
+      color: #fff;
+      background: #333;
+      margin-top: -46px;
+      margin-left: 180px;
+      cursor: pointer;
+      padding: 2px 7px;
+      border-radius: 3px;
+    }
+    .user-name {
+      background: #ff0;
+      font-size: 27px;
+      margin-top: 10px; /* 名前を画像の下に表示させるためのスペース */
+    }
+  }
+  /* src/components/MyAvatar.js */
+  .avatar-update {
+    .avatar-update-body {
+      .my-avatar {
+        text-align: center;
+        .user-avatar {
+          width: 300px;
+          height: 300px;
+          background: #000;
+          border-radius: 50%;
+          object-fit: cover;
+        }
+        .cancel {
+          position: absolute;
+          top: 50%;
+          right: 50px;
+          background: #cc0000;
+          color: #fff;
+          padding: 5px 10px;
+          border-radius: 3px;
+          cursor: pointer;
+          display: inline;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+}
+
+.myprofile-detail-items, .myprofile-base-items {
+  /* 必須項目 */
+  .profile-require {
+    background: #880000;
+    font-size: 12px;
+    border: 1px solid #880000;
+    color: #fff;
+    padding: 1px 4px;
+    border-radius: 3px;
+  }
+  .pdupdated {
+    border: 1px solid #3cb371;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 2px;
+    color: #2e8b57;
+  }
+  .pd-comment {
+    font-size: 13px;
+    margin-bottom: 7px;
+  }
+  .pd-errormessage {
+    font-size: 13px;
+    margin-bottom: 7px;
+    color: red;
+  }
+  .target-area-checkbox {
+    // background: #ff0;
+    display: inline-block;
+    margin-right: 20px;
+  }
+  .app-profile-url {
+
+    a {
+      color: #333;
+      text-decoration: none;
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  .pb-target-area {
+    // background: #f00;
+
+  }
+  .pb-description-save-btn {
+    text-align: right;
+  }
+
+  .propensity-category {
+    // background: #ff0;
+    .form-switch {
+      margin-bottom: 5px;
+      label {
+        font-size: 15px;
+      }
+      input {
+        height: 20px;
+        width: 39px;
+        margin-right: 12px;
+        // background: #cc0000;
+      }
+    }
+    /* スイッチのオンの状態を変更 */
+    /* デフォルトのスイッチのスタイルをリセット（ブラウザ依存のスタイルを削除） */
+    // .form-check-input.propensity-checkbox {
+    //   appearance: none;
+    //   -webkit-appearance: none;
+    //   width: 40px; /* スイッチの幅 */
+    //   height: 20px; /* スイッチの高さ */
+    //   background-color: #ccc; /* オフ時の背景色 */
+    //   border-radius: 20px; /* 丸みをつける */
+    //   border: 1px solid #333; /* 枠線を追加 */
+    //   position: relative;
+    //   outline: none;
+    //   cursor: pointer;
+    //   transition: background-color 0.5s ease;
+    // }
+    /* スイッチがオンの状態 */
+    // .form-check-input.propensity-checkbox:checked {
+    //   background-color: #880000; /* 好きなオンの色を指定 */
+    //   border: 1px solid #880000; /* 枠線を追加 */
+    // }
+    /* スイッチ内の丸い部分 */
+    // .form-check-input.propensity-checkbox::before {
+    //   content: "";
+    //   position: absolute;
+    //   width: 18px; /* 丸い部分のサイズ */
+    //   height: 18px; /* 丸い部分のサイズ */
+    //   background-color: #fff; /* 丸い部分の色 */
+    //   border-radius: 50%;
+    //   top: 0px;
+    //   left: 0px;
+      // transition: transform 0.4s ease;
+    //   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* 影を追加 */
+    // }
+    // .form-check-input.propensity-checkbox:checked::before {
+    //   transform: translateX(20px); /* スイッチの幅に合わせて調整 */
+    // }
+  }
+}
+
+.do-member-favorite {
+  background: #fff;
+  width: 180px;
+  height:40px;
+  position: fixed;
+  top: 66px;
+  left: 11px;
+  z-index: 100;
+  border-radius: 3px;
+  border: 1px solid #666;
+  color: #666;
+  padding: 8px 10px 5px 10px;
+  text-align: center;
+  cursor: pointer;
+
+  .favorite-on {
+    font-size: 20px;
+    margin-right: 7px;
+    color: #880000
+  }
+  .favorite-on-text {
+    color: #880000;
+    font-weight: bold;
+  }
+}
+.do-member-favorite-on {
+  border: 1px solid #880000;
+}
+.do-member-favorite-off {
+  border: 1px solid #c1c1c1;
+}

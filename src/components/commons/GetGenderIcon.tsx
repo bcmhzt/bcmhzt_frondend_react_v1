@@ -26,7 +26,7 @@ const GetGenderIcon: React.FC<GenderIconProps> = ({ genderId }) => {
   return (
     <>
       <PersonWalking style={{ color: 'green' }} />
-      Non-binary
+      non-binary
     </>
   );
 };

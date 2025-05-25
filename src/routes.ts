@@ -14,7 +14,10 @@ import Members from "./pages/members/Members";
 import Posts from "./pages/posts/Posts";
 import Notice from "./pages/notice/Notice";
 import Messages from "./pages/messages/Messages"
+import LoopTutorial from "./pages/develop/LoopTutorial";
+import MyProfile from "./pages/user/MyProfile"
 // import MetaAccount from "./pages/User/MetaAccount";
+//src/pages/user/MyProfile.tsx
 
 
 /** devRoutes */
@@ -55,6 +58,8 @@ const routes: RoutesObject = {
     { path: "/posts", component: Posts },
     { path: "/notice", component: Notice },
     { path: "/messages", component: Messages },
+    { path: "/loop_tutorial", component: LoopTutorial },
+    { path: "/myprofile", component: MyProfile }
     // { path: "/metaaccount", component: MetaAccount }
   ],
   errorRoutes: [],

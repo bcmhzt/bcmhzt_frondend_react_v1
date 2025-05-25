@@ -6,6 +6,9 @@
 @import './devauthenticate.scss';
 @import './top.scss';
 @import './members.scss';
+@import './dashboard.scss';
+@import './referralEntries.scss';
+@import './myProfile.scss';
 
 
 // @media (max-width: 575px) { margin-top: 30px; }
@@ -27,7 +30,7 @@ body {
     margin-bottom: $footer-height+10;
   }
   .bc-right {
-    background-color: #f1f1f1;
+    // background-color: #f1f1f1;
     margin-top: 10px;
     margin-bottom: $footer-height+10;
   }

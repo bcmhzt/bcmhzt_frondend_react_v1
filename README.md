@@ -1,8 +1,14 @@
+```
+rm -rf node_modules package-lock.json;
+npm cache clean --force;
+npm install --legacy-peer-deps;
+npm start;
+```
 
 # Spec
+
 react: v19.1.0
 type script: Version 4.9.5
-
 
 % npx tsc -v
 Version 4.9.5
@@ -10,6 +16,7 @@ Version 4.9.5
 ## Develop command
 
 インストール時は`--legacy-peer-deps`をつける。
+
 ```
 % npm install xxxxxx --legacy-peer-deps
 ```
@@ -26,20 +33,20 @@ Version 4.9.5
 
 # Rules
 
-| 対象                | 命名規則                     | 例                             |
-| ----------------- | ------------------------ | ----------------------------- |
-| React コンポーネントファイル | PascalCase               | `UserProfile.tsx`             |
+| 対象                         | 命名規則                    | 例                            |
+| ---------------------------- | --------------------------- | ----------------------------- |
+| React コンポーネントファイル | PascalCase                  | `UserProfile.tsx`             |
 | ユーティリティファイル       | camelCase または PascalCase | `useAuth.ts`, `formatDate.ts` |
-| ディレクトリ名           | kebab-case               | `components/`, `pages/`       |
-| 関数・変数名            | camelCase                | `handleClick`, `fetchData`    |
-| React コンポーネント名    | PascalCase               | `UserProfile`                 |
-| React フック         | camelCase + `use` 始まり    | `useAuth`                     |
-
+| ディレクトリ名               | kebab-case                  | `components/`, `pages/`       |
+| 関数・変数名                 | camelCase                   | `handleClick`, `fetchData`    |
+| React コンポーネント名       | PascalCase                  | `UserProfile`                 |
+| React フック                 | camelCase + `use` 始まり    | `useAuth`                     |
 
 # 新規作成
 
 1. Type scriptファイルの作成
-page以下、またはcomponent以下など。
+   page以下、またはcomponent以下など。
+
 ```
 const ArchitectFile = () => {
   return (
@@ -50,12 +57,12 @@ const ArchitectFile = () => {
 };
 export default ArchitectFile;
 ```
+
 1. routeの登録
-src/routes.ts
+   src/routes.ts
 
+---
 
-
-------------------------
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).

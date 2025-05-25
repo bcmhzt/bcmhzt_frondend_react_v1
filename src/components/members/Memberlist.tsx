@@ -7,7 +7,7 @@ import {
   // PersonArmsUp,
   // PersonWalking,
   X,
-  // CardText,
+  CardText,
   // CardImage,
   Search,
 } from 'react-bootstrap-icons';
@@ -15,8 +15,13 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { buildStorageUrl } from '../../utility/GetUseImage';
-import { getBcmhzt } from '../../utility/GetCommonFunctions';
+import {
+  getBcmhzt,
+  convertFormattedText,
+} from '../../utility/GetCommonFunctions';
 import GetGenderIcon from '../../components/commons/GetGenderIcon';
+import MemberTools from '../../components/members/MemberTools';
+// src/components/members/MemberTools.tsx
 //src/utility/GetCommonFunctions.tsx
 // src/components/commons/GetGenderIcon.tsx
 
@@ -38,6 +43,39 @@ if (debug === 'true') {
  * - 検索 (検索結果はスクロールするか？）
  */
 
+interface UserDetails {
+  id?: number;
+  uid?: string;
+  gender?: string | null;
+  gender_detail?: string | null;
+  age?: number | null;
+  occupation_type?: string | null;
+  bheight?: number | null;
+  bweight?: number | null;
+  blood_type?: string | null;
+  academic_background?: string | null;
+  marital_status?: string | null;
+  hobbies_lifestyle?: string | null;
+  alcohol?: string | null;
+  tobacco?: string | null;
+  pet?: string | null;
+  holidays?: string | null;
+  favorite_food?: string | null;
+  character?: string | null;
+  religion?: string | null;
+  belief?: string | null;
+  conditions_ideal_partner?: string | null;
+  age_range?: string | null;
+  target_area?: string | null;
+  marriage_aspiration?: string | null;
+  self_introductory_statement?: string | null;
+  others_options?: string | null;
+  profile_video?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+  location?: string | null;
+}
+
 interface MemberListData {
   id: number;
   uid: string;
@@ -48,6 +86,39 @@ interface MemberListData {
   profile_images: string | null;
   user_details_location?: string | null;
   user_details_gender?: string | null;
+  propensities?: any; // 追加: propensitiesプロパティ（型は適宜修正）
+  status?: string | null; // 追加: statusプロパティ
+  created_at?: string | null; // 追加: created_atプロパティ
+  updated_at?: string | null; // 追加: updated_atプロパティ
+  user_detail_id?: string | null; // 追加: user_detail_idプロパティ
+  user_details_uid?: string | null; // 追加: user_details_uidプロパティ
+  user_details_gender_detail?: string | null;
+  user_details_age?: number | null;
+  user_details_occupation_type?: string | null;
+  user_details_bheight?: number | null;
+  user_details_bweight?: number | null;
+  user_details_blood_type?: string | null;
+  user_details_academic_background?: string | null;
+  user_details_marital_status?: string | null;
+  user_details_hobbies_lifestyle?: string | null;
+  user_details_alcohol?: string | null;
+  user_details_tobacco?: string | null;
+  user_details_pet?: string | null;
+  user_details_holidays?: string | null;
+  user_details_favorite_food?: string | null;
+  user_details_character?: string | null;
+  user_details_religion?: string | null;
+  user_details_belief?: string | null;
+  user_details_conditions_ideal_partner?: string | null;
+  user_details_age_range?: string | null;
+  user_details_target_area?: string | null;
+  user_details_marriage_aspiration?: string | null;
+  user_details_self_introductory_statement?: string | null;
+  user_details_others_options?: string | null;
+  user_details_profile_video?: string | null;
+  user_details_created_at?: string | null;
+  user_details_updated_at?: string | null;
+  user_details?: UserDetails[]; // ← これを追加
 }
 
 interface MembersPage {
@@ -86,6 +157,13 @@ async function fetchMembers(
   return res.data;
 }
 
+/**
+ * 関数本体
+ *
+ *
+ *
+ *
+ * */
 const MemberList: React.FC = () => {
   // const [page, setPage] = useState(1);
   const auth = useAuth();
@@ -93,6 +171,9 @@ const MemberList: React.FC = () => {
   const [inputKeyword, setInputKeyword] = useState<string>('');
   const [searchKeyword, setSearchKeyword] = useState<string>('');
   const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL;
+  const [isPullDownOpen, setIsPullDownOpen] = useState<{
+    [id: number]: boolean;
+  }>({});
 
   const {
     data,
@@ -132,6 +213,19 @@ const MemberList: React.FC = () => {
     },
     [hasNextPage, isFetchingNextPage, fetchNextPage]
   );
+
+  const togglePullDown = (id: number) => {
+    setIsPullDownOpen((prev) => ({
+      ...prev,
+      [id]: !prev[id],
+    }));
+    if (debug === 'true') {
+      console.log(
+        '[src/components/members/Memberlist.tsx:147] togglePullDown',
+        [isPullDownOpen]
+      );
+    }
+  };
 
   // デバッグ用
   React.useEffect(() => {
@@ -241,6 +335,7 @@ const MemberList: React.FC = () => {
               ref={i === members.length - 1 ? lastItemRef : null}
             >
               <div className="card">
+                <MemberTools targetBcuid={m.bcuid} />
                 <div className="profile-header d-flex flex-row">
                   <div className="avatar">
                     <Link to="/member/bcuid">
@@ -250,13 +345,15 @@ const MemberList: React.FC = () => {
                             storageUrl ?? '',
                             m.profile_images ?? '',
                             '_thumbnail'
-                          ) || '/assets/images/dummy/dummy_avatar.png'
+                          ) ||
+                          `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
                         }
                         alt="User Avatar"
                         className="avatar-80"
                         onError={(e) => {
+                          e.currentTarget.onerror = null;
                           (e.currentTarget as HTMLImageElement).src =
-                            '/assets/images/dummy/dummy_avatar.png';
+                            `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`;
                         }}
                       />
                     </Link>
@@ -268,25 +365,286 @@ const MemberList: React.FC = () => {
                       {m.user_details_location ?? 'no location'}
                       <GetGenderIcon genderId={m.user_details_gender ?? ''} />
                     </div>
+                    <div className="post-count mt5">
+                      <Link to="/">
+                        <CardText
+                          className="mr5"
+                          style={{ fontSize: '23px' }}
+                        />
+                        投稿(999)
+                      </Link>
+                    </div>
                   </div>
                 </div>
                 <div className="card-body">
-                  <p>
-                    url:{' '}
-                    {buildStorageUrl(
-                      storageUrl ?? '',
-                      m.profile_images ?? '',
-                      '_small'
+                  <p className="description">
+                    {/* 関数でHTMLを生成する場合はdangerouslySetInnerHTMLを使う */}
+                    {convertFormattedText(m.description ?? '') ? (
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: convertFormattedText(m.description ?? ''),
+                        }}
+                      />
+                    ) : (
+                      '(no description)'
                     )}
                   </p>
-                  <p>
-                    {m.profile_images ??
-                      '/assets/images/dummy/dummy_avatar.png'}
-                  </p>
-                  <p className="description">
-                    {m.description ?? '(no description)'}
-                  </p>
+
+                  <div className="propensities">
+                    {/* <pre>{JSON.stringify(m.propensities, null, 2)}</pre> */}
+                    {Array.isArray(m.propensities) ? (
+                      m.propensities.length > 0 ? (
+                        m.propensities.map((prop: any, idx: number) => (
+                          <span key={idx} className="propensity-tag">
+                            {typeof prop === 'object' && <>{prop.name_ja}</>}
+                          </span>
+                        ))
+                      ) : (
+                        <>
+                          <span className="propensity-tag">スケベタグなし</span>
+                        </>
+                      )
+                    ) : (
+                      <>スケベタグなし</>
+                    )}
+                  </div>
+
+                  <div
+                    className="member-toggle"
+                    style={{
+                      cursor: 'pointer',
+                      color: '#007bff',
+                      marginTop: '8px',
+                    }}
+                    onClick={() => togglePullDown(m.id)}
+                  >
+                    {typeof isPullDownOpen === 'object' &&
+                    isPullDownOpen[m.id] ? (
+                      <>close</>
+                    ) : (
+                      <>more read ...</>
+                    )}
+                  </div>
+                  {typeof isPullDownOpen === 'object' &&
+                    isPullDownOpen[m.id] && (
+                      <div className="member-pulldown">
+                        <div className="member-detail mt20">
+                          {/* <pre>{JSON.stringify(m, null, 2)}</pre> */}
+                          詳細情報
+                          <table className="table table-bordered table-sm table-striped">
+                            <tbody>
+                              <tr>
+                                <td className="item-name">ID</td>
+                                <td>{m.id}</td>
+                              </tr>
+                              {debug === 'true' && (
+                                <tr>
+                                  <td>UID</td>
+                                  <td>{m.uid}</td>
+                                </tr>
+                              )}
+
+                              <tr>
+                                <td>BCUID</td>
+                                <td>{m.bcuid}</td>
+                              </tr>
+                              {/* <tr>
+                                <td>メールアドレス</td>
+                                <td>{m.email}</td>
+                              </tr> */}
+                              <tr>
+                                <td>ニックネーム</td>
+                                <td>{m.nickname}</td>
+                              </tr>
+                              {/* <tr>
+                                <td>説明</td>
+                                <td>{m.description ?? '(no description)'}</td>
+                              </tr> */}
+                              {/* <tr>
+                                <td>プロフィール画像</td>
+                                <td>
+                                  {m.profile_images ? (
+                                    <img
+                                      src={buildStorageUrl(
+                                        storageUrl ?? '',
+                                        m.profile_images,
+                                        '_thumbnail'
+                                      )}
+                                      alt="プロフィール画像"
+                                      style={{
+                                        width: 60,
+                                        height: 60,
+                                        objectFit: 'cover',
+                                      }}
+                                      onError={(e) => {
+                                        (
+                                          e.currentTarget as HTMLImageElement
+                                        ).src =
+                                          '/assets/images/dummy/dummy_avatar.png';
+                                      }}
+                                    />
+                                  ) : (
+                                    'なし'
+                                  )}
+                                </td>
+                              </tr> */}
+                              <tr>
+                                <td>ステータス</td>
+                                <td>{m.status ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>作成日</td>
+                                <td>{m.created_at ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>更新日</td>
+                                <td>{m.updated_at ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>詳細ID</td>
+                                <td>
+                                  {Array.isArray(m.user_details)
+                                    ? (m.user_details[0]?.id ?? '')
+                                    : ''}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>詳細UID</td>
+                                <td>{m.user_details_uid ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>性別</td>
+                                <td>{m.user_details_gender ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>性別詳細</td>
+                                <td>{m.user_details_gender_detail ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>年齢</td>
+                                <td>{m.user_details_age ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>都道府県</td>
+                                <td>{m.user_details_location ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>職業</td>
+                                <td>{m.user_details_occupation_type ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>身長</td>
+                                <td>{m.user_details_bheight ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>体重</td>
+                                <td>{m.user_details_bweight ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>血液型</td>
+                                <td>{m.user_details_blood_type ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>学歴</td>
+                                <td>
+                                  {m.user_details_academic_background ?? ''}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>婚姻状況</td>
+                                <td>{m.user_details_marital_status ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>趣味・ライフスタイル</td>
+                                <td>
+                                  {m.user_details_hobbies_lifestyle ?? ''}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>お酒</td>
+                                <td>{m.user_details_alcohol ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>タバコ</td>
+                                <td>{m.user_details_tobacco ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>ペット</td>
+                                <td>{m.user_details_pet ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>休日</td>
+                                <td>{m.user_details_holidays ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>好きな食べ物</td>
+                                <td>{m.user_details_favorite_food ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>性格</td>
+                                <td>{m.user_details_character ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>宗教</td>
+                                <td>{m.user_details_religion ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>信条</td>
+                                <td>{m.user_details_belief ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>理想の相手条件</td>
+                                <td>
+                                  {m.user_details_conditions_ideal_partner ??
+                                    ''}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>希望年齢層</td>
+                                <td>{m.user_details_age_range ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>希望エリア</td>
+                                <td>{m.user_details_target_area ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>結婚願望</td>
+                                <td>
+                                  {m.user_details_marriage_aspiration ?? ''}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>自己紹介文</td>
+                                <td>
+                                  {m.user_details_self_introductory_statement ??
+                                    ''}
+                                </td>
+                              </tr>
+                              <tr>
+                                <td>その他オプション</td>
+                                <td>{m.user_details_others_options ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>プロフィール動画</td>
+                                <td>{m.user_details_profile_video ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>詳細作成日</td>
+                                <td>{m.user_details_created_at ?? ''}</td>
+                              </tr>
+                              <tr>
+                                <td>詳細更新日</td>
+                                <td>{m.user_details_updated_at ?? ''}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    )}
                 </div>
+                {/* <div className="card-footer">
+                  {m.profile_images ?? ''}
+                </div> */}
               </div>
             </li>
           ))}
@@ -297,7 +655,7 @@ const MemberList: React.FC = () => {
         )}
       </div>
       {/* デバッグ出力 */}
-      <pre>{JSON.stringify(data, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(data, null, 2)}</pre> */}
     </>
   );
 };

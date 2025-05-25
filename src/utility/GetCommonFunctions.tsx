@@ -22,3 +22,20 @@ export function getAgeRangeJp(ageRange: string): string {
 export function getBcmhzt(): string {
   return 'BCMHZT';
 }
+
+/**
+ *
+ * @param url
+ * @returns
+ */
+export function convertFormattedText(text: string): string {
+  /** chage url */
+  text = text.replace(
+    /(https?:\/\/[^\s]+)/g,
+    (url) =>
+      `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`
+  );
+  /** change \n to <br /> */
+  text = text.replace(/\n/g, '<br />');
+  return text;
+}
