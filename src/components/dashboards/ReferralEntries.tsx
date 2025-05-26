@@ -94,9 +94,9 @@ const ReferralEntries = () => {
     }
   };
 
-  interface ReferralMethodChangeEvent {
-    target: { checked: boolean };
-  }
+  // interface ReferralMethodChangeEvent {
+  //   target: { checked: boolean };
+  // }
 
   const handleReferralChange = (method: 'share' | 'email') => {
     setReferralMethod(method);

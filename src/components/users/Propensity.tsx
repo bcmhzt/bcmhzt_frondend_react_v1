@@ -256,10 +256,10 @@ const Propensity = () => {
     fetchData();
   }, [token]);
 
-  interface HandlePropensityChangeEvent {
-    id: number;
-    value: number;
-  }
+  // interface HandlePropensityChangeEvent {
+  //   id: number;
+  //   value: number;
+  // }
 
   const handlePropensityChange = async (
     id: number,

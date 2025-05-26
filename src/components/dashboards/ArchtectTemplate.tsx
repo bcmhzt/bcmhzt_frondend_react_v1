@@ -50,7 +50,7 @@ interface ApiData {
  *
  */
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
-const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
+// const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
 
 /**
  * ⑤ fetch 関数実装

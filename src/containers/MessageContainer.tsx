@@ -19,7 +19,7 @@ export const MessageContainer = () => {
 /**
  * 単一メッセージ要素を描画 + フェードイン/アウト制御
  */
-type MessageType = 'success' | 'error' | 'warning' | 'info';
+// type MessageType = 'success' | 'error' | 'warning' | 'info';
 
 type Message = {
   id: string;

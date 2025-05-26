@@ -1,5 +1,5 @@
 /** 6b836863 */
-import React, { useState, useRef, useCallback } from 'react';
+// import React, { useState, useRef, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -114,7 +114,7 @@ interface ApiData {
 }
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
-const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
+// const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
 
 async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
   try {

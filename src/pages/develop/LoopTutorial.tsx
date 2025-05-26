@@ -1,9 +1,9 @@
 import { useAuth } from '../../contexts/AuthContext';
 // import { UserFirebase } from '../../types/UserFirebase'; // adjust the path as needed
 
-interface CurrentUserProfile {
-  [section: string]: any; // どんなキーでも OK、値の中身は any
-}
+// interface CurrentUserProfile {
+//   [section: string]: any; // どんなキーでも OK、値の中身は any
+// }
 
 const LoopTutorial = () => {
   const { currentUserProfile, isLogin } = useAuth();
