@@ -20,6 +20,10 @@ const MyProfileDetails = () => {
   );
   const [genderState, setGenderState] = useState(false);
 
+  /* age */
+  const [age, setAge] = useState(currentUserProfile.user_detail.age || '');
+  const [ageState, setAgeState] = useState(false);
+
   /* location */
   const [location, setLocation] = useState(
     currentUserProfile.user_detail.location || ''
@@ -129,6 +133,69 @@ const MyProfileDetails = () => {
       setGenderState(false);
     }
   };
+
+  interface ChangeAgeRangeEvent extends React.ChangeEvent<HTMLInputElement> {}
+
+  interface ChangeAgeRangeResponse {
+    data: {
+      status: boolean;
+      [key: string]: any;
+    };
+  }
+
+  // const changeAgeRange = async (
+  //   e: ChangeAgeRangeEvent,
+  //   range: string
+  // ): Promise<void> => {
+  //   console.log('AgeRange selected:', e.target.value);
+
+  //   // updatedAgeRangeの更新
+  //   let updatedAgeRange: string[];
+  //   if (e.target.checked) {
+  //     // チェックが入った場合は追加
+  //     updatedAgeRange = [...ageRange, range];
+  //   } else {
+  //     // チェックが外れた場合は削除
+  //     updatedAgeRange = ageRange.filter((item: string) => item !== range);
+  //   }
+
+  //   // 配列を数値順にソート
+  //   const sortedAgeRange: string[] = updatedAgeRange
+  //     .map((item: string) => parseInt(item, 10)) // 数値に変換
+  //     .sort((a: number, b: number) => a - b) // 昇順にソート
+  //     .map((item: number) => item.toString()); // 文字列に戻す
+
+  //   // カンマ区切りの文字列に変換
+  //   const ageRangeString: string = sortedAgeRange.join(',');
+  //   setAgeRange(sortedAgeRange); // ソート済みの配列をステートに設定
+  //   console.log('AgeRange selected (sorted):', sortedAgeRange);
+  //   console.log('AgeRange selected string:', ageRangeString);
+
+  //   try {
+  //     const response: ChangeAgeRangeResponse = await axios.post(
+  //       `${apiEndpoint}/update/user/detail/age_range/${currentUserProfile.user_profile.uid}`,
+  //       {
+  //         value: ageRangeString,
+  //         token: token,
+  //       },
+  //       {
+  //         headers: { Authorization: `Bearer ${token}` },
+  //       }
+  //     );
+
+  //     if (debug === 'true') {
+  //       console.log('API response [changeAgeRange]:', response.data);
+  //     }
+
+  //     if (response.data.status === true) {
+  //       setAgeRangeState(response.data.status);
+  //     } else {
+  //       setAgeRangeState(false);
+  //     }
+  //   } catch (error) {
+  //     console.log('API error [changeAgeRange e1]:', error);
+  //   }
+  // };
   // ...（省略：他の関数・returnの前まで同じ）
 
   // 詳細情報を保存する関数を追加
@@ -160,7 +227,10 @@ const MyProfileDetails = () => {
 
   return (
     <>
-      <h2>MyProfileDetails</h2>
+      <h2 className="section-title-h2">
+        プロフィール詳細<span className="count">999</span>
+      </h2>
+
       <div className="myprofile-detail-items">
         {/* 性別 */}
         <div className="pb-gender mt20">
@@ -213,6 +283,32 @@ const MyProfileDetails = () => {
             </label>
           </div>
         </div>
+
+        {/* 年齢 */}
+        {/* <div className="pb-age mt20">
+          <h3>年齢</h3>
+          <div className="mb10">
+            {ageState && <span className="pdupdated">保存完了</span>}
+          </div>
+          <div className="mb-3">
+            <label htmlFor="age" className="form-label">
+              <span>
+                年齢を入力してください。表示には年代のみ表示されます。
+              </span>
+            </label>
+            <input
+              type="text"
+              className="form-control"
+              id="age"
+              name="age"
+              style={{ width: '100px' }}
+              placeholder="年齢"
+              value={age}
+              onChange={changeAge}
+              onBlur={blurAge} // フォーカスが外れたときにAPIを叩く
+            />
+          </div>
+        </div> */}
 
         {/* 地域 */}
         <div className="pb-location mt20">

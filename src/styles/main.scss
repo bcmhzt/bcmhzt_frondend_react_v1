@@ -45,6 +45,16 @@ body {
     height: $footer-height;
     background: #333;
   }
+  .section-title-h2 {
+    .conut {
+      font-size: 12px;
+      color: #888;
+      border:#888 1px solid;
+      border-radius: 2px;
+      padding: 0px 5px;
+      margin-left: 5px;
+    }
+  }
 
   /* member cardの主要デザイン */
   .members-list {

@@ -9,7 +9,7 @@
  * ⑦ 認証情報の設定（Token）
  */
 /** ② 必要な import */
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { X, Search } from 'react-bootstrap-icons';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -98,6 +98,7 @@ const ArchtectTemplate: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
+    refetch,
   } = useInfiniteQuery<ApiResponse, Error>({
     queryKey: ['memberList', token, searchKeyword],
     queryFn: ({ pageParam = 1 }) =>
@@ -128,6 +129,24 @@ const ArchtectTemplate: React.FC = () => {
     },
     [fetchNextPage, hasNextPage, isFetchingNextPage]
   );
+
+  /**
+   * ⑭ 401エラーの場合はTokenの再発行
+   * 401エラー時にTokenリフレッシュ＆再フェッチ
+   */
+  useEffect(() => {
+    if (
+      isError &&
+      axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      typeof auth.refreshToken === 'function'
+    ) {
+      (async () => {
+        await auth.refreshToken();
+        refetch();
+      })();
+    }
+  }, [isError, error, auth, refetch]);
 
   /** ⑪ Loading とエラー制御 */
   if (isLoading) return null;

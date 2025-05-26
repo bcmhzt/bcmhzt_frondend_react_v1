@@ -1,5 +1,5 @@
 /** 6b836863 */
-// import React, { useState, useRef, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
@@ -11,7 +11,7 @@ import {
   chageAgeRange,
 } from '../../utility/GetCommonFunctions';
 import GetGenderIcon from '../commons/GetGenderIcon';
-// src/components/commons/GetGenderIcon.tsx
+import { buildStorageUrl } from '../../utility/GetUseImage';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -114,7 +114,7 @@ interface ApiData {
 }
 
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
-// const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
+const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
 
 async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
   try {
@@ -144,13 +144,33 @@ const LikedMemberLimit = () => {
   const auth = useAuth();
   const token = auth?.token!;
 
-  const { data, isLoading, isError, error } = useQuery<ApiResponse, Error>({
+  /** APIデータはdataで取得 */
+  const { data, isLoading, isError, error, refetch } = useQuery<
+    ApiResponse,
+    Error
+  >({
     queryKey: ['likedMemberList', token],
     queryFn: () => fetchApiData(1, token),
     retry: 1,
     enabled: !!token,
   });
 
+  /** 401エラーのときはTokenの再発行をする */
+  useEffect(() => {
+    if (
+      isError &&
+      axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      typeof auth.refreshToken === 'function'
+    ) {
+      (async () => {
+        await auth.refreshToken();
+        refetch();
+      })();
+    }
+  }, [isError, error, auth, refetch]);
+
+  /** それ以外のエラーは例外処理 */
   if (isLoading) return null;
   if (isError) {
     return (
@@ -160,28 +180,96 @@ const LikedMemberLimit = () => {
     );
   }
 
+  console.log(
+    '[src/components/dashboards/LikedMemberLimit.tsx:163] data?.data.total:',
+    data?.data.total
+  );
+  // setTotalCount(data?.data.total ?? 0);
+
   const listData: ApiData[] = data?.data?.data ?? [];
+
+  /**
+   * 1. listDataの配列の1つ目の要素を取得
+   * 2. その要素から、member_like_created_atの値(a)を取得する
+   * 3. ローカルストレージのLikedMember(key)に日付が格納されているか確認する
+   * 4. 日付が格納されていたら(b)、その日付(b)と(a)を比較する。（必ず(a)の方が新しい）
+   * 5. listDataの配列で、(b)より新しいレコードを抽出して、件数をカウントする。
+   * 6. listDataの配列で、(b)より新しいレコードを抽出して、そのレコードにフラグを立てる(新しい配列の要素を加える)
+   * 7. フラグのあるレコードには新しい何等かのマークを追加する。
+   */
+  // const latestCreatedAt = listData[0]?.member_like_created_at ?? null;
+  // // ローカルストレージから保存済み日付を取得
+  // const localKey = 'LikedMember';
+  // const storedDate = localStorage.getItem(localKey);
+  // // 新着判定用
+  // let newCount = 0;
+  // let markedListData: (ApiData & { isNew?: boolean })[] = listData;
+
+  // if (storedDate) {
+  //   // 新しいレコードにisNewフラグを付与
+  //   markedListData = listData.map((item) => {
+  //     const isNew = item.member_like_created_at > storedDate;
+  //     if (isNew) newCount++;
+  //     return { ...item, isNew };
+  //   });
+  // } else {
+  //   // ローカルストレージに何もなければ全て未読扱い
+  //   markedListData = listData.map((item) => ({ ...item, isNew: true }));
+  //   newCount = listData.length;
+  // }
+
+  // if (debug === 'true') {
+  //   console.log(
+  //     '[src/components/dashboards/LikedMemberLimit.tsx:145] latestCreatedAt:',
+  //     latestCreatedAt
+  //   );
+  //   console.log(
+  //     '[src/components/dashboards/LikedMemberLimit.tsx:145] storedDate:',
+  //     storedDate
+  //   );
+  //   console.log(
+  //     '[src/components/dashboards/LikedMemberLimit.tsx:145] newCount:',
+  //     newCount
+  //   );
+  // }
 
   return (
     <>
-      {/* <pre>{JSON.stringify(listDatas, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(listData, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(data?.data.total, null, 2)}</pre> */}
       {/* success: {data?.success?.toString()} */}
-      <h2>あなたにナイススケベをした人 {/*(all: {listData.length})*/}</h2>
-
+      {/* success: {data?.total?.toString()} */}
+      <h2 className="section-title-h2">
+        あなたにナイススケベをした人
+        <span className="conut">{data?.data.total}</span>
+      </h2>
       <ul className="members-list mt10">
-        <p className="more-read">
-          <Link to="/">もっとみる...</Link>
-        </p>
+        {data?.data?.total !== undefined && data.data.total > 10 && (
+          <p className="more-read">
+            <Link to="/">もっとみる...</Link>
+          </p>
+        )}
+
         {listData.map((m) => (
           <li key={m.id} className="member">
             {/* <pre>{JSON.stringify(m, null, 2)}</pre> */}
             <div className="member-flex d-flex justify-content-start">
               <div className="member-avator-area">
                 <Link to={`/v1/member/${m.bcuid}`}>
+                  {/* <pre>
+                    {JSON.stringify(m?.member_like_created_at, null, 2)}
+                  </pre> */}
                   <img
                     className="member-avator"
                     alt={`member_${m.bcuid}`}
-                    src="https://firebasestorage.googleapis.com/v0/b/bcmhzt-b25e9.appspot.com/o/profiles%2FrLgA6ZP4hPVegLhddIQON85xdP13%2FrLgA6ZP4hPVegLhddIQON85xdP13_thumbnail.jpg?alt=media"
+                    src={
+                      buildStorageUrl(
+                        storageUrl ?? '',
+                        m.profile_images ?? '',
+                        '_thumbnail'
+                      ) ||
+                      `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
+                    }
                   />
                 </Link>
               </div>

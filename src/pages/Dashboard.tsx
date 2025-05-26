@@ -31,7 +31,7 @@ const Dashboard = () => {
             <div className="dashboard-instructor">
               <Instructor />
             </div>
-            <h2>Dashboard</h2>
+            {/* <h2>Dashboard</h2> */}
             {/* <ArchtectTemplate /> */}
             <LikedMemberLimit />
             <MatchedMemberLimit />

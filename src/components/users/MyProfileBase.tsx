@@ -167,7 +167,10 @@ const MyProfileBase = () => {
 
   return (
     <>
-      <h2>基本情報</h2>
+      <h2></h2>
+      <h2 className="section-title-h2">
+        基本情報<span className="count">10/100</span>
+      </h2>
 
       <div className="myprofile-base-items">
         <div className="pb-nicknam mt20">
