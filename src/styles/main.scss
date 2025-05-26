@@ -45,6 +45,66 @@ body {
     height: $footer-height;
     background: #333;
   }
+
+  /* member cardの主要デザイン */
+  .members-list {
+    list-style: none;
+    margin-left: -32px;
+    .more-read {
+      text-align: right;
+      a {
+        color: #4682b4;
+        &:hover {
+          color: #4682b4;
+          text-decoration: underline;
+        }
+      }
+    }
+    .member {
+      margin-bottom: 20px;;
+      .member-flex {
+        .member-avator-area {
+          img.member-avator {
+            width:64px;
+            height:64px;
+            border-radius: 50%;
+            border: 1px solid #c1c1c1;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+          }
+        }
+        .nickname-area {
+          width: 100%;
+          // background: #ffd700;
+          margin-left:10px;
+          .nick-name {
+            font-size: 20px;
+            color: #333;
+            .bcuid {
+              font-size: 14px;
+              color: #888;
+            }
+          }
+          .member-property {
+            background: #f1f1f1;
+            .gender-icon {
+              width: 16px;
+              height: 16px;
+              margin-right: 5px;
+            }
+          }
+          .created_at {
+            text-align: right;;
+          }
+          .created_at {
+            font-size: 10px;
+            color: #888;
+          }
+        }
+      }
+
+    }
+  }
   
 }
 

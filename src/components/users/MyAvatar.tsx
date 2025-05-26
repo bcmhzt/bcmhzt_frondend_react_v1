@@ -5,7 +5,7 @@ import { XLg } from 'react-bootstrap-icons';
 import { Spinner } from 'react-bootstrap';
 import { storage } from '../../firebaseConfig';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { X, Image } from 'react-bootstrap-icons';
+import { Image } from 'react-bootstrap-icons';
 
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {

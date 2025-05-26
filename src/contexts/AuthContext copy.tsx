@@ -336,44 +336,9 @@ export const AuthProvider = ({
     ]
   );
 
-  const ErrorFallback = ({ error }: { error: any }) => {
-    // Firebaseエラーの場合のみリダイレクトしたい場合
-    React.useEffect(() => {
-      if (
-        error &&
-        typeof error === 'object' &&
-        error.code === 'auth/network-request-failed'
-      ) {
-        // 例: publicなページへリダイレクト
-        if (window.location.pathname !== '/error.html') {
-          window.location.href = '/error.html';
-        }
-      }
-    }, [error]);
-
-    // それ以外はエラーメッセージを表示
-    /**
-     * Backendのネットワークが落ちている場合のエラー表示
-     * Firebaseと通信できず認証ができない場合。
-     * Backend APIと通信ができない場合。
-     */
-    return (
-      <div className="alert alert-danger">
-        Firebase認証で致命的なエラーが発生しました。
-        <br />
-        {error?.message || String(error)}
-      </div>
-    );
-  };
-
   return (
     <AuthContext.Provider value={contextValue}>
-      {loading ? null : error ? (
-        // 致命的なエラー時の表示やリダイレクト
-        <ErrorFallback error={error} />
-      ) : (
-        children
-      )}
+      {!loading && children}
     </AuthContext.Provider>
   );
 };

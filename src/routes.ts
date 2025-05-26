@@ -15,6 +15,7 @@ import Posts from "./pages/posts/Posts";
 import Notice from "./pages/notice/Notice";
 import Messages from "./pages/messages/Messages"
 import LoopTutorial from "./pages/develop/LoopTutorial";
+import DevArchtectPage from "./pages/develop/DevArchtectPage";
 import MyProfile from "./pages/user/MyProfile"
 // import MetaAccount from "./pages/User/MetaAccount";
 //src/pages/user/MyProfile.tsx
@@ -66,6 +67,7 @@ const routes: RoutesObject = {
   devRoutes: [
     { path: "/list", component: List },
     { path: "/develop/archtect", component: Archtect },
+    { path: "/develop/archtect/page", component: DevArchtectPage },
     
   ],
   notFound: { path: "*", component: NotFound404 }

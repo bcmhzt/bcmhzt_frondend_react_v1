@@ -1,69 +1,84 @@
+/**
+ * works/archtect/2025-05-24_APIページの作成.md
+ * ① ファイル＆雛形作成
+ * ② 必要な import
+ * ③ 型定義
+ * ④ static 定義
+ * ⑤ fetch 関数実装
+ * ⑥ 検索フォーム制御
+ * ⑦ 認証情報の設定（Token）
+ */
+/** ② 必要な import */
 import React, { useState, useRef, useCallback } from 'react';
-import { Link } from 'react-router-dom';
 import { X, Search } from 'react-bootstrap-icons';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
-import { buildStorageUrl } from '../../utility/GetUseImage';
-import {
-  getBcmhzt,
-  convertFormattedText,
-} from '../../utility/GetCommonFunctions';
-import GetGenderIcon from '../../components/commons/GetGenderIcon';
-import MemberTools from '../../components/members/MemberTools';
+import { getBcmhzt } from '../../utility/GetCommonFunctions';
 
-// --- 型定義 ---
-interface UserDetails {
-  gender?: string;
-  // 必要に応じて他のプロパティも追加
-}
-interface Member {
-  id: number;
-  bcuid: string;
-  nickname: string | null;
-  profile_images: string | null;
-  description: string | null;
-  user_details?: UserDetails[];
-}
-interface MembersPage {
-  current_page: number;
-  last_page: number;
-  data: Member[];
-}
-interface MemberListResponse {
+/**
+ * ③ 型定義
+ * ApiResponse -> APIのレスポンス形式
+ * ApiPage -> ページネーションされたデータの形式
+ * ApiData -> 各メンバーのデータ形式
+ */
+interface ApiResponse {
   success: boolean;
   status: number;
   message: string;
   data: {
-    members: MembersPage;
+    listDatas: ApiPage;
   };
   errors: any;
 }
+interface ApiPage {
+  current_page: number;
+  last_page: number;
+  data: ApiData[];
+}
+interface ApiData {
+  id: number;
+  name: string;
+  uid: string;
+  email: string | null;
+  created_at: string | null;
+}
 
-// --- APIエンドポイント ---
+/**
+ *  ④ static 定義
+ * APIエンドポイント
+ *
+ */
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
 const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
 
-// --- データ取得関数 ---
-async function fetchMembers(
+/**
+ * ⑤ fetch 関数実装
+ */
+async function fetchApiData(
   page: number,
   token: string,
   keyword: string
-): Promise<MemberListResponse> {
+): Promise<ApiResponse> {
   const body = keyword ? { keywords: keyword } : {};
   const res = await axios.post(
-    `${apiEndpoint}/v1/get/members?page=${page}`,
+    `${apiEndpoint}/v1/get/pagenate_mock?page=${page}`,
     body,
     { headers: { Authorization: `Bearer ${token}` } }
   );
   return res.data;
 }
 
+/**
+ * ① ファイル＆雛形作成
+ *
+ */
 const ArchtectTemplate: React.FC = () => {
+  /** ⑦ 認証情報の設定（Token） */
   const auth = useAuth();
   const token = auth?.token!;
 
-  // 検索フォーム
+  /** ⑥ 検索フォーム制御 */
   const [inputKeyword, setInputKeyword] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) =>
@@ -74,7 +89,7 @@ const ArchtectTemplate: React.FC = () => {
     setSearchKeyword('');
   };
 
-  // useInfiniteQueryを先に定義
+  /** ⑧　useInfiniteQueryの設定 */
   const {
     data,
     isLoading,
@@ -83,19 +98,19 @@ const ArchtectTemplate: React.FC = () => {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useInfiniteQuery<MemberListResponse, Error>({
+  } = useInfiniteQuery<ApiResponse, Error>({
     queryKey: ['memberList', token, searchKeyword],
     queryFn: ({ pageParam = 1 }) =>
-      fetchMembers(pageParam as number, token, searchKeyword),
+      fetchApiData(pageParam as number, token, searchKeyword),
     retry: 1,
     initialPageParam: 1,
     getNextPageParam: (last) => {
-      const { current_page, last_page } = last.data.members;
+      const { current_page, last_page } = last.data.listDatas;
       return current_page < last_page ? current_page + 1 : undefined;
     },
   });
 
-  // IntersectionObserver
+  /** ⑩　IntersectionObserverの設定 */
   const observerRef = useRef<IntersectionObserver | null>(null);
   const lastItemRef = useCallback(
     (node: HTMLLIElement | null) => {
@@ -114,6 +129,7 @@ const ArchtectTemplate: React.FC = () => {
     [fetchNextPage, hasNextPage, isFetchingNextPage]
   );
 
+  /** ⑪ Loading とエラー制御 */
   if (isLoading) return null;
   if (isError) {
     return (
@@ -123,13 +139,13 @@ const ArchtectTemplate: React.FC = () => {
     );
   }
 
-  // メンバー配列
-  const members: Member[] =
-    data?.pages.flatMap((p) => p.data.members.data) ?? [];
+  /** ⑫ メンバー配列 */
+  const listDatas: ApiData[] =
+    data?.pages.flatMap((p) => p.data.listDatas.data) ?? [];
 
   return (
     <>
-      {/* 検索フォーム */}
+      {/* ⑨ 検索窓の設置 */}
       <div className="member-search mb20">
         <div className="input-group">
           <input
@@ -153,53 +169,26 @@ const ArchtectTemplate: React.FC = () => {
           </button>
         </div>
       </div>
-      {/* ステータス表示 */}
+      {/* ⑬　APIのデータ表示 */}
       success: {data?.pages[0].success.toString()}
-      <h2>MemberList (all: {members.length})</h2>
-      <p>{getBcmhzt()}</p>
-      {/* メンバー一覧 */}
+      <h2>MemberList (all: {listDatas.length})</h2>
+      <h3>{getBcmhzt()}</h3>
       <ul className="members-list">
-        {members.map((m, i) => (
+        {listDatas.map((m, i) => (
           <li
             key={m.id}
-            ref={i === members.length - 1 ? lastItemRef : null}
+            ref={i === listDatas.length - 1 ? lastItemRef : null}
             className="member"
           >
-            <MemberTools targetBcuid={m.bcuid} />
-            <Link to={`/member/${m.bcuid}`}>
-              <img
-                src={buildStorageUrl(
-                  storageUrl,
-                  m.profile_images ?? '',
-                  '_thumbnail'
-                )}
-                alt="User Avatar"
-                className="avatar-80"
-                onError={(e) => {
-                  e.currentTarget.onerror = null;
-                  e.currentTarget.src = '/assets/images/dummy/dummy_avatar.png';
-                }}
-              />
-            </Link>
-            <div className="nickname">
-              {m.nickname ?? '(no nickname)'} <span>@{m.bcuid}</span>
-              <GetGenderIcon genderId={m.user_details?.[0]?.gender ?? ''} />
-            </div>
-            <p className="description">
-              {convertFormattedText(m.description ?? '') ? (
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: convertFormattedText(m.description ?? ''),
-                  }}
-                />
-              ) : (
-                '(no description)'
-              )}
-            </p>
+            <pre>{JSON.stringify(m, null, 2)}</pre>
+            <h4>{m.name}</h4>
+            <div>{m.id}</div>
+            <div>{m.uid}</div>
+            <div>{m.email}</div>
+            <div>{m.created_at}</div>
           </li>
         ))}
       </ul>
-      {/* 次ページ取得中インジケーター */}
       {isFetchingNextPage && (
         <div className="text-center my-3">Loading more…</div>
       )}

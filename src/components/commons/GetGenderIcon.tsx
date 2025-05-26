@@ -13,14 +13,14 @@ const GetGenderIcon: React.FC<GenderIconProps> = ({ genderId }) => {
     return (
       <>
         <PersonStanding style={{ color: 'mediumblue' }} />
-        Man
+        男性
       </>
     );
   if (genderId === '2')
     return (
       <>
         <PersonStandingDress style={{ color: 'crimson' }} />
-        Woman
+        女性
       </>
     );
   return (

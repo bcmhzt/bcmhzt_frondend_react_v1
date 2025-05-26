@@ -36,7 +36,7 @@ const MyProfileDetails = () => {
   const [occupationType, setOccupationType] = useState(
     currentUserProfile.user_detail.occupationType || ''
   );
-  const [occupationTypeState, setOccupationTypeState] = useState(false);
+  // const [occupationTypeState, setOccupationTypeState] = useState(false);
 
   // 追加: 地域変更時のハンドラ
   const changeLocation = async (e: React.ChangeEvent<HTMLSelectElement>) => {

@@ -6,7 +6,7 @@ import Instructor from '../components/Instructor';
 // import FooterTool from '../components/FooterTool';
 // import MemberList from '../components/v1/member/Memberlist';
 // import MatchedMemberLimit from '../components/v1/dashboard/MatchedMemberLimit';
-import ArchtectTemplate from '../components/dashboards/ArchtectTemplate';
+// import ArchtectTemplate from '../components/dashboards/ArchtectTemplate';
 import LikedMemberLimit from '../components/dashboards/LikedMemberLimit';
 import MatchedMemberLimit from '../components/dashboards/MatchedMemberLimit';
 import MyLikedMemberLimit from '../components/dashboards/MyLikedMemberLimit';
@@ -32,7 +32,7 @@ const Dashboard = () => {
               <Instructor />
             </div>
             <h2>Dashboard</h2>
-            <ArchtectTemplate />
+            {/* <ArchtectTemplate /> */}
             <LikedMemberLimit />
             <MatchedMemberLimit />
             <MyLikedMemberLimit />
