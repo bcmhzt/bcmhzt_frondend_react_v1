@@ -7,6 +7,13 @@
  * ⑤ fetch 関数実装
  * ⑥ 検索フォーム制御
  * ⑦ 認証情報の設定（Token）
+ * ⑧ useInfiniteQueryの設定
+ * ⑨ 検索窓の設置
+ * ⑩ IntersectionObserverの設定
+ * ⑪ Loading とエラー制御
+ * ⑫ メンバー配列
+ * ⑬ APIのデータ表示
+ * ⑭ 401エラーの場合はTokenの再発行
  */
 /** ② 必要な import */
 import React, { useState, useRef, useCallback, useEffect } from 'react';

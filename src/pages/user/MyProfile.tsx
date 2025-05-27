@@ -1,3 +1,4 @@
+/** 105ca813 */
 // import PostBoard from '../components/PostBoard';
 import MyAvatar from '../../components/users/MyAvatar';
 import MyProfileDetails from '../../components/users/MyProfileDetails';
@@ -11,12 +12,11 @@ import Footer from '../../components/Footer';
 
 const MyProfile = () => {
   return (
-    <>
+    <div className="app-body">
       <Header />
-      <div className="container myprofile mt50">
+      <div className="container bc-app">
         <div className="row">
-          <div className="col-lg-6 main-section mb50">
-            {/* Firebase profile<br></br> */}
+          <div className="col-12 col-md-6 bc-left profile">
             <div className="myprofile">
               <MyAvatar />
             </div>
@@ -25,16 +25,13 @@ const MyProfile = () => {
               <Propensity />
             </div>
           </div>
-          <div className="col-lg-6 sub-section mb100">
-            <div className="myprofile-details mt20">
-              <MyProfileDetails />
-            </div>
+          <div className="col-12 col-md-6 bc-right profile">
+            <MyProfileDetails />
           </div>
         </div>
       </div>
-      {/* <PostBoard /> */}
       <Footer />
-    </>
+    </div>
   );
 };
 export default MyProfile;

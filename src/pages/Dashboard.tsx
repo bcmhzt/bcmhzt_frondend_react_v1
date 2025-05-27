@@ -28,9 +28,8 @@ const Dashboard = () => {
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left dashboard">
-            <div className="dashboard-instructor">
-              <Instructor />
-            </div>
+            <Instructor />
+
             {/* <h2>Dashboard</h2> */}
             {/* <ArchtectTemplate /> */}
             <LikedMemberLimit />

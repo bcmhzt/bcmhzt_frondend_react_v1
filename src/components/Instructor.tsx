@@ -1,137 +1,142 @@
+/** ec46447e */
 import React, { useEffect, useState } from 'react';
-// import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { XLg } from 'react-bootstrap-icons';
 
-// 型定義ファイルからUserProfile型をインポート（パスは実際の型定義ファイルに合わせて修正してください）
-// import type { UserProfile } from '../types/UserProfile';
-
-// src/components/Instructor.js
-// [src/components/Instructor.js]
-// instructor
-// instructor	instructor	instructor	Instructor	instructor
-
+/* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
-  console.log('[src/components/Instructor.js:13] debug:', debug);
+  console.log('[src/components/Instructor.tsx:xx] debug:', debug);
 }
 
+/**
+ * ec46447e
+ * [src/components/Instructor.tsx:xx]
+ *
+ * type: component
+ *
+ * [Order]
+ * - プロフィールの必須項目のチェック
+ * - 画像、ニックネーム、性別、年齢、地域）をチェックして、入力や更新を促す
+ * - ひとつでも未入力があったらこの画面を出す。（instructorStatus）
+ */
+
 const Instructor = () => {
-  const { currentUserProfile, isLogin } = useAuth();
-  const [nicknameInstructor, setNicknameInstructor] = useState<string | null>(
-    null
-  );
-  const [descriptionInstructor, setDescriptionInstructor] = useState<
-    string | null
-  >(null);
-  const [profileImagesInstructor, setProfileImagesInstructor] = useState<
-    string | null
-  >(null);
+  const { currentUserProfile } = useAuth();
   /* 全体表示の判定 (非表示のときはfalseにする) */
   const [instructorStatus, setInstructorStatus] = useState(false);
 
-  if (debug === 'true') {
-    console.log('[src/components/Instructor.js:25] isLogin - ', isLogin);
-    console.log(
-      '[src/components/Instructor.js:26] currentUserProfile - ',
-      currentUserProfile
-    );
-  }
-
-  /**
-   * プロファイルをまだ書いていない人に、書くように促します
-   * currentUserProfile
-   */
   useEffect(() => {
-    const profile = currentUserProfile?.user_profile;
-    if (!profile) return;
-
-    // console.log('[Instructor] useEffect start');
-    // console.count('[Instructor] useEffect fired');
-
-    if (debug === 'true') {
-      console.log(
-        '[src/components/Instructor.js:33] description - ',
-        currentUserProfile?.user_profile?.description
-      );
-      console.log(
-        '[src/components/Instructor.js:33] nickname - ',
-        currentUserProfile?.user_profile?.nickname
-      );
-      console.log(
-        '[src/components/Instructor.js:33] profile_image - ',
-        currentUserProfile?.user_profile?.profile_image
-      );
-    }
-
+    /* プロフィール画像の確認 */
     if (
-      currentUserProfile?.user_profile?.description === null &&
-      currentUserProfile?.user_profile?.nickname === null &&
-      !currentUserProfile?.user_profile?.profile_image
+      currentUserProfile?.user_profile?.profile_images === null ||
+      currentUserProfile?.user_profile?.nickname === null ||
+      currentUserProfile?.user_profile?.description === null ||
+      currentUserProfile?.user_detail.gender === null ||
+      currentUserProfile?.user_detail.location === null ||
+      currentUserProfile?.user_detail.age === null
     ) {
       setInstructorStatus(true);
     } else {
-      /** 強制的に表示させるときは、ここをtrueにする */
-      setInstructorStatus(true);
+      setInstructorStatus(false);
     }
+    /* develop & test */
+    // setInstructorStatus(true);
 
-    if (currentUserProfile?.user_profile?.description === null) {
-      setDescriptionInstructor('自己紹介文を書きましょう');
-    }
-    if (currentUserProfile?.user_profile?.nickname === 'no nickname') {
-      setNicknameInstructor('ニックネームを設定しましょう');
-    }
-    if (!currentUserProfile?.user_profile?.profile_image) {
-      setProfileImagesInstructor('プロフィール画像を追加しましょう');
-    }
-
-    // Auto-hide the instructor list after 10 seconds
-    // const timer = setTimeout(() => {
-    //   setInstructorStatus(true); // Hide the instructor list
-    // }, 100000);
-
-    // Clear timer if component unmounts
-    // return () => clearTimeout(timer);
+    const timer = setTimeout(() => {
+      setInstructorStatus(false);
+    }, 120000);
+    return () => clearTimeout(timer);
   }, [currentUserProfile]);
 
   return (
     <>
-      {/* <pre>{JSON.stringify(currentUserProfile, null, 2)}</pre>
-      <pre>{JSON.stringify(instructorStatus, null, 2)}</pre> */}
+      {/* <pre>
+        profile_images:
+        {JSON.stringify(
+          currentUserProfile?.user_profile?.profile_images,
+          null,
+          2
+        )}
+      </pre>
+      <pre>
+        nickname:
+        {JSON.stringify(currentUserProfile?.user_profile?.nickname, null, 2)}
+      </pre>
+      <pre>
+        description:
+        {JSON.stringify(currentUserProfile?.user_profile?.description, null, 2)}
+      </pre>
+      <pre>
+        gender:
+        {JSON.stringify(currentUserProfile?.user_detail?.gender, null, 2)}
+      </pre>
+      <pre>
+        location:
+        {JSON.stringify(currentUserProfile?.user_detail?.location, null, 2)}
+      </pre>
+      <pre>
+        age:
+        {JSON.stringify(currentUserProfile?.user_detail?.age, null, 2)}
+      </pre>
+      <pre>
+        open/close:
+        {JSON.stringify(instructorStatus, null, 2)}
+      </pre> */}
+
       {instructorStatus && (
-        <div className="instructor-list">
+        <div className="dashboard-instructor">
           <span
             onClick={() => setInstructorStatus(false)}
             className="close-button"
           >
             <XLg style={{ fontSize: '23px', cursor: 'pointer' }} />
           </span>
-          <div className="mt40 mb10 ml10 mr10">
-            <span style={{ fontSize: '22px' }}>
-              Bcmhztに登録ありがとうございます
-            </span>
-          </div>
+          <h3>Bcmhztに登録ありがとうございます</h3>
           <ul>
-            {descriptionInstructor && (
-              <li
-                style={{ fontSize: '30px', fontWeight: 'bold', color: '#434' }}
-              >
-                {descriptionInstructor}{' '}
+            {currentUserProfile?.user_profile?.profile_images === null && (
+              <li>
+                <span className="enhunce">プロフィール画像</span>
+                を設定してください。放っておくとシステムが勝手に適当な画像を設定します。
               </li>
             )}
-            {nicknameInstructor && (
-              <li style={{ fontSize: '16px' }}>{nicknameInstructor}</li>
+            {currentUserProfile?.user_profile?.nickname === null && (
+              <li>
+                <span className="enhunce">ニックネーム</span>
+                を設定してください。放っておくとシステムにより適当な名前を授けます。
+              </li>
             )}
-            {profileImagesInstructor && (
-              <li style={{ fontSize: '23px' }}>{profileImagesInstructor}</li>
+
+            {currentUserProfile?.user_profile?.description === null && (
+              <li>
+                <span className="enhunce">自己紹介文</span>
+                を作成してください。放っておくとシステムが適当な自己紹介を設定します。
+              </li>
+            )}
+            {currentUserProfile?.user_detail?.gender === null && (
+              <li>
+                <span className="enhunce">性別</span>
+                を設定してください。あるいは、性別を選択しないという選択ができます。
+              </li>
+            )}
+            {currentUserProfile?.user_detail?.location === null && (
+              <li>
+                <span className="enhunce">地域</span>
+                を設定してください。地域の設定は大切です。
+              </li>
+            )}
+            {currentUserProfile?.user_detail?.age === null && (
+              <li>
+                <span className="enhunce">年齢</span>を設定してください。
+              </li>
             )}
           </ul>
           <p className="ml20 mr10">
-            プロフィールを記入しないと、このWEBサービスは使えません。
+            プロフィールを記入しないと、このWEBサービスは使えません。というか、マッチングのアルゴリズムが迷います。
           </p>
-          <div className="edit-profile">
+          <div className="edit-profile mb20 ml10">
             <button
-              className="btn btn-primary btn-bc-main"
+              className="btn btn-primary btn-bc-main bcmhzt-btn"
               onClick={() => (window.location.href = '/myprofile')}
             >
               プロフィールを変更する
