@@ -203,6 +203,7 @@ const ArchtectTemplate: React.FC = () => {
         {listDatas.map((m, i) => (
           <li
             key={m.id}
+            // 無限スクロールの最後の要素にrefを設定
             ref={i === listDatas.length - 1 ? lastItemRef : null}
             className="member"
           >

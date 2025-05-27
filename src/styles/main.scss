@@ -74,6 +74,7 @@ body {
       margin-bottom: 20px;;
       .member-flex {
         .member-avator-area {
+          position: relative;
           img.member-avator {
             width:64px;
             height:64px;
@@ -81,6 +82,16 @@ body {
             border: 1px solid #c1c1c1;
             aspect-ratio: 1 / 1;
             object-fit: cover;
+          }
+          .new-mark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #ff4500;
+            color: #ffd700;
+            padding: 2px;
+            font-size: 16px;
+            border-radius: 50%;
           }
         }
         .nickname-area {

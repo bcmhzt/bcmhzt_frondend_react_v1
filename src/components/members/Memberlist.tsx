@@ -190,6 +190,7 @@ const MemberList: React.FC = () => {
     retry: 1,
     initialPageParam: 1,
     getNextPageParam: (lastPage: MemberListResponse) => {
+      if (!lastPage?.data?.members) return undefined;
       const { current_page, last_page } = lastPage.data.members;
       return current_page < last_page ? current_page + 1 : undefined;
     },
@@ -253,7 +254,9 @@ const MemberList: React.FC = () => {
 
   // 取得したメンバー配列
   const members: MemberListData[] =
-    data?.pages.flatMap((p) => p.data.members.data) ?? [];
+    data?.pages.flatMap((p) =>
+      p?.data?.members?.data ? p.data.members.data : []
+    ) ?? [];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(

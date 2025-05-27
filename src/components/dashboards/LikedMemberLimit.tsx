@@ -12,6 +12,8 @@ import {
 } from '../../utility/GetCommonFunctions';
 import GetGenderIcon from '../commons/GetGenderIcon';
 import { buildStorageUrl } from '../../utility/GetUseImage';
+import { CircleFill } from 'react-bootstrap-icons';
+//
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -113,6 +115,7 @@ interface ApiData {
   user_profile_created_at: string;
 }
 
+/** ④ static 定義 */
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
 const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
 
@@ -197,41 +200,15 @@ const LikedMemberLimit = () => {
    * 6. listDataの配列で、(b)より新しいレコードを抽出して、そのレコードにフラグを立てる(新しい配列の要素を加える)
    * 7. フラグのあるレコードには新しい何等かのマークを追加する。
    */
-  // const latestCreatedAt = listData[0]?.member_like_created_at ?? null;
-  // // ローカルストレージから保存済み日付を取得
-  // const localKey = 'LikedMember';
-  // const storedDate = localStorage.getItem(localKey);
-  // // 新着判定用
-  // let newCount = 0;
-  // let markedListData: (ApiData & { isNew?: boolean })[] = listData;
 
-  // if (storedDate) {
-  //   // 新しいレコードにisNewフラグを付与
-  //   markedListData = listData.map((item) => {
-  //     const isNew = item.member_like_created_at > storedDate;
-  //     if (isNew) newCount++;
-  //     return { ...item, isNew };
-  //   });
-  // } else {
-  //   // ローカルストレージに何もなければ全て未読扱い
-  //   markedListData = listData.map((item) => ({ ...item, isNew: true }));
-  //   newCount = listData.length;
-  // }
+  const isNew = (createdAt: string): boolean => {
+    const today = new Date();
+    const createdDate = new Date(createdAt);
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(today.getDate() - 7);
 
-  // if (debug === 'true') {
-  //   console.log(
-  //     '[src/components/dashboards/LikedMemberLimit.tsx:145] latestCreatedAt:',
-  //     latestCreatedAt
-  //   );
-  //   console.log(
-  //     '[src/components/dashboards/LikedMemberLimit.tsx:145] storedDate:',
-  //     storedDate
-  //   );
-  //   console.log(
-  //     '[src/components/dashboards/LikedMemberLimit.tsx:145] newCount:',
-  //     newCount
-  //   );
-  // }
+    return createdDate.getTime() >= oneWeekAgo.getTime();
+  };
 
   return (
     <>
@@ -246,7 +223,7 @@ const LikedMemberLimit = () => {
       <ul className="members-list mt10">
         {data?.data?.total !== undefined && data.data.total > 10 && (
           <p className="more-read">
-            <Link to="/">もっとみる...</Link>
+            <Link to="/liked_member">もっとみる...</Link>
           </p>
         )}
 
@@ -255,6 +232,9 @@ const LikedMemberLimit = () => {
             {/* <pre>{JSON.stringify(m, null, 2)}</pre> */}
             <div className="member-flex d-flex justify-content-start">
               <div className="member-avator-area">
+                {isNew(m.member_like_created_at) && (
+                  <CircleFill className="new-mark" />
+                )}
                 <Link to={`/v1/member/${m.bcuid}`}>
                   {/* <pre>
                     {JSON.stringify(m?.member_like_created_at, null, 2)}

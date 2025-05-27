@@ -93,7 +93,7 @@ const MyLikedMemberLimit = () => {
           )} */}
           {iLikedMembers?.length > 0 && (
             <div className="more-read">
-              <a href="/v1/my_liked_member">もっと見る</a>
+              <a href="/my_liked_member">もっと見る</a>
             </div>
           )}
         </div>

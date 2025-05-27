@@ -16,9 +16,12 @@ import Notice from "./pages/notice/Notice";
 import Messages from "./pages/messages/Messages"
 import LoopTutorial from "./pages/develop/LoopTutorial";
 import DevArchtectPage from "./pages/develop/DevArchtectPage";
-import MyProfile from "./pages/user/MyProfile"
+import MyProfile from "./pages/user/MyProfile";
+import LikedMember from "./pages/likematch/LikedMember";
+import MyLikedMember from "./pages/likematch/MyLikedMember";
 // import MetaAccount from "./pages/User/MetaAccount";
 //src/pages/user/MyProfile.tsx
+
 
 
 /** devRoutes */
@@ -60,7 +63,9 @@ const routes: RoutesObject = {
     { path: "/notice", component: Notice },
     { path: "/messages", component: Messages },
     { path: "/loop_tutorial", component: LoopTutorial },
-    { path: "/myprofile", component: MyProfile }
+    { path: "/myprofile", component: MyProfile },
+    { path: "/liked_member", component: LikedMember },
+    { path: "/my_liked_member", component: MyLikedMember },
     // { path: "/metaaccount", component: MetaAccount }
   ],
   errorRoutes: [],
