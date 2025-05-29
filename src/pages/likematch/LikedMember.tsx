@@ -239,7 +239,7 @@ const LikedMember = () => {
             {/* <pre>
               {JSON.stringify(data?.pages[0]?.badges?.total_count, null, 2)}
             </pre> */}
-            <h2 className="section-title-h2">
+            <h2 className="section-title-h2 mb30">
               あなたにナイススケベをした人
               <span className="conut">
                 {data?.pages[0]?.badges?.total_count}

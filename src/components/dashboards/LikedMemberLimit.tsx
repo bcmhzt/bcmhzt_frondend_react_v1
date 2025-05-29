@@ -158,6 +158,15 @@ const LikedMemberLimit = () => {
     enabled: !!token,
   });
 
+  // useEffect(() => {
+  //   if (data) {
+  //     console.log(
+  //       '[src/components/dashboards/LikedMemberLimit.tsx:163] useQuery data:',
+  //       data
+  //     );
+  //   }
+  // }, [data]);
+
   /** 401エラーのときはTokenの再発行をする */
   useEffect(() => {
     if (
@@ -256,7 +265,7 @@ const LikedMemberLimit = () => {
               <div className="nickname-area">
                 <div className="nick-name">
                   {`${m?.nickname}`}
-                  <span className="bcuid">@f56-52c7d2d0</span>
+                  <span className="bcuid">@{m.bcuid}</span>
                 </div>
                 <span className="member-property">
                   {chageAgeRange(m?.age)}
