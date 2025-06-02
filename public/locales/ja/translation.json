@@ -111,5 +111,13 @@
       "myaccount_data_download": "データダウンロード",
       "myaccount_data_download_message": "ご自身の投稿データをダウンロードします。"
     }
+  },
+  "settings": {
+    "title": "各種設定",
+    "language": "言語",
+    "timezone": "タイムゾーン",
+    "notification_liked": "ナイススケベされたときの通知",
+    "notification_matched": "マッチしたときの通知",
+    "publish": "サイト内公開"
   }
 }

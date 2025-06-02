@@ -17,8 +17,9 @@ import Messages from "./pages/messages/Messages"
 import LoopTutorial from "./pages/develop/LoopTutorial";
 import DevArchtectPage from "./pages/develop/DevArchtectPage";
 import MyProfile from "./pages/user/MyProfile";
-import LikedMember from "./pages/likematch/LikedMember";
+import LikedMeCard from "./pages/likematch/LikedMeCard";
 import MyLikedMember from "./pages/likematch/MyLikedMember";
+import Settings from "./pages/user/Settings";
 // import MetaAccount from "./pages/User/MetaAccount";
 //src/pages/user/MyProfile.tsx
 
@@ -64,8 +65,10 @@ const routes: RoutesObject = {
     { path: "/messages", component: Messages },
     { path: "/loop_tutorial", component: LoopTutorial },
     { path: "/myprofile", component: MyProfile },
-    { path: "/liked_member", component: LikedMember },
+    { path: "/liked_me", component: LikedMeCard },
     { path: "/my_liked_member", component: MyLikedMember },
+    /** user */
+    { path: "/settings", component: Settings },
     // { path: "/metaaccount", component: MetaAccount }
   ],
   errorRoutes: [],

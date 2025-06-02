@@ -59,5 +59,13 @@
     "email": "E-Mail",
     "enter_your_email": "Bitte geben Sie Ihre E-Mail-Adresse ein",
     "submit": "Passwort-Reset-E-Mail senden"
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "language": "Sprache",
+    "timezone": "Zeitzone",
+    "notification_liked": "Benachrichtigung bei Gefällt mir",
+    "notification_matched": "Benachrichtigung bei Match",
+    "publish": "Öffentlich auf der Websiteh"
   }
 }

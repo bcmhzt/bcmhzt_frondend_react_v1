@@ -60,5 +60,13 @@
     "email": "이메일",
     "enter_your_email": "이메일 주소를 입력하세요",
     "submit": "비밀번호 재설정 링크 보내기"
+  },
+  "settings": {
+    "title": "설정",
+    "language": "언어",
+    "timezone": "시간대",
+    "notification_liked": "좋아요 알림",
+    "notification_matched": "매치 알림",
+    "publish": "사이트에 게시"
   }
 }

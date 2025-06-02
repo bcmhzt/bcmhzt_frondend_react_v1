@@ -1,4 +1,4 @@
-/** 6b836863 */
+/** ae5b9d3a */
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -19,18 +19,19 @@ import { CircleFill } from 'react-bootstrap-icons';
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
   console.log(
-    '[src/components/dashboards/MyLikedMemberLimit.tsx:xx] debug:',
+    '[src/components/dashboards/ILikedCardLimit.tsx:xx] debug:',
     debug
   );
 }
 
 /**
- * 6b836863
- * [src/components/dashboards/MyLikedMemberLimit:xx]
+ * ae5b9d3a
+ * [src/components/dashboards/ILikedCardLimit:xx]
  *
  * type: component
  *
  * [Order]
+ * - あなたがナイススケベをした人（10件）ページネーションの1ページ目のみ取得
  * ① ファイル＆雛形作成
  * ② 必要な import
  * ③ 型定義
@@ -128,7 +129,7 @@ async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
     );
     if (debug === 'true') {
       console.log(
-        '[src/components/dashboards/MyLikedMemberLimit.tsx:119] res.data:',
+        '[src/components/dashboards/ILikedCardLimit.tsx:119] res.data:',
         res.data
       );
     }
@@ -136,14 +137,14 @@ async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
     return res.data;
   } catch (error) {
     console.error(
-      '[src/components/dashboards/MyLikedMemberLimit.tsx:126] API error:',
+      '[src/components/dashboards/ILikedCardLimit.tsx:126] API error:',
       error
     );
     throw error;
   }
 }
 
-const MyLikedMemberLimit = () => {
+const ILikedCardLimit = () => {
   const auth = useAuth();
   const token = auth?.token!;
 
@@ -160,7 +161,7 @@ const MyLikedMemberLimit = () => {
 
   useEffect(() => {
     console.log(
-      '[src/components/dashboards/MyLikedMemberLimit.tsx:162] MyLikedMemberLimit data:',
+      '[src/components/dashboards/ILikedCardLimit.tsx:162] ILikedCardLimit data:',
       data
     );
   }, [data]);
@@ -191,7 +192,7 @@ const MyLikedMemberLimit = () => {
   }
 
   console.log(
-    '[src/components/dashboards/MyLikedMemberLimit.tsx:163] data?.data.total:',
+    '[src/components/dashboards/ILikedCardLimit.tsx:163] data?.data.total:',
     data?.data.total
   );
   // setTotalCount(data?.data.total ?? 0);
@@ -281,4 +282,4 @@ const MyLikedMemberLimit = () => {
     </>
   );
 };
-export default MyLikedMemberLimit;
+export default ILikedCardLimit;

@@ -59,5 +59,13 @@
     "email": "Email",
     "enter_your_email": "Veuillez entrer votre adresse électronique",
     "submit": "Envoyer le lien de réinitialisation"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "language": "Langue",
+    "timezone": "Fuseau horaire",
+    "notification_liked": "Notification des J'aime",
+    "notification_matched": "Notification des Matchs",
+    "publish": "Publier sur le site"
   }
 }

@@ -1,3 +1,4 @@
+/** fbfb2bb3 */
 import React from 'react';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -7,9 +8,9 @@ import Instructor from '../components/Instructor';
 // import MemberList from '../components/v1/member/Memberlist';
 // import MatchedMemberLimit from '../components/v1/dashboard/MatchedMemberLimit';
 // import ArchtectTemplate from '../components/dashboards/ArchtectTemplate';
-import LikedMemberLimit from '../components/dashboards/LikedMemberLimit';
+// import LikedMeCardLimit from '../components/dashboards/LikedMeCardLimit';
 import MatchedMemberLimit from '../components/dashboards/MatchedMemberLimit';
-import MyLikedMemberLimit from '../components/dashboards/MyLikedMemberLimit';
+// import ILikedCardLimit from '../components/dashboards/ILikedCardLimit';
 import BcmhztLinkCollections from '../components/dashboards/BcmhztLinkCollections';
 import ReferralEntries from '../components/dashboards/ReferralEntries';
 import Header from '../components/Header';
@@ -20,6 +21,18 @@ let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
   console.log('[src/pages/Dashboard.tsx:xx] debug:', debug);
 }
+
+/**
+ * fbfb2bb3
+ * [src/pages/Dashboard.tsx:xx]
+ *
+ * type: page
+ *
+ * [Order]
+ * - LikedMemberLimit あなたにナイススケベをした人
+ * - MatchedMemberLimit マッチした人
+ * - MyLikedMemberLimit あなたがナイススケベをした人
+ */
 
 const Dashboard = () => {
   return (
@@ -32,9 +45,9 @@ const Dashboard = () => {
 
             {/* <h2>Dashboard</h2> */}
             {/* <ArchtectTemplate /> */}
-            <LikedMemberLimit />
+            {/* <LikedMeCardLimit /> */}
             <MatchedMemberLimit />
-            <MyLikedMemberLimit />
+            {/* <ILikedCardLimit /> */}
             <BcmhztLinkCollections />
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">

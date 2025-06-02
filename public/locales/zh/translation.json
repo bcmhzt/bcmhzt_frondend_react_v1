@@ -60,5 +60,13 @@
     "email": "邮箱",
     "enter_your_email": "请输入您的邮箱地址",
     "submit": "发送重置密码邮件"
+  },
+  "settings": {
+    "title": "设置",
+    "language": "语言",
+    "timezone": "时区",
+    "notification_liked": "喜欢通知",
+    "notification_matched": "匹配通知",
+    "publish": "发布到网站"
   }
 }

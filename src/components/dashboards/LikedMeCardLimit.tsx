@@ -19,14 +19,15 @@ import { CircleFill } from 'react-bootstrap-icons';
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
   console.log(
-    '[src/components/dashboards/LikedMemberLimit.tsx:xx] debug:',
+    '[src/components/dashboards/LikedMeCardLimit.tsx:xx] debug:',
     debug
   );
 }
 
 /**
  * 6b836863
- * [src/components/dashboards/LikedMemberLimit:xx]
+ * LikedMeCardLimit.tsx
+ * [src/components/dashboards/LikedMeCardLimit:xx]
  *
  * type: component
  *
@@ -128,7 +129,7 @@ async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
     );
     if (debug === 'true') {
       console.log(
-        '[src/components/dashboards/LikedMemberLimit.tsx:119] res.data:',
+        '[src/components/dashboards/LikedMeCardLimit.tsx:119] res.data:',
         res.data
       );
     }
@@ -136,14 +137,14 @@ async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
     return res.data;
   } catch (error) {
     console.error(
-      '[src/components/dashboards/LikedMemberLimit.tsx:126] API error:',
+      '[src/components/dashboards/LikedMeCardLimit.tsx:126] API error:',
       error
     );
     throw error;
   }
 }
 
-const LikedMemberLimit = () => {
+const LikedMeCardLimit = () => {
   const auth = useAuth();
   const token = auth?.token!;
 
@@ -161,7 +162,7 @@ const LikedMemberLimit = () => {
   // useEffect(() => {
   //   if (data) {
   //     console.log(
-  //       '[src/components/dashboards/LikedMemberLimit.tsx:163] useQuery data:',
+  //       '[src/components/dashboards/LikedMeCardLimit.tsx:163] useQuery data:',
   //       data
   //     );
   //   }
@@ -193,7 +194,7 @@ const LikedMemberLimit = () => {
   }
 
   console.log(
-    '[src/components/dashboards/LikedMemberLimit.tsx:163] data?.data.total:',
+    '[src/components/dashboards/LikedMeCardLimit.tsx:163] data?.data.total:',
     data?.data.total
   );
   // setTotalCount(data?.data.total ?? 0);
@@ -232,7 +233,7 @@ const LikedMemberLimit = () => {
       <ul className="members-list mt10">
         {data?.data?.total !== undefined && data.data.total > 10 && (
           <p className="more-read">
-            <Link to="/liked_member">もっとみる...</Link>
+            <Link to="/liked_me">もっとみる...</Link>
           </p>
         )}
 
@@ -283,4 +284,4 @@ const LikedMemberLimit = () => {
     </>
   );
 };
-export default LikedMemberLimit;
+export default LikedMeCardLimit;

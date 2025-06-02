@@ -1,3 +1,4 @@
+/** 4609aed3 */
 import React, { useState, useEffect } from 'react';
 import {
   PersonStanding,
@@ -12,12 +13,23 @@ import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 
-const debug = process.env.REACT_APP_DEBUG === 'true';
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
 if (debug) {
   console.log(
     '[src/components/v1/dashboard/MatchedMemberLimit.js:16] debug mode is on'
   );
 }
+
+/**
+ * 4609aed3
+ * [src/components/dashboards/MatchedMemberLimit.tsx:xx]
+ *
+ * type: component
+ *
+ * [Order]
+ * - あなたとスケベマッチした人（10件）ページネーションの1ページ目のみ取得
+ */
 
 const MatchedMemberLimit = () => {
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
