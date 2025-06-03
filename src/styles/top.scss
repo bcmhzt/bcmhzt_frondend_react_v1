@@ -110,6 +110,12 @@
         font-size: 18px;
         color: #555;
       }
+      .news-description {
+        p {
+          margin: 0;
+          padding: 0;
+        }
+      }
       a:link, a:visited {
         color: #457B9D;
         text-decoration: none;

@@ -231,7 +231,7 @@ const ILikedCardLimit = () => {
       <ul className="members-list mt10">
         {data?.data?.total !== undefined && data.data.total > 10 && (
           <p className="more-read">
-            <Link to="/liked_member">もっとみる...</Link>
+            <Link to="/i_liked">もっとみる...</Link>
           </p>
         )}
 

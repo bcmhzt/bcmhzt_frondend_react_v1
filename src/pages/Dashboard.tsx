@@ -8,9 +8,9 @@ import Instructor from '../components/Instructor';
 // import MemberList from '../components/v1/member/Memberlist';
 // import MatchedMemberLimit from '../components/v1/dashboard/MatchedMemberLimit';
 // import ArchtectTemplate from '../components/dashboards/ArchtectTemplate';
-// import LikedMeCardLimit from '../components/dashboards/LikedMeCardLimit';
+import LikedMeCardLimit from '../components/dashboards/LikedMeCardLimit';
 import MatchedMemberLimit from '../components/dashboards/MatchedMemberLimit';
-// import ILikedCardLimit from '../components/dashboards/ILikedCardLimit';
+import ILikedCardLimit from '../components/dashboards/ILikedCardLimit';
 import BcmhztLinkCollections from '../components/dashboards/BcmhztLinkCollections';
 import ReferralEntries from '../components/dashboards/ReferralEntries';
 import Header from '../components/Header';
@@ -29,9 +29,9 @@ if (debug === 'true') {
  * type: page
  *
  * [Order]
- * - LikedMemberLimit あなたにナイススケベをした人
+ * - LikedMeCardLimit あなたにナイススケベをした人
  * - MatchedMemberLimit マッチした人
- * - MyLikedMemberLimit あなたがナイススケベをした人
+ * - ILikedCardLimit あなたがナイススケベをした人
  */
 
 const Dashboard = () => {
@@ -45,9 +45,9 @@ const Dashboard = () => {
 
             {/* <h2>Dashboard</h2> */}
             {/* <ArchtectTemplate /> */}
-            {/* <LikedMeCardLimit /> */}
+            <LikedMeCardLimit />
             <MatchedMemberLimit />
-            {/* <ILikedCardLimit /> */}
+            <ILikedCardLimit />
             <BcmhztLinkCollections />
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">

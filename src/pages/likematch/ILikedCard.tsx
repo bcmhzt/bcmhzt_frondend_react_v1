@@ -111,7 +111,7 @@ async function fetchApiData(
   return res.data;
 }
 
-const MyLikedMember = () => {
+const ILikedCard = () => {
   const auth = useAuth();
   const token = auth?.token!;
 
@@ -307,4 +307,4 @@ const MyLikedMember = () => {
     </div>
   );
 };
-export default MyLikedMember;
+export default ILikedCard;

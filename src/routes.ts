@@ -18,7 +18,7 @@ import LoopTutorial from "./pages/develop/LoopTutorial";
 import DevArchtectPage from "./pages/develop/DevArchtectPage";
 import MyProfile from "./pages/user/MyProfile";
 import LikedMeCard from "./pages/likematch/LikedMeCard";
-import MyLikedMember from "./pages/likematch/MyLikedMember";
+import ILikedCard from "./pages/likematch/ILikedCard";
 import Settings from "./pages/user/Settings";
 // import MetaAccount from "./pages/User/MetaAccount";
 //src/pages/user/MyProfile.tsx
@@ -66,7 +66,7 @@ const routes: RoutesObject = {
     { path: "/loop_tutorial", component: LoopTutorial },
     { path: "/myprofile", component: MyProfile },
     { path: "/liked_me", component: LikedMeCard },
-    { path: "/my_liked_member", component: MyLikedMember },
+    { path: "/my_liked_member", component: ILikedCard },
     /** user */
     { path: "/settings", component: Settings },
     // { path: "/metaaccount", component: MetaAccount }

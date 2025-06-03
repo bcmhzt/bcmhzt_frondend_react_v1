@@ -7,7 +7,8 @@ import VisualBackground from '../components/VidualBackground';
 // import Footer from "../components/Footer";
 // import { useAuth } from "../contexts/AuthContext";
 import DevelopBanner from '../components/DevelopBanner';
-import NewsLimited from '../components/NewsLimited';
+// import NewsLimited from '../components/NewsLimited';
+import PortalNewsLimited from '../components/news/PortalNewsLimited';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -144,7 +145,8 @@ const Top = () => {
             </div>
           </div>
           <div className="col-md-6 col-lg-6 main-section mb50">
-            <NewsLimited />
+            {/* <NewsLimited /> */}
+            <PortalNewsLimited />
           </div>
         </div>
       </div>
