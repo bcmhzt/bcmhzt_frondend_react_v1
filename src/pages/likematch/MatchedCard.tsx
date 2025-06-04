@@ -105,7 +105,7 @@ async function fetchApiData(
 ): Promise<ApiResponse> {
   const body = keyword ? { keyword: keyword } : {};
   const res = await axios.post(
-    `${apiEndpoint}/v1/get/liked?page=${page}`,
+    `${apiEndpoint}/v1/get/matched?page=${page}`,
     body,
     { headers: { Authorization: `Bearer ${token}` } }
   );
@@ -241,7 +241,7 @@ const LikedMeCard = () => {
               {JSON.stringify(data?.pages[0]?.badges?.total_count, null, 2)}
             </pre> */}
             <h2 className="section-title-h2 mb30">
-              あなたにナイススケベをした人
+              あなたとスケベマッチした人
               <span className="conut">
                 {data?.pages[0]?.badges?.total_count}
               </span>

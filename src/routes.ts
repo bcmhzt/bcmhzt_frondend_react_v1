@@ -18,6 +18,7 @@ import LoopTutorial from "./pages/develop/LoopTutorial";
 import DevArchtectPage from "./pages/develop/DevArchtectPage";
 import MyProfile from "./pages/user/MyProfile";
 import LikedMeCard from "./pages/likematch/LikedMeCard";
+import MatchedCard from "./pages/likematch/MatchedCard";
 import ILikedCard from "./pages/likematch/ILikedCard";
 import Settings from "./pages/user/Settings";
 // import MetaAccount from "./pages/User/MetaAccount";
@@ -66,6 +67,7 @@ const routes: RoutesObject = {
     { path: "/loop_tutorial", component: LoopTutorial },
     { path: "/myprofile", component: MyProfile },
     { path: "/liked_me", component: LikedMeCard },
+    { path: "/matched", component: MatchedCard },
     { path: "/i_liked", component: ILikedCard },
     /** user */
     { path: "/settings", component: Settings },

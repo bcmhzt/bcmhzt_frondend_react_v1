@@ -1,86 +1,213 @@
-/** 4609aed3 */
-import React, { useState, useEffect } from 'react';
-import {
-  PersonStanding,
-  PersonStandingDress,
-  PersonArmsUp,
-  PersonWalking,
-  // X,
-  // CardText,
-  // CardImage,
-} from 'react-bootstrap-icons';
-import { useAuth } from '../../contexts/AuthContext';
+/** ae5b9d3a */
+import React, { useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
+import {
+  // getAgeRangeJp,
+  // getBcmhzt,
+  getDateOnly,
+  chageAgeRange,
+} from '../../utility/GetCommonFunctions';
+import GetGenderIcon from '../commons/GetGenderIcon';
 import { buildStorageUrl } from '../../utility/GetUseImage';
+import { CircleFill } from 'react-bootstrap-icons';
+//
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
-if (debug) {
+if (debug === 'true') {
   console.log(
-    '[src/components/v1/dashboard/MatchedMemberLimit.js:16] debug mode is on'
+    '[src/components/dashboards/ILikedCardLimit.tsx:xx] debug:',
+    debug
   );
 }
 
 /**
- * 4609aed3
- * [src/components/dashboards/MatchedMemberLimit.tsx:xx]
+ * ae5b9d3a
+ * [src/components/dashboards/ILikedCardLimit:xx]
  *
  * type: component
  *
  * [Order]
- * - あなたとスケベマッチした人（10件）ページネーションの1ページ目のみ取得
+ * - あなたがナイススケベをした人（10件）ページネーションの1ページ目のみ取得
+ * ① ファイル＆雛形作成
+ * ② 必要な import
+ * ③ 型定義
+ * ④ static 定義
+ * ⑤ fetch 関数実装
+ * ⑥ 検索フォーム制御
+ * ⑦ 認証情報の設定（Token）
  */
 
-const MatchedMemberLimit = () => {
-  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
-  const { token } = useAuth();
-  interface MatchedMember {
-    bcuid: string;
-    nickname: string;
-    gender: number | null;
-    location?: string;
-    member_like_created_at: string;
-    profile_images?: any;
+/** APIの返り値のinterface */
+interface ApiResponse {
+  success: boolean;
+  status: number;
+  message: string;
+  data: ApiPage;
+  badges?: {
+    total_count: number;
+    latest_created_at: string | null;
+  };
+  errors: any;
+}
+interface ApiPage {
+  current_page: number;
+  data: ApiData[];
+  first_page_url: string;
+  from: number | null;
+  last_page: number;
+  last_page_url: string;
+  links: Array<{
+    url: string | null;
+    label: string;
+    active: boolean;
+  }>;
+  next_page_url: string | null;
+  path: string;
+  per_page: number;
+  prev_page_url: string | null;
+  to: number | null;
+  total: number;
+}
+interface ApiData {
+  id: number;
+  uid: string;
+  target_uid: string;
+  reason: string;
+  level: number;
+  created_at: string;
+  updated_at: string;
+  bcuid: string;
+  email: string;
+  nickname: string | null;
+  description: string | null;
+  profile_images: string | null;
+  status: number | null;
+  gender: string | null;
+  gender_detail: string | null;
+  age: number | null;
+  location: string | null;
+  occupation_type: string | null;
+  bheight: number | null;
+  bweight: number | null;
+  blood_type: string | null;
+  academic_background: string | null;
+  marital_status: string | null;
+  hobbies_lifestyle: string | null;
+  alcohol: string | null;
+  tobacco: string | null;
+  pet: string | null;
+  holidays: string | null;
+  favorite_food: string | null;
+  character: string | null;
+  religion: string | null;
+  belief: string | null;
+  conditions_ideal_partner: string | null;
+  age_range: string | null;
+  target_area: string | null;
+  marriage_aspiration: string | null;
+  self_introductory_statement: string | null;
+  others_options: string | null;
+  profile_video: string | null;
+  member_like_created_at: string;
+  user_profile_created_at: string;
+}
+
+/** ④ static 定義 */
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
+const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
+
+async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
+  try {
+    const res = await axios.post(
+      `${apiEndpoint}/v1/get/matched?page=1`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    if (debug === 'true') {
+      console.log(
+        '[src/components/dashboards/ILikedCardLimit.tsx:119] res.data:',
+        res.data
+      );
+    }
+
+    return res.data;
+  } catch (error) {
+    console.error(
+      '[src/components/dashboards/ILikedCardLimit.tsx:126] API error:',
+      error
+    );
+    throw error;
   }
-  const [matchedMembers, setMatchedMembers] = useState<MatchedMember[]>([]);
-  const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL;
+}
+
+const ILikedCardLimit = () => {
+  const auth = useAuth();
+  const token = auth?.token!;
+
+  /** APIデータはdataで取得 */
+  const { data, isLoading, isError, error, refetch } = useQuery<
+    ApiResponse,
+    Error
+  >({
+    queryKey: ['ilikedMemberList', token],
+    queryFn: () => fetchApiData(1, token),
+    retry: 1,
+    enabled: !!token,
+  });
+
+  useEffect(() => {
+    console.log(
+      '[src/components/dashboards/ILikedCardLimit.tsx:162] ILikedCardLimit data:',
+      data
+    );
+  }, [data]);
+
+  /** 401エラーのときはTokenの再発行をする */
+  useEffect(() => {
+    if (
+      isError &&
+      axios.isAxiosError(error) &&
+      error.response?.status === 401 &&
+      typeof auth.refreshToken === 'function'
+    ) {
+      (async () => {
+        await auth.refreshToken();
+        refetch();
+      })();
+    }
+  }, [isError, error, auth, refetch]);
+
+  /** それ以外のエラーは例外処理 */
+  if (isLoading) return null;
+  if (isError) {
+    return (
+      <div className="alert alert-secondary">
+        データ取得失敗 ({error.message})
+      </div>
+    );
+  }
+
+  console.log(
+    '[src/components/dashboards/ILikedCardLimit.tsx:163] data?.data.total:',
+    data?.data.total
+  );
+  // setTotalCount(data?.data.total ?? 0);
+
+  const listData: ApiData[] = data?.data?.data ?? [];
 
   /**
-   * Dashboardではpagenationの1page目だけを取得する
-   * 全量は別ページで取得する（無限スクロール）
+   * 1. listDataの配列の1つ目の要素を取得
+   * 2. その要素から、member_like_created_atの値(a)を取得する
+   * 3. ローカルストレージのLikedMember(key)に日付が格納されているか確認する
+   * 4. 日付が格納されていたら(b)、その日付(b)と(a)を比較する。（必ず(a)の方が新しい）
+   * 5. listDataの配列で、(b)より新しいレコードを抽出して、件数をカウントする。
+   * 6. listDataの配列で、(b)より新しいレコードを抽出して、そのレコードにフラグを立てる(新しい配列の要素を加える)
+   * 7. フラグのあるレコードには新しい何等かのマークを追加する。
    */
-  useEffect(() => {
-    const fetchMatchedMembers = async () => {
-      try {
-        const response = await axios.post(
-          `${apiEndpoint}/v1/get/matched?page=1`,
-          {},
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        console.log(
-          '[src/components/v1/dashboard/LikedMemberLimit.js:33] response:',
-          response.data
-        );
-        setMatchedMembers(response.data.data.data);
-      } catch (error) {
-        console.error('src/components/v1/dashboard/LikedMemberLimit.js', error);
-      }
-    };
-    fetchMatchedMembers();
-  }, [token, apiEndpoint]);
-
-  interface MatchedMember {
-    bcuid: string;
-    nickname: string;
-    gender: number | null;
-    location?: string;
-    member_like_created_at: string;
-    profile_images?: any;
-  }
 
   const isNew = (createdAt: string): boolean => {
     const today = new Date();
@@ -93,84 +220,72 @@ const MatchedMemberLimit = () => {
 
   return (
     <>
-      {/* <pre>{JSON.stringify(matchedMembers, null, 2)}</pre> */}
-      <div className="matched-member-limit">
-        <div className="matched-member-limit-title">
-          <h2 className="">あなたとスケベマッチした人</h2>
-          {matchedMembers?.length > 0 && (
-            <div className="more-read">
-              <a href="/v1/matched_member">もっと見る</a>
-            </div>
-          )}
-        </div>
+      {/* <pre>{JSON.stringify(listData, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(data?.data.total, null, 2)}</pre> */}
+      {/* success: {data?.success?.toString()} */}
+      {/* success: {data?.total?.toString()} */}
+      <h2 className="section-title-h2">
+        あなたとスケベマッチした人
+        <span className="conut">{data?.data.total}</span>
+      </h2>
+      <ul className="members-list mt10">
+        {data?.data?.total !== undefined && data.data.total > 10 && (
+          <p className="more-read">
+            <Link to="/matched">もっとみる...</Link>
+          </p>
+        )}
 
-        <ul className="matched-member-list">
-          {matchedMembers && matchedMembers.length > 0 ? (
-            matchedMembers.map((member, index) => (
-              <li key={index} className="matched-member-item">
-                {/* <pre>{JSON.stringify(member, null, 2)}</pre> */}
-                <div className="matched-member d-flex justify-content-start">
-                  <div className="member-avator-area">
-                    {isNew(member.member_like_created_at) && (
-                      <div className="new">new</div>
-                    )}
-                    <a href={`/v1/member/${member.bcuid}`}>
-                      <img
-                        className="member-avator"
-                        src={
-                          member?.profile_images
-                            ? buildStorageUrl(
-                                storageUrl ?? '',
-                                member.profile_images,
-                                '_thumbnail'
-                              )
-                            : `${process.env.PUBLIC_URL}/assets/dummy-user.png`
-                        }
-                        alt={`member_@${member?.bcuid || 'unknown'}`}
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          (e.currentTarget as HTMLImageElement).src =
-                            `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`;
-                        }}
-                      />
-                    </a>
+        {listData.length === 0 ? (
+          <div className="alert alert-secondary" role="alert">
+            まだ、あなたとスケベマッチした人はいません。
+          </div>
+        ) : (
+          listData.map((m) => (
+            <li key={m.id} className="member">
+              {/* <pre>{JSON.stringify(m, null, 2)}</pre> */}
+              <div className="member-flex d-flex justify-content-start">
+                <div className="member-avator-area">
+                  {isNew(m.member_like_created_at) && (
+                    <CircleFill className="new-mark" />
+                  )}
+                  <Link to={`/v1/member/${m.bcuid}`}>
+                    {/* <pre>
+                    {JSON.stringify(m?.member_like_created_at, null, 2)}
+                  </pre> */}
+                    <img
+                      className="member-avator"
+                      alt={`member_${m.bcuid}`}
+                      src={
+                        buildStorageUrl(
+                          storageUrl ?? '',
+                          m.profile_images ?? '',
+                          '_thumbnail'
+                        ) ||
+                        `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
+                      }
+                    />
+                  </Link>
+                </div>
+                <div className="nickname-area">
+                  <div className="nick-name">
+                    {`${m?.nickname}`}
+                    <span className="bcuid">@f56-52c7d2d0</span>
                   </div>
-                  <div>
-                    <div className="nick-name">
-                      {member.nickname}
-                      <span className="bcuid">@{member.bcuid}</span>
-                    </div>
-                    {member.gender === null ? (
-                      <PersonWalking
-                        style={{ fontSize: '20px', color: '#888' }}
-                      />
-                    ) : Number(member.gender) === 1 ? (
-                      <PersonStanding
-                        style={{ fontSize: '20px', color: '#0000ff' }}
-                      />
-                    ) : Number(member.gender) === 2 ? (
-                      <PersonStandingDress
-                        style={{ fontSize: '20px', color: '#880000' }}
-                      />
-                    ) : (
-                      <PersonArmsUp
-                        style={{ fontSize: '20px', color: '#006400' }}
-                      />
-                    )}
-                    <span className="location">{member.location || ''}</span>
-                    <div className="created_at mt10">
-                      {member.member_like_created_at}
-                    </div>
+                  <span className="member-property">
+                    {chageAgeRange(m?.age)}
+                    <GetGenderIcon genderId={m?.gender ?? ''} />@
+                    {m?.location || 'no location'}
+                  </span>
+                  <div className="created_at">
+                    {getDateOnly(m.created_at)}より利用
                   </div>
                 </div>
-              </li>
-            ))
-          ) : (
-            <div className="no-data mb10">まだいません</div>
-          )}
-        </ul>
-      </div>
+              </div>
+            </li>
+          ))
+        )}
+      </ul>
     </>
   );
 };
-export default MatchedMemberLimit;
+export default ILikedCardLimit;
