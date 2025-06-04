@@ -66,7 +66,7 @@ const routes: RoutesObject = {
     { path: "/loop_tutorial", component: LoopTutorial },
     { path: "/myprofile", component: MyProfile },
     { path: "/liked_me", component: LikedMeCard },
-    { path: "/my_liked_member", component: ILikedCard },
+    { path: "/i_liked", component: ILikedCard },
     /** user */
     { path: "/settings", component: Settings },
     // { path: "/metaaccount", component: MetaAccount }

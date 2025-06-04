@@ -239,7 +239,7 @@ const LikedMeCardLimit = () => {
 
         {listData.length === 0 ? (
           <div className="alert alert-secondary" role="alert">
-            まだあなたにナイスすけべをした人はいません。
+            まだ、あなたにナイスすけべをした人はいません。
           </div>
         ) : (
           listData.map((m) => (

@@ -1,4 +1,6 @@
 /**
+ * 4e2692d6
+ *
  * 画像URLのファイル名部分にsuffixを付与して返す
  * @param originalUrl オリジナル画像のURL
  * @param suffix 例: "_thumbnail", "_small"
@@ -12,7 +14,7 @@ export function getImageWithSuffix(
   if (!originalUrl) return '';
   return originalUrl.replace(
     /([^/%]+)(\.[a-zA-Z0-9]+)(\?[^?]*)?$/,
-    (match, filename, ext, query) => `${filename}${suffix}${ext}${query || ''}`
+    (match, filename, ext, query) => `${filename}${suffix}.jpg${query || ''}`
   );
 }
 

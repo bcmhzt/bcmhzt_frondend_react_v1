@@ -1,3 +1,4 @@
+/** 308ac087 */
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 // import { X, Search } from 'react-bootstrap-icons';
@@ -102,7 +103,7 @@ async function fetchApiData(
   token: string,
   keyword: string
 ): Promise<ApiResponse> {
-  const body = keyword ? { keywords: keyword } : {};
+  const body = keyword ? { keyword: keyword } : {};
   const res = await axios.post(
     `${apiEndpoint}/v1/get/i_liked_list?page=${page}`,
     body,
@@ -246,6 +247,24 @@ const ILikedCard = () => {
               </span>
             </h2>
             <ul className="members-list mt10">
+              {data?.pages[0]?.badges?.total_count === 0 && (
+                <div className="alert alert-secondary">
+                  該当するメンバーはいません。
+                  {inputKeyword && (
+                    <span
+                      className="clear-text"
+                      style={{
+                        color: '#007bff',
+                        cursor: 'pointer',
+                        marginLeft: '10px',
+                      }}
+                      onClick={handleClear}
+                    >
+                      リストに戻る
+                    </span>
+                  )}
+                </div>
+              )}
               {listDatas
                 .filter((m) => m && m.bcuid)
                 .map((m, i) => (

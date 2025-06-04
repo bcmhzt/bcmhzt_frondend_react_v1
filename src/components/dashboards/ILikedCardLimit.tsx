@@ -235,49 +235,55 @@ const ILikedCardLimit = () => {
           </p>
         )}
 
-        {listData.map((m) => (
-          <li key={m.id} className="member">
-            {/* <pre>{JSON.stringify(m, null, 2)}</pre> */}
-            <div className="member-flex d-flex justify-content-start">
-              <div className="member-avator-area">
-                {isNew(m.member_like_created_at) && (
-                  <CircleFill className="new-mark" />
-                )}
-                <Link to={`/v1/member/${m.bcuid}`}>
-                  {/* <pre>
+        {listData.length === 0 ? (
+          <div className="alert alert-secondary" role="alert">
+            まだ、あなたがナイスすけべをした人はいません。
+          </div>
+        ) : (
+          listData.map((m) => (
+            <li key={m.id} className="member">
+              {/* <pre>{JSON.stringify(m, null, 2)}</pre> */}
+              <div className="member-flex d-flex justify-content-start">
+                <div className="member-avator-area">
+                  {isNew(m.member_like_created_at) && (
+                    <CircleFill className="new-mark" />
+                  )}
+                  <Link to={`/v1/member/${m.bcuid}`}>
+                    {/* <pre>
                     {JSON.stringify(m?.member_like_created_at, null, 2)}
                   </pre> */}
-                  <img
-                    className="member-avator"
-                    alt={`member_${m.bcuid}`}
-                    src={
-                      buildStorageUrl(
-                        storageUrl ?? '',
-                        m.profile_images ?? '',
-                        '_thumbnail'
-                      ) ||
-                      `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
-                    }
-                  />
-                </Link>
-              </div>
-              <div className="nickname-area">
-                <div className="nick-name">
-                  {`${m?.nickname}`}
-                  <span className="bcuid">@f56-52c7d2d0</span>
+                    <img
+                      className="member-avator"
+                      alt={`member_${m.bcuid}`}
+                      src={
+                        buildStorageUrl(
+                          storageUrl ?? '',
+                          m.profile_images ?? '',
+                          '_thumbnail'
+                        ) ||
+                        `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
+                      }
+                    />
+                  </Link>
                 </div>
-                <span className="member-property">
-                  {chageAgeRange(m?.age)}
-                  <GetGenderIcon genderId={m?.gender ?? ''} />@
-                  {m?.location || 'no location'}
-                </span>
-                <div className="created_at">
-                  {getDateOnly(m.created_at)}より利用
+                <div className="nickname-area">
+                  <div className="nick-name">
+                    {`${m?.nickname}`}
+                    <span className="bcuid">@f56-52c7d2d0</span>
+                  </div>
+                  <span className="member-property">
+                    {chageAgeRange(m?.age)}
+                    <GetGenderIcon genderId={m?.gender ?? ''} />@
+                    {m?.location || 'no location'}
+                  </span>
+                  <div className="created_at">
+                    {getDateOnly(m.created_at)}より利用
+                  </div>
                 </div>
               </div>
-            </div>
-          </li>
-        ))}
+            </li>
+          ))
+        )}
       </ul>
     </>
   );

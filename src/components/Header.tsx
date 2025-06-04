@@ -1,3 +1,4 @@
+/** 5310e80a */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import bcmhztLogo from '../assets/images/icon/bcmhzt-logo.png';
@@ -29,13 +30,14 @@ if (debug === 'true') {
 }
 
 /**
- * 99999999 (hash)
- * [src/pages/Archtect.tsx:xx]
+ * 5310e80a
+ * [src/components/Header.tsx:xx]
  *
- * type: page
+ * type: component
  *
- * [Order] このコードでやっていること
- * - ログイン時と非ログイン時のヘッダーの出し分け
+ * [Order]
+ * - TopHeaderBar
+ * - getImageWithSuffix
  */
 
 const Header = () => {
@@ -94,13 +96,17 @@ const Header = () => {
                   <Link to="/members">Members</Link>
                 </li>
                 <li>
-                  <Link to="/about">Usage</Link>
+                  <Link to="https://portal.bcmhzt.net/%e3%81%94%e5%88%a9%e7%94%a8%e6%96%b9%e6%b3%95-usage/">
+                    Usage
+                  </Link>
                 </li>
               </>
             ) : (
               <>
                 <li>
-                  <Link to="/usage">Usage</Link>
+                  <Link to="https://portal.bcmhzt.net/%e3%81%94%e5%88%a9%e7%94%a8%e6%96%b9%e6%b3%95-usage/">
+                    Usage
+                  </Link>
                 </li>
                 <li>
                   <Link to="/about">About</Link>
