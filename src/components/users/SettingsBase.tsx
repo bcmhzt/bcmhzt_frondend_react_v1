@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+// import { useState } from 'react';
 /** i18n */
 import LanguageSelector from '../../utility/LanguageSelector';
 import { useTranslation } from 'react-i18next';
@@ -22,9 +22,9 @@ import LikedNotificationSetting from '../../utility/settings/LikedNotificationSe
  */
 
 const SettingsBase = () => {
-  const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState(false);
-  const { t, i18n } = useTranslation();
+  // const [loading, setLoading] = useState(false);
+  // const [status, setStatus] = useState(false);
+  const { t } = useTranslation();
 
   return (
     <>

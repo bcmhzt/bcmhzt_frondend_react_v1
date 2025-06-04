@@ -1,8 +1,8 @@
-import LanguageSelector from '../../utility/LanguageSelector';
+// import LanguageSelector from '../../utility/LanguageSelector';
 import { useTranslation } from 'react-i18next';
 
 const LikedNotificationSetting = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
 
   return (
     <>
