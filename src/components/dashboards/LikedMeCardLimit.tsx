@@ -250,7 +250,7 @@ const LikedMeCardLimit = () => {
                   {isNew(m.member_like_created_at) && (
                     <CircleFill className="new-mark" />
                   )}
-                  <Link to={`/v1/member/${m.bcuid}`}>
+                  <Link to={`/member/${m.bcuid}`}>
                     {/* <pre>
                 {JSON.stringify(m?.member_like_created_at, null, 2)}
               </pre> */}

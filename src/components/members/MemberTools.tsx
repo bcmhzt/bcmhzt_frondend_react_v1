@@ -376,7 +376,7 @@ const MemberTools = ({ targetBcuid }: MemberToolsProps) => {
                           本当にブロックしますか？
                           <br />
                           ブロックすると、
-                          <Link to={`/v1/member/${targetBcuid}`}>
+                          <Link to={`/member/${targetBcuid}`}>
                             このメンバー
                           </Link>
                           はあなたのプロフィールやメッセージが見えなくなります。
@@ -384,21 +384,21 @@ const MemberTools = ({ targetBcuid }: MemberToolsProps) => {
 
                         <ul className="mt20">
                           <li>
-                            <Link to={`/v1/member/${targetBcuid}`}>
+                            <Link to={`/member/${targetBcuid}`}>
                               このメンバー
                             </Link>
                             はあなたのプロフィールを見ることができません。
                           </li>
                           <li>
                             あなたは
-                            <Link to={`/v1/member/${targetBcuid}`}>
+                            <Link to={`/member/${targetBcuid}`}>
                               このメンバー
                             </Link>
                             のプロフィールを見ることができます。
                           </li>
 
                           <li>
-                            <Link to={`/v1/member/${targetBcuid}`}>
+                            <Link to={`/member/${targetBcuid}`}>
                               このメンバー
                             </Link>
                             はあなたの投稿を見ることができません。
@@ -408,7 +408,7 @@ const MemberTools = ({ targetBcuid }: MemberToolsProps) => {
                           </li>
 
                           <li>
-                            <Link to={`/v1/member/${targetBcuid}`}>
+                            <Link to={`/member/${targetBcuid}`}>
                               このメンバー
                             </Link>
                             はあなたにナイススケベ・いいね・返信・ブックマークなどができません。

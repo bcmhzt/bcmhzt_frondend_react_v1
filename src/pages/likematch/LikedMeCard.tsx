@@ -278,7 +278,7 @@ const LikedMeCard = () => {
                         {isNew(m.member_like_created_at) && (
                           <CircleFill className="new-mark" />
                         )}
-                        <Link to={`/v1/member/${m.bcuid}`}>
+                        <Link to={`/member/${m.bcuid}`}>
                           <img
                             className="member-avator"
                             alt={`member_${m.bcuid}`}
@@ -296,7 +296,7 @@ const LikedMeCard = () => {
                       <div className="nickname-area">
                         <div className="nick-name">
                           {`${m?.nickname}`}
-                          <span className="bcuid">@f56-52c7d2d0</span>
+                          <span className="bcuid">@{m.bcuid}</span>
                         </div>
                         <span className="member-property">
                           {chageAgeRange(m?.age)}

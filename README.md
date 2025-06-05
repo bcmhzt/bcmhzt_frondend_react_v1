@@ -61,6 +61,16 @@ export default ArchitectFile;
 1. routeの登録
    src/routes.ts
 
+## スマホのエミュレーター
+
+```
+% npm install ngrok --save-dev --legacy-peer-deps
+% ipconfig getifaddr en0
+192.168.1.14
+% npm start HTTPS=true HOST=192.168.1.14
+% npx ngrok http 3000
+```
+
 ---
 
 # Getting Started with Create React App

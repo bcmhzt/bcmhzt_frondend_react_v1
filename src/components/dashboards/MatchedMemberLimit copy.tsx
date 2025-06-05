@@ -127,8 +127,8 @@ const MatchedMemberLimit = () => {
                       <CircleFill className="new-mark" />x
                     </>
                   )}
-                  <Link to={`/v1/member/${member.bcuid}`}></Link>
-                  <a href={`/v1/member/${member.bcuid}`}>
+                  <Link to={`/member/${member.bcuid}`}></Link>
+                  <a href={`/member/${member.bcuid}`}>
                     <img
                       className="member-avator"
                       src={

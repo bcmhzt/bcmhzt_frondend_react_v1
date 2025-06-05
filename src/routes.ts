@@ -11,6 +11,7 @@ import PasswordReset from './pages/auth/PasswordReset';
 /** privateRoutes */
 import Dashboard from "./pages/Dashboard";
 import Members from "./pages/members/Members";
+import MemberDetail from "./pages/members/MemberDetail";
 import Posts from "./pages/posts/Posts";
 import Notice from "./pages/notice/Notice";
 import Messages from "./pages/messages/Messages"
@@ -61,6 +62,7 @@ const routes: RoutesObject = {
     { path: "/develop/authenticate", component: DevAuthenticate },
     { path: "/dashboard", component: Dashboard },
     { path: "/members", component: Members },
+    { path: "/member/:bcuid", component: MemberDetail },
     { path: "/posts", component: Posts },
     { path: "/notice", component: Notice },
     { path: "/messages", component: Messages },

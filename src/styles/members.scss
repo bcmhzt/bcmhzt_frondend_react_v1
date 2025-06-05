@@ -95,7 +95,7 @@
 
   #member-tools {
     position: absolute;
-    top: 33px;
+    top: 18px;
     right: 0px;
     .member-tools-box {
       // background: #ff0;
@@ -155,6 +155,10 @@
       }
     }
   }
+}
+
+.member-profile-detail, .member-profile {
+  position: relative;
 }
 
 
@@ -482,6 +486,75 @@
         }
         .modal-footer {
 
+        }
+      }
+    }
+  }
+}
+
+.member-profile-detail {
+  .member-header {
+    // background: #ffd700;
+    .member-header-avatar {
+      img.member-avator {
+        width: 180px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 50%;
+        aspect-ratio: 1 / 1;
+        border: 1px solid #ccc;
+      }
+    }
+    .member-header-text {
+      overflow-wrap: break-word;
+      word-break: break-word;
+      .nickname {
+        font-size: 23px;
+        padding-top: 60px;
+        line-height: 32px;
+        .bcuid {
+          font-size: 14px;
+          color: #888;
+        }
+        .location {
+          font-size: 14px;
+          color: #333;
+        }
+        .post-count {
+          font-size: 15px;
+          // border: #333 1px solid;
+        }
+      }
+    }
+  }
+  .member-avator-large {
+    width: 100%;
+    object-fit: cover;
+    border-radius: 3px;
+    aspect-ratio: 1 / 1;
+    // border: 1px solid #ccc;
+  }
+  .profile-detail {
+    .mp-description {
+      font-size: 15px;
+    }
+    .mp-propensities {
+      padding: 0;
+      ul.propensities-list {
+        margin-left: -23px;
+        li {
+          font-size: 12px;
+          display: inline-block;
+          border: #c1c1c1 1px solid;
+          margin-right: 10px;
+          margin-bottom: 10px;
+          // line-height: 28px;
+          border-radius: 3px;
+          padding: 0px 5px;
+          background: #f1f1f1;
+          .propensity-name {
+            background: #f1f1f1;
+          }
         }
       }
     }

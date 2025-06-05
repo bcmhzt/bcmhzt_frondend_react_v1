@@ -42,8 +42,11 @@ const Members = () => {
           </div>
 
           <div className="d-none d-md-block col-md-6 bc-right">
-            bar
-            {/* <Imagelist /> */}
+            <div
+              style={{ background: '#f1f1f1', height: '100%', padding: '20px' }}
+            >
+              広告エリア / サブエリア
+            </div>
           </div>
         </div>
       </div>

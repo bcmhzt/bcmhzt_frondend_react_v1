@@ -64,9 +64,6 @@ const TargetArea = () => {
   const [status, setStatus] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // 「地域を選択しない」が選択されているか
-  const isNoneSelected = selected.includes('地域を選択しない');
-
   useEffect(() => {
     if (status) {
       const t = setTimeout(() => setStatus(false), 3000);
@@ -75,19 +72,9 @@ const TargetArea = () => {
   }, [status]);
 
   const toggle = async (area: string, checked: boolean) => {
-    let updated: string[];
-    if (area === '地域を選択しない') {
-      if (checked) {
-        updated = ['地域を選択しない'];
-      } else {
-        updated = [];
-      }
-    } else {
-      // 他の地域を選択した場合、「地域を選択しない」を外す
-      updated = checked
-        ? [...selected.filter((x) => x !== '地域を選択しない'), area]
-        : selected.filter((x) => x !== area);
-    }
+    const updated = checked
+      ? [...selected, area]
+      : selected.filter((x) => x !== area);
     setSelected(updated);
     setLoading(true);
     try {
@@ -118,30 +105,20 @@ const TargetArea = () => {
           <span className="saved">保存済</span>
         )}
       </div>
-      {prefectures.map((pref) => {
-        // 「地域を選択しない」以外の項目をdisableにする
-        const isNone = pref === '地域を選択しない';
-        const disabled = !isNone && isNoneSelected;
-        return (
-          <div key={pref} className="form-check">
-            <input
-              type="checkbox"
-              className="form-check-input"
-              id={`area-${pref}`}
-              checked={selected.includes(pref)}
-              onChange={(e) => toggle(pref, e.target.checked)}
-              disabled={disabled}
-            />
-            <label
-              className="form-check-label"
-              htmlFor={`area-${pref}`}
-              style={disabled ? { color: '#bbb' } : {}}
-            >
-              {pref}
-            </label>
-          </div>
-        );
-      })}
+      {prefectures.map((pref) => (
+        <div key={pref} className="form-check">
+          <input
+            type="checkbox"
+            className="form-check-input"
+            id={`area-${pref}`}
+            checked={selected.includes(pref)}
+            onChange={(e) => toggle(pref, e.target.checked)}
+          />
+          <label className="form-check-label" htmlFor={`area-${pref}`}>
+            {pref}
+          </label>
+        </div>
+      ))}
     </div>
   );
 };

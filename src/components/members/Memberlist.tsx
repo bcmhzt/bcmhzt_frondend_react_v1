@@ -324,10 +324,10 @@ const MemberList: React.FC = () => {
         </div>
       </div>
       {/* 成功ステータス */}
-      success: {data?.pages[0].success.toString() ?? 'loading…'}
+      {/* success: {data?.pages[0].success.toString() ?? 'loading…'} */}
       {/* 全件数 */}
       <h2>MemberList (all: {members.length})</h2>
-      <p>{getBcmhzt()}</p>
+      {/* <p>{getBcmhzt()}</p> */}
       {/* メンバー一覧 */}
       <div className="members">
         <ul className="members-list">
@@ -341,13 +341,13 @@ const MemberList: React.FC = () => {
                 <MemberTools targetBcuid={m.bcuid} />
                 <div className="profile-header d-flex flex-row">
                   <div className="avatar">
-                    <Link to="/member/bcuid">
+                    <Link to={`/member/${m.bcuid}`}>
                       <img
                         src={
                           buildStorageUrl(
                             storageUrl ?? '',
                             m.profile_images ?? '',
-                            '_thumbnail'
+                            '_small'
                           ) ||
                           `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
                         }
