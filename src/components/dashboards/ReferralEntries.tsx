@@ -18,7 +18,7 @@ const ReferralEntries = () => {
   const [shareOpen, setShareOpen] = useState(true);
   const [nickname, setNickname] = useState('');
   const siteUrl = process.env.REACT_APP_URL || 'http://localhost:3000';
-  const [registerUrl, setRegisterUrl] = useState(siteUrl + '/v1/register');
+  const [registerUrl, setRegisterUrl] = useState(siteUrl + '/register');
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
   const { currentUserProfile, token } = useAuth();
   const { showMessage } = useMessage();
@@ -79,7 +79,7 @@ const ReferralEntries = () => {
           response.data.data.introduced_hash
         );
       }
-      const shareUrl = `${siteUrl}/v1/register?referral_hash=${response.data.data.introduced_hash}`;
+      const shareUrl = `${siteUrl}/register?referral_hash=${response.data.data.introduced_hash}`;
       setRegisterUrl(shareUrl);
       if (debug) {
         console.log(
@@ -116,7 +116,7 @@ const ReferralEntries = () => {
       // 1) 招待レコードを作成してハッシュを取得
       const hash = await createReferralMember();
       // 2) URL を組み立て
-      const shareUrl = `${siteUrl}/v1/register?referral_hash=${hash}`;
+      const shareUrl = `${siteUrl}/register?referral_hash=${hash}`;
 
       // 3) シェア実行
       await navigator.share({

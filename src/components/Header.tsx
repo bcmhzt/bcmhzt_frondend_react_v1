@@ -120,7 +120,7 @@ const Header = () => {
           {isLogin ? (
             <>
               <span className="nickname">
-                <Link to="/member">
+                <Link to={`/member/${currentUserProfile?.user_profile?.bcuid}`}>
                   <span className="name">
                     {!currentUserProfile?.user_profile?.nickname
                       ? 'NaN'

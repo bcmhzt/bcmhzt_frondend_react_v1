@@ -15,10 +15,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { buildStorageUrl } from '../../utility/GetUseImage';
-import {
-  getBcmhzt,
-  convertFormattedText,
-} from '../../utility/GetCommonFunctions';
+import { convertFormattedText } from '../../utility/GetCommonFunctions';
 import GetGenderIcon from '../../components/commons/GetGenderIcon';
 import MemberTools from '../../components/members/MemberTools';
 // src/components/members/MemberTools.tsx
@@ -124,6 +121,7 @@ interface MemberListData {
 interface MembersPage {
   current_page: number;
   last_page: number; // 追加: 総ページ数
+  total?: number; // 追加: 総件数
   data: MemberListData[];
   // ページネーション情報なども必要なら追加
 }
@@ -326,7 +324,14 @@ const MemberList: React.FC = () => {
       {/* 成功ステータス */}
       {/* success: {data?.pages[0].success.toString() ?? 'loading…'} */}
       {/* 全件数 */}
-      <h2>MemberList (all: {members.length})</h2>
+
+      <p style={{ textAlign: 'right', color: '#888' }}>
+        Total members:{' '}
+        <span className="total-members">
+          {data?.pages[0]?.data.members.total}
+        </span>
+      </p>
+      {/* <pre>{JSON.stringify(data?.pages[0]?.data.members.total, null, 2)}</pre> */}
       {/* <p>{getBcmhzt()}</p> */}
       {/* メンバー一覧 */}
       <div className="members">
@@ -334,13 +339,13 @@ const MemberList: React.FC = () => {
           {members.map((m, i) => (
             <li
               key={m.id}
-              className="member"
+              className="member member-card"
               ref={i === members.length - 1 ? lastItemRef : null}
             >
               <div className="card">
                 <MemberTools targetBcuid={m.bcuid} />
                 <div className="profile-header d-flex flex-row">
-                  <div className="avatar">
+                  <div className="avatar-section">
                     <Link to={`/member/${m.bcuid}`}>
                       <img
                         src={
@@ -352,7 +357,7 @@ const MemberList: React.FC = () => {
                           `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
                         }
                         alt="User Avatar"
-                        className="avatar-80"
+                        className="avatar-160"
                         onError={(e) => {
                           e.currentTarget.onerror = null;
                           (e.currentTarget as HTMLImageElement).src =
@@ -361,12 +366,15 @@ const MemberList: React.FC = () => {
                       />
                     </Link>
                   </div>
-                  <div className="nickname">
-                    {m.nickname ?? '(no nickname)'}
-                    <span className="bcuid">@{m.bcuid ?? 'no bcuid?'}</span>
+
+                  <div className="nickname-section mt60 ml10">
+                    <div className="nickname">
+                      {m.nickname ?? '(no nickname)'}
+                    </div>
+                    <div className="bcuid">@{m.bcuid ?? 'no bcuid?'}</div>
                     <div className="location">
+                      <GetGenderIcon genderId={m.user_details_gender ?? ''} />　
                       {m.user_details_location ?? 'no location'}
-                      <GetGenderIcon genderId={m.user_details_gender ?? ''} />
                     </div>
                     <div className="post-count mt5">
                       <Link to="/">
