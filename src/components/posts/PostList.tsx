@@ -274,22 +274,19 @@ const PostList: React.FC = () => {
                   />
                   {/* OGP */}
                   <div className="ogps">
-                    {p.ogps &&
-                      Array.isArray(p.ogps) &&
-                      p.ogps.length > 0 &&
-                      p.ogps.map((ogp, i) => (
-                        <div
-                          className="ogp"
-                          dangerouslySetInnerHTML={{
-                            __html: UseOgpFrameWidth100(
-                              ogp.url ?? '',
-                              ogp.title ?? 'No Title',
-                              ogp.description ?? 'No Description',
-                              ogp.image ?? ''
-                            ),
-                          }}
-                        />
-                      ))}
+                    {p.ogps && !Array.isArray(p.ogps) && (
+                      <div
+                        className="ogp"
+                        dangerouslySetInnerHTML={{
+                          __html: UseOgpFrameWidth100(
+                            p.ogps.url ?? '',
+                            p.ogps.title ?? 'No Title',
+                            p.ogps.description ?? 'No Description',
+                            p.ogps.image ?? ''
+                          ),
+                        }}
+                      />
+                    )}
                   </div>
                   {/* 投稿画像 */}
                   {images.length > 0 && (
