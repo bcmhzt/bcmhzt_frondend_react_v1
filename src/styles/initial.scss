@@ -136,37 +136,55 @@ body {
   }
 
   .mesage-container {
-  position: fixed;
-  top: 20px;
-  left: 5%;
-  right: 5%;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-
-  .message-style {
-    position: relative;
-    padding: 10px 16px;
-    border-radius: 4px;
-    color: #fff;
-    box-shadow: #333;
+    position: fixed;
+    top: 20px;
+    left: 5%;
+    right: 5%;
+    z-index: 9999;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column;
+    gap: 8px;
 
-    /* フェードイン/アウト用初期状態 */
-    opacity: 0;               /* 透明に */
-    transform: translateY(-10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    .message-style {
+      position: relative;
+      padding: 10px 16px;
+      border-radius: 4px;
+      color: #fff;
+      box-shadow: #333;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
 
-    /* "show" クラスでフェードイン */
-    &.show {
-      opacity: 0.9;
-      transform: translateY(0);
+      /* フェードイン/アウト用初期状態 */
+      opacity: 0;               /* 透明に */
+      transform: translateY(-10px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+
+      /* "show" クラスでフェードイン */
+      &.show {
+        opacity: 0.9;
+        transform: translateY(0);
+      }
     }
   }
-}
+
+  .ogps {
+    .ogp {
+      .ogp-item {
+        background: #ffd700;
+        border: #000 solid 5px;
+        .image {
+          img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 2px;
+          }
+        }
+        .text {background: #ffd700;}
+      }
+    }
+  }
 }
 
 /** main color */

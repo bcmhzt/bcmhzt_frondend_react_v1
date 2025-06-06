@@ -13,7 +13,8 @@ import {
   buildStorageUrl,
   buildStoragePostImageUrl,
 } from '../../utility/GetUseImage';
-import { convertFormattedText } from '../../utility/GetCommonFunctions';
+import { UseOgpFrameWidth100 } from '../../utility/UseOgpFrame';
+// import { convertFormattedText } from '../../utility/GetCommonFunctions';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -29,6 +30,7 @@ interface OGPData {
 }
 
 export interface PostData {
+  id: string;
   post_id: number;
   uid: string;
   bcuid: string;
@@ -40,7 +42,7 @@ export interface PostData {
   post_images: string | null;
   created_at: string;
   reply_count?: number;
-  ogp?: OGPData | null;
+  ogps?: OGPData | null;
 }
 
 interface PostsPage {
@@ -223,13 +225,14 @@ const PostList: React.FC = () => {
 
           return (
             <>
-              {/* <pre>{JSON.stringify(p, null, 2)}</pre> */}
+              <pre>{JSON.stringify(p, null, 2)}</pre>
               <div
                 key={p.post_id}
                 className="post-thread"
                 ref={idx === posts.length - 1 ? lastItemRef : null}
               >
                 <div className="post-thread-header d-flex align-items-center">
+                  {/* プロフィール画像 */}
                   <div className="avatar-section">
                     <Link to={`/member/${p.bcuid}`}>
                       <img
@@ -250,6 +253,7 @@ const PostList: React.FC = () => {
                     </Link>
                   </div>
                   <div className="nickname-section">
+                    {/* メンバー情報 */}
                     <div className="nickname">
                       {p.nickname}
                       <span className="bcuid">@{p.bcuid} </span>
@@ -262,11 +266,31 @@ const PostList: React.FC = () => {
                 </div>
 
                 <div className="post-thread-body">
+                  {/* 投稿テキスト */}
                   <p
                     dangerouslySetInnerHTML={{
-                      __html: convertFormattedText(p?.post ?? ''),
+                      __html: p?.post ?? '',
                     }}
                   />
+                  {/* OGP */}
+                  <div className="ogps">
+                    {p.ogps &&
+                      Array.isArray(p.ogps) &&
+                      p.ogps.length > 0 &&
+                      p.ogps.map((ogp, i) => (
+                        <div
+                          className="ogp"
+                          dangerouslySetInnerHTML={{
+                            __html: UseOgpFrameWidth100(
+                              ogp.url ?? '',
+                              ogp.title ?? 'No Title',
+                              ogp.description ?? 'No Description',
+                              ogp.image ?? ''
+                            ),
+                          }}
+                        />
+                      ))}
+                  </div>
                   {/* 投稿画像 */}
                   {images.length > 0 && (
                     <div className="">
