@@ -13,6 +13,7 @@ import Dashboard from "./pages/Dashboard";
 import Members from "./pages/members/Members";
 import MemberDetail from "./pages/members/MemberDetail";
 import Posts from "./pages/posts/Posts";
+import PostDetail from "./pages/posts/PostDetail"
 import Notice from "./pages/notice/Notice";
 import Messages from "./pages/messages/Messages"
 import LoopTutorial from "./pages/develop/LoopTutorial";
@@ -64,6 +65,7 @@ const routes: RoutesObject = {
     { path: "/members", component: Members },
     { path: "/member/:bcuid", component: MemberDetail },
     { path: "/posts", component: Posts },
+    { path: "/post/:post_id", component: PostDetail },
     { path: "/notice", component: Notice },
     { path: "/messages", component: Messages },
     { path: "/loop_tutorial", component: LoopTutorial },

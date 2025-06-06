@@ -171,8 +171,9 @@ body {
   .ogps {
     .ogp {
       .ogp-item {
-        background: #ffd700;
-        border: #000 solid 5px;
+        // background: #ffd700;
+        border: #888 solid 1px;
+        margin-bottom: 10px;
         .image {
           img {
             width: 100px;
@@ -181,7 +182,14 @@ body {
             border-radius: 2px;
           }
         }
-        .text {background: #ffd700;}
+        .text {
+          .title {
+            margin-top: 7px;
+          }
+          .description {
+            font-size: 12px;
+          }
+        }
       }
     }
   }

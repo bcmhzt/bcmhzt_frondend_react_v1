@@ -14,7 +14,16 @@ import {
   buildStoragePostImageUrl,
 } from '../../utility/GetUseImage';
 import { UseOgpFrameWidth100 } from '../../utility/UseOgpFrame';
-// import { convertFormattedText } from '../../utility/GetCommonFunctions';
+import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
+import PostLike from '../../components/posts/PostLike';
+import {
+  // PersonWalking,
+  // PersonStanding,
+  // PersonStandingDress,
+  ThreeDotsVertical,
+  BookmarkFill,
+  ChatRightDotsFill,
+} from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -40,8 +49,9 @@ export interface PostData {
   profile_images: string | null;
   post: string;
   post_images: string | null;
-  created_at: string;
-  reply_count?: number;
+  // created_at: string;
+  post_updated_at: string;
+  replies_count?: number;
   ogps?: OGPData | null;
 }
 
@@ -149,26 +159,6 @@ const PostList: React.FC = () => {
     setSearchKeyword('');
   };
 
-  /** 本文中 URL のリンク化 */
-  // const renderWithLinks = (text: string) => {
-  //   const urlRegex = /(https?:\/\/[^\s]+)/g;
-  //   return text.split(urlRegex).map((part, i) =>
-  //     urlRegex.test(part) ? (
-  //       <a
-  //         key={i}
-  //         href={part}
-  //         target="_blank"
-  //         rel="noopener noreferrer"
-  //         style={{ color: '#457B9D', textDecoration: 'underline' }}
-  //       >
-  //         {part.length > 30 ? `${part.slice(0, 30)}…` : part}
-  //       </a>
-  //     ) : (
-  //       <span key={i}>{part}</span>
-  //     )
-  //   );
-  // };
-
   /** ロード & エラー */
   if (isLoading) return null; // グローバルローディングに任せる
 
@@ -225,7 +215,7 @@ const PostList: React.FC = () => {
 
           return (
             <>
-              <pre>{JSON.stringify(p, null, 2)}</pre>
+              {/* <pre>{JSON.stringify(p, null, 2)}</pre> */}
               <div
                 key={p.post_id}
                 className="post-thread"
@@ -274,19 +264,35 @@ const PostList: React.FC = () => {
                   />
                   {/* OGP */}
                   <div className="ogps">
-                    {p.ogps && !Array.isArray(p.ogps) && (
-                      <div
-                        className="ogp"
-                        dangerouslySetInnerHTML={{
-                          __html: UseOgpFrameWidth100(
-                            p.ogps.url ?? '',
-                            p.ogps.title ?? 'No Title',
-                            p.ogps.description ?? 'No Description',
-                            p.ogps.image ?? ''
-                          ),
-                        }}
-                      />
-                    )}
+                    {p.ogps &&
+                      Array.isArray(p.ogps) &&
+                      p.ogps.length > 0 &&
+                      p.ogps
+                        // 重複排除（全プロパティが同じもののみユニーク化）
+                        .filter(
+                          (ogp, idx, arr) =>
+                            arr.findIndex(
+                              (o) =>
+                                o.url === ogp.url &&
+                                o.title === ogp.title &&
+                                o.description === ogp.description &&
+                                o.image === ogp.image
+                            ) === idx
+                        )
+                        .map((ogp, i) => (
+                          <div
+                            className="ogp"
+                            dangerouslySetInnerHTML={{
+                              __html: UseOgpFrameWidth100(
+                                ogp.url ?? '',
+                                ogp.title ?? 'No Title',
+                                ogp.description ?? 'No Description',
+                                ogp.image ?? ''
+                              ),
+                            }}
+                            key={i}
+                          />
+                        ))}
                   </div>
                   {/* 投稿画像 */}
                   {images.length > 0 && (
@@ -306,74 +312,52 @@ const PostList: React.FC = () => {
                       )}
                     </div>
                   )}
-                  <div></div>
-                  {p.created_at}{' '}
-                  <Link to={`/post/${p.post_id}`} className="post-link">
-                    No.{p.post_id}
-                  </Link>
-                </div>
-
-                {/* ─── 投稿本文 ─── */}
-                <div className="post-thread-body">
-                  {/* OGP */}
-                  {/* {p.ogp && (
-                    <div className="opg-info">
-                      <a
-                        href={p.ogp.url ?? '#'}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <div className="opg-image-block">
-                          <img
-                            src={p.ogp.image || '/assets/dummy/1200x630.png'}
-                            alt={p.ogp.title ?? ''}
-                            className="opg-image"
-                          />
-                        </div>
-                        <div className="opg-details-block">
-                          <div className="opg-title">{p.ogp.title}</div>
-                          <div className="opg-description">
-                            {p.ogp.description}
-                          </div>
-                        </div>
-                      </a>
-                    </div>
-                  )} */}
-
-                  {/* フッターツール */}
-                  <div className="footer-tools mt10">
-                    {/* <div className="ftool heart">
-                      <Heart style={{ fontSize: '18px' }} />{' '}
-                      <span className="bcsum">9999</span>
-                    </div>
-                    <div className="ftool bookmark">
-                      <Bookmark style={{ fontSize: '18px' }} />{' '}
-                      <span className="bcsum">9999</span>
-                    </div> */}
-                    {/* <div className="ftool reply">
-                    <ReplyBoard postId={p.post_id} />{' '}
-                    <span className="bcsum">{p.reply_count ?? 0}</span>
+                  {/* 日付・post ID */}
+                  <div className="date-link">
+                    {convertUtcToTimeZone(p.post_updated_at, 'JST')}{' '}
+                    <Link to={`/post/${p.post_id}`} className="post-link">
+                      No.{p.post_id}
+                    </Link>
                   </div>
-                  <div className="ftool">
-                    <PostUserMenu post_id={p.post_id} bcuid={p.bcuid} />
-                  </div> */}
+                </div>
+                <div className="post-thread-footer">
+                  <PostLike />
+                  {/* 返信 */}
+                  <div className="replay-button">
+                    <Link to={`/post/${p.post_id}`}>
+                      <ChatRightDotsFill
+                        style={{
+                          fontSize: '23px',
+                          color:
+                            (p.replies_count ?? 0) > 0 ? '#666' : '#c1c1c1c1',
+                          verticalAlign: 'middle',
+                        }}
+                      />
+                    </Link>
+                    {/* <span className="badge bg-dark ms-1"> */}
+                    <span className="badge bg-secondary ms-1">
+                      {p.replies_count ?? 0}
+                    </span>
+                  </div>
+                  {/* ブックマーク */}
+                  <div className="me-2">
+                    <BookmarkFill
+                      style={{
+                        fontSize: '20px',
+                        color: '#c1c1c1c1',
+                        verticalAlign: 'middle',
+                      }}
+                    />
+                    <span className="badge bg-secondary ms-1">99</span>
+                  </div>
+                  <div className="post-tooles-button">
+                    <ThreeDotsVertical style={{ fontSize: '20px' }} />
                   </div>
                 </div>
               </div>
             </>
           );
         })}
-
-        {/* 次ページ取得インジケーター */}
-        {/* {isFetchingNextPage && (
-          <div style={{ textAlign: 'center', margin: '20px 0' }}>
-            <img
-              src="/assets/icons/loading-posts.gif"
-              alt="Loading..."
-              style={{ width: 50, height: 50 }}
-            />
-          </div>
-        )} */}
 
         {/* 末尾 */}
         {!hasNextPage && (

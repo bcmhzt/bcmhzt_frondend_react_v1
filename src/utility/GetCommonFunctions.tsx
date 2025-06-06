@@ -115,3 +115,50 @@ export function chageAgeRange(age: number | null | undefined): string {
     return '不明';
   }
 }
+
+/**
+ * UTCからJSTなどのタイムゾーンに変換する
+ * @param utcDate 例: "2025-06-05 20:26:53"
+ * @param timeZone タイムゾーン名 (例: "Asia/Tokyo")
+ *
+ *
+ * JST: Asia/Tokyo (日本標準時 UTC+9)
+ * CET: Europe/Berlin ドイツ標準時（UTC+1）
+ * CET: Europe/Paris フランス標準時（UTC+1）
+ * CST: Asia/Shanghai 中国標準時（UTC+8）
+ * GMT: Europe/London イギリス標準時（UTC+0）
+ * EST: America/New_York アメリカ東部標準時（UTC-5）
+ * など
+ */
+export function convertUtcToTimeZone(
+  utcDate: string, //"2025-06-05 20:26:53"
+  timeZone: string // JST
+): string {
+  // 文字列を "YYYY-MM-DD HH:mm:ss" から "YYYY-MM-DDTHH:mm:ssZ" に変換してUTCとして解釈
+  const utcDateString = utcDate.replace(' ', 'T') + 'Z';
+  const date = new Date(utcDateString);
+  const options: Intl.DateTimeFormatOptions = {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    // second: '2-digit',
+    hour12: false,
+    timeZone,
+  };
+  let formatted = date
+    .toLocaleString('ja-JP', options)
+    .replace(/\//g, '-')
+    .replace(
+      /(\d{4})-(\d{2})-(\d{2})\s*(\d{2}):(\d{2}):(\d{2})/,
+      '$1-$2-$3 $4:$5'
+    );
+  // Safari等で区切りが異なる場合の対応
+  return formatted.replace(' ', 'T').replace('T', ' ');
+}
+/**
+ * UTCからJSTに変換する
+ * @param utcDate 例: "2025-06-05 20:26:53"
+ * @returns JSTの日時文字列
+ */
