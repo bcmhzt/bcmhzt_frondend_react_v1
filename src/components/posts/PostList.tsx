@@ -321,7 +321,8 @@ const PostList: React.FC = () => {
                   </div>
                 </div>
                 <div className="post-thread-footer">
-                  <PostLike />
+                  {/* いいね */}
+                  <PostLike key={p.post_id} item={p} />
                   {/* 返信 */}
                   <div className="replay-button">
                     <Link to={`/post/${p.post_id}`}>

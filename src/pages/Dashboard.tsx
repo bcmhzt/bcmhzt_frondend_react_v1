@@ -50,7 +50,7 @@ const Dashboard = () => {
             <ILikedCardLimit />
             <BcmhztLinkCollections />
           </div>
-          <div className="d-none d-md-block col-md-6 bc-right">
+          <div className="col-12 col-md-6 bc-right dashboard">
             <ReferralEntries />
             <p>bar</p>
           </div>
