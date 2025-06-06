@@ -4,13 +4,16 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
-
-import { Search, Heart, Bookmark } from 'react-bootstrap-icons';
+import { Search } from 'react-bootstrap-icons';
 // import ReplyBoard from '../ReplyBoard';
 // import PostUserMenu from '../PostUserMenu';
 // import DOMPurify from 'dompurify';
 import GetGenderIcon from '../commons/GetGenderIcon';
-import { buildStorageUrl } from '../../utility/GetUseImage';
+import {
+  buildStorageUrl,
+  buildStoragePostImageUrl,
+} from '../../utility/GetUseImage';
+import { convertFormattedText } from '../../utility/GetCommonFunctions';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -208,7 +211,7 @@ const PostList: React.FC = () => {
       {/* <pre>{JSON.stringify(res.data, null, 2)}</pre> */}
 
       {/* ─── 投稿一覧 ──────────────────────────────────────────── */}
-      <div className="post mb100">
+      <div className="posts mb100">
         {posts.map((p, idx) => {
           let images: string[] = [];
           try {
@@ -219,126 +222,124 @@ const PostList: React.FC = () => {
           }
 
           return (
-            <div
-              key={p.post_id}
-              className="post-thread"
-              ref={idx === posts.length - 1 ? lastItemRef : null}
-            >
-              {/* ─── ユーザーアバター ─── */}
-              <Link to={`/member/${p.uid}`}>
-                <img
-                  className="post-master-avatar"
-                  src={
-                    buildStorageUrl(
-                      storageUrl,
-                      p.profile_images ?? '',
-                      '_small'
-                    ) || '/assets/dummy-user.png'
-                  }
-                  alt={p.bcuid}
-                  onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).src =
-                      '/assets/dummy-user.png';
-                  }}
-                />
-              </Link>
-
-              {/* ─── 投稿本文 ─── */}
-              <div className="post-thread-body">
-                <p className="nick-name">
-                  {p.nickname}
-                  <span className="bcuid"> @ {p.bcuid}</span>
-                  <GetGenderIcon genderId={p.gender ?? ''} />
-                  <span className="location"> [{p.location || '不明'}]</span>
-                </p>
-                <p className="post-meta">
-                  <span className="post-meta-detail">
-                    {p.created_at}{' '}
-                    <Link to={`/post/${p.post_id}`} className="post-link">
-                      No.{p.post_id}
+            <>
+              {/* <pre>{JSON.stringify(p, null, 2)}</pre> */}
+              <div
+                key={p.post_id}
+                className="post-thread"
+                ref={idx === posts.length - 1 ? lastItemRef : null}
+              >
+                <div className="post-thread-header d-flex align-items-center">
+                  <div className="avatar-section">
+                    <Link to={`/member/${p.bcuid}`}>
+                      <img
+                        className="avatar-64"
+                        src={
+                          buildStorageUrl(
+                            storageUrl,
+                            p.profile_images ?? '',
+                            '_thumbnail'
+                          ) || '/assets/images/dummy/dummy_avatar.png'
+                        }
+                        alt={p.bcuid}
+                        onError={(e) => {
+                          (e.currentTarget as HTMLImageElement).src =
+                            '/assets/images/dummy/dummy_avatar.png';
+                        }}
+                      />
                     </Link>
-                  </span>
-                </p>
-
-                {/* 画像 */}
-                {images.length > 0 && (
-                  <div className="pt10 pb10">
-                    {images.length > 0 && (
-                      <div className="pt10 pb10">
-                        {images.map((img, i) => (
-                          <Link to="" key={i}>
-                            <img
-                              src={img}
-                              alt={`img-${i}`}
-                              className="img-fluid"
-                            />
-                          </Link>
-                        ))}
-                      </div>
-                    )}
                   </div>
-                )}
+                  <div className="nickname-section">
+                    <div className="nickname">
+                      {p.nickname}
+                      <span className="bcuid">@{p.bcuid} </span>
+                    </div>
+                    <div className="gender">
+                      <GetGenderIcon genderId={p.gender ?? ''} />　
+                      {p.location || '不明'}
+                    </div>
+                  </div>
+                </div>
 
-                {/* テキスト */}
-                {/* <p className="bctext mt10">
-                  {DOMPurify.sanitize(p.post)
-                    .split('\n')
-                    .map((line, i) => (
-                      <React.Fragment key={i}>
-                        {renderWithLinks(line)}
-                        <br />
-                      </React.Fragment>
-                    ))}
-                </p> */}
-                <p className="post-read-more">
-                  <Link to={`/post/${p.post_id}`}>...続きを読む</Link>
-                </p>
-
-                {/* OGP */}
-                {p.ogp && (
-                  <div className="opg-info">
-                    <a
-                      href={p.ogp.url ?? '#'}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <div className="opg-image-block">
-                        <img
-                          src={p.ogp.image || '/assets/dummy/1200x630.png'}
-                          alt={p.ogp.title ?? ''}
-                          className="opg-image"
-                        />
-                      </div>
-                      <div className="opg-details-block">
-                        <div className="opg-title">{p.ogp.title}</div>
-                        <div className="opg-description">
-                          {p.ogp.description}
+                <div className="post-thread-body">
+                  <p
+                    dangerouslySetInnerHTML={{
+                      __html: convertFormattedText(p?.post ?? ''),
+                    }}
+                  />
+                  {/* 投稿画像 */}
+                  {images.length > 0 && (
+                    <div className="">
+                      {images.length > 0 && (
+                        <div className="">
+                          {images.map((img, i) => (
+                            <Link to="" key={i}>
+                              <img
+                                src={buildStoragePostImageUrl(img, '_medium')}
+                                alt={`img-${i}`}
+                                className="img-fluid"
+                              />
+                            </Link>
+                          ))}
                         </div>
-                      </div>
-                    </a>
-                  </div>
-                )}
+                      )}
+                    </div>
+                  )}
+                  <div></div>
+                  {p.created_at}{' '}
+                  <Link to={`/post/${p.post_id}`} className="post-link">
+                    No.{p.post_id}
+                  </Link>
+                </div>
 
-                {/* フッターツール */}
-                <div className="footer-tools mt10">
-                  <div className="ftool heart">
-                    <Heart style={{ fontSize: '18px' }} />{' '}
-                    <span className="bcsum">9999</span>
-                  </div>
-                  <div className="ftool bookmark">
-                    <Bookmark style={{ fontSize: '18px' }} />{' '}
-                    <span className="bcsum">9999</span>
-                  </div>
-                  {/* <div className="ftool reply">
+                {/* ─── 投稿本文 ─── */}
+                <div className="post-thread-body">
+                  {/* OGP */}
+                  {/* {p.ogp && (
+                    <div className="opg-info">
+                      <a
+                        href={p.ogp.url ?? '#'}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <div className="opg-image-block">
+                          <img
+                            src={p.ogp.image || '/assets/dummy/1200x630.png'}
+                            alt={p.ogp.title ?? ''}
+                            className="opg-image"
+                          />
+                        </div>
+                        <div className="opg-details-block">
+                          <div className="opg-title">{p.ogp.title}</div>
+                          <div className="opg-description">
+                            {p.ogp.description}
+                          </div>
+                        </div>
+                      </a>
+                    </div>
+                  )} */}
+
+                  {/* フッターツール */}
+                  <div className="footer-tools mt10">
+                    {/* <div className="ftool heart">
+                      <Heart style={{ fontSize: '18px' }} />{' '}
+                      <span className="bcsum">9999</span>
+                    </div>
+                    <div className="ftool bookmark">
+                      <Bookmark style={{ fontSize: '18px' }} />{' '}
+                      <span className="bcsum">9999</span>
+                    </div> */}
+                    {/* <div className="ftool reply">
                     <ReplyBoard postId={p.post_id} />{' '}
                     <span className="bcsum">{p.reply_count ?? 0}</span>
                   </div>
                   <div className="ftool">
                     <PostUserMenu post_id={p.post_id} bcuid={p.bcuid} />
                   </div> */}
+                  </div>
                 </div>
               </div>
-            </div>
+            </>
           );
         })}
 

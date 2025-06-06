@@ -35,3 +35,33 @@ export const buildStorageUrl = (url: string, path: string, suffix?: string) => {
   );
   return `${url}${path_suffix}?alt=media`;
 };
+
+/**
+ * 投稿(POST)画像のURLにsuffixを付与して返す
+ * @param originalUrl オリジナル画像のURL
+ * @param suffix 例: "_thumbnail", "_small"
+ * @returns suffix付き画像URL
+ */
+export const buildStoragePostImageUrl = (
+  originalUrl: string,
+  suffix: string
+): string => {
+  if (!originalUrl) return '';
+  try {
+    // URL とクエリを分離
+    const [basePath, query = ''] = originalUrl.split('?');
+
+    // パス末尾のファイル名 + 拡張子を置換
+    const convertedPath = basePath.replace(
+      /([^/]+?)(\.[a-zA-Z0-9]+)$/, // グループ1: ファイル名, グループ2: 拡張子
+      (_, fileName /* ext は捨てる */) => `${fileName}${suffix}.jpg`
+    );
+
+    // クエリを付け直して返却
+    return query ? `${convertedPath}?${query}` : convertedPath;
+  } catch (e) {
+    // 万一パース失敗しても元 URL を返す
+    console.error('[buildStoragePostImageUrl] invalid url:', originalUrl, e);
+    return originalUrl;
+  }
+};
