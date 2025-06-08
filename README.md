@@ -27,7 +27,7 @@ Version 4.9.5
 % npm cache clean --force
 % rm -f package-lock.json
 % rm -fR node_modules
-% npm install --legacy-peer-deps
+% --legacy-peer-deps
 % npm start
 ```
 
