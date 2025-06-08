@@ -22,31 +22,31 @@ jobs:
       REACT_APP_VAPID_KEY: BJrishZkvKcB5ZGorRCWry4NpuLSoR3mYK5pu6p7dsEpvNtpoLBE0aPWPQ-v8MNBCXLChjbdxog6SX4qgWtgVHY
     steps:
       - checkout
-      - run: "echo dev deploy!"
+      - run: 'echo dev deploy!'
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8"
-      - run: "sudo apt-get update && sudo apt-get install -y rsync"
+            - 'SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8'
+      - run: 'sudo apt-get update && sudo apt-get install -y rsync'
       - run:
-          name: "Clear npm cache"
-          command: "npm cache clean --force"
+          name: 'Clear npm cache'
+          command: 'npm cache clean --force'
       - run:
-          name: "Remove node_modules"
-          command: "rm -rf node_modules"
+          name: 'Remove node_modules'
+          command: 'rm -rf node_modules'
       - run:
-          name: "Install dependencies"
-          command: "npm install --legacy-peer-deps"
+          name: 'Install dependencies'
+          command: 'npm install --legacy-peer-deps'
       - run:
-          name: "Build React app with verbose output"
-          command: "npm run build --verbose"  # ここで詳細なログを取得
+          name: 'Build React app with verbose output'
+          command: 'npm run build --verbose' # ここで詳細なログを取得
       - run:
-          name: "Add SSH Host Key"
+          name: 'Add SSH Host Key'
           command: |
             mkdir -p ~/.ssh
             ssh-keyscan -p 2222 ssh.lolipop.jp >> ~/.ssh/known_hosts
             cat ~/.ssh/known_hosts
       - run:
-          name: "Move .htaccess for dev"
+          name: 'Move .htaccess for dev'
           command: mv ~/repo/htaccess.dev ~/repo/build/.htaccess
       - run:
           name: Deploy to server
@@ -70,31 +70,34 @@ jobs:
       REACT_APP_VAPID_KEY: BJrishZkvKcB5ZGorRCWry4NpuLSoR3mYK5pu6p7dsEpvNtpoLBE0aPWPQ-v8MNBCXLChjbdxog6SX4qgWtgVHY
     steps:
       - checkout
-      - run: "echo test deploy!"
+      - run: 'echo test deploy!'
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8"
-      - run: "sudo apt-get update && sudo apt-get install -y rsync"
+            - 'SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8'
+      - run: 'sudo apt-get update && sudo apt-get install -y rsync'
       - run:
-          name: "Clear npm cache"
-          command: "npm cache clean --force"
+          name: 'Clear npm cache'
+          command: 'npm cache clean --force'
       - run:
-          name: "Remove node_modules"
-          command: "rm -rf node_modules"
+          name: 'Remove node_modules'
+          command: 'rm -rf node_modules'
       - run:
-          name: "Install dependencies"
-          command: "npm install --legacy-peer-deps"
+          name: 'Install dependencies'
+          command: 'npm install --legacy-peer-deps'
       - run:
-          name: "Build React app with verbose output"
-          command: "npm run build --verbose"
+          name: 'Check PostBookmark.tsx exists'
+          command: 'ls -l src/components/posts/'
       - run:
-          name: "Add SSH Host Key"
+          name: 'Build React app with verbose output'
+          command: 'npm run build --verbose'
+      - run:
+          name: 'Add SSH Host Key'
           command: |
             mkdir -p ~/.ssh
             ssh-keyscan -p 2222 ssh.lolipop.jp >> ~/.ssh/known_hosts
             cat ~/.ssh/known_hosts
       - run:
-          name: "Move .htaccess for test"
+          name: 'Move .htaccess for test'
           command: mv ~/repo/htaccess.test ~/repo/build/.htaccess
       - run:
           name: Deploy to server
@@ -118,31 +121,31 @@ jobs:
       REACT_APP_VAPID_KEY: BJrishZkvKcB5ZGorRCWry4NpuLSoR3mYK5pu6p7dsEpvNtpoLBE0aPWPQ-v8MNBCXLChjbdxog6SX4qgWtgVHY
     steps:
       - checkout
-      - run: "echo prod deploy!"
+      - run: 'echo prod deploy!'
       - add_ssh_keys:
           fingerprints:
-            - "SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8"
-      - run: "sudo apt-get update && sudo apt-get install -y rsync"
+            - 'SHA256:Qrff7b7pFC1ydF6pYcxIafXjgtVrwVnco/reQmQa+p8'
+      - run: 'sudo apt-get update && sudo apt-get install -y rsync'
       - run:
-          name: "Clear npm cache"
-          command: "npm cache clean --force"
+          name: 'Clear npm cache'
+          command: 'npm cache clean --force'
       - run:
-          name: "Remove node_modules"
-          command: "rm -rf node_modules"
+          name: 'Remove node_modules'
+          command: 'rm -rf node_modules'
       - run:
-          name: "Install dependencies"
-          command: "npm install --legacy-peer-deps"
+          name: 'Install dependencies'
+          command: 'npm install --legacy-peer-deps'
       - run:
-          name: "Build React app with verbose output"
-          command: "npm run build --verbose"
+          name: 'Build React app with verbose output'
+          command: 'npm run build --verbose'
       - run:
-          name: "Add SSH Host Key"
+          name: 'Add SSH Host Key'
           command: |
             mkdir -p ~/.ssh
             ssh-keyscan -p 2222 ssh.lolipop.jp >> ~/.ssh/known_hosts
             cat ~/.ssh/known_hosts
       - run:
-          name: "Move .htaccess for prod"
+          name: 'Move .htaccess for prod'
           command: mv ~/repo/htaccess.main ~/repo/build/.htaccess
       - run:
           name: Deploy to server
