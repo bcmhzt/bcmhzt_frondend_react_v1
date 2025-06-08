@@ -13,7 +13,7 @@ import {
 import { UseOgpFrameWidth100 } from '../../utility/UseOgpFrame';
 import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
 import PostLike from '../../components/posts/PostLike';
-import PostBookmark from '../../components/posts/PostBookmark';
+import PostBookmark from './PostBookmark';
 import PostCreateForm from '../../components/posts/PostCreateForm';
 import { useQueryClient } from '@tanstack/react-query';
 import { ThreeDotsVertical, ChatRightDotsFill } from 'react-bootstrap-icons';

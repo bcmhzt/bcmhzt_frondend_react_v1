@@ -5,7 +5,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { buildStorageUrl } from '../../utility/GetUseImage';
-import PostBookmark from '../../components/posts/PostBookmark';
+import PostBookmark from './PostBookmark';
 
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
