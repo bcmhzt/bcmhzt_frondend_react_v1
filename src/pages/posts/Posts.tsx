@@ -1,7 +1,9 @@
 /**  */
+import React from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PostList from '../../components/posts/PostList';
+import PostIndexHeader from './PostIndexHeader';
 
 const Posts = () => {
   return (
@@ -9,7 +11,11 @@ const Posts = () => {
       <Header />
       <div className="container bc-app">
         <div className="row">
-          <div className="col-12 col-md-6 bc-left">
+          <div
+            className="col-12 col-md-6 bc-left"
+            style={{ position: 'relative' }}
+          >
+            <PostIndexHeader page={window.location.pathname} />
             <PostList />
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">

@@ -601,3 +601,19 @@ h6 { font-size: 24px; color: #444; }
 .fs39 { font-size: 39px; }
 .fs40 { font-size: 40px; }
 
+.skeleton-image {
+  background: #e0e0e0;
+  position: relative;
+  overflow: hidden;
+}
+.shimmer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.6) 50%, transparent 100%);
+  animation: shimmer 1.4s infinite;
+}
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}

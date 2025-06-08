@@ -46,3 +46,44 @@
     }
   }
 }
+
+.post-index-header {
+  // background: #00d7ff;
+  .pih {
+    border-left: #888 1px solid;
+    border-top: #888 1px solid;
+    border-bottom: #888 1px solid;
+    width: 100%;
+    padding: 2px;
+    text-align: center;
+    background: #f1f1f1;
+    font-size: 10px;;
+    a {
+      color: #888;
+    }
+  }
+  .pih:first-child {
+    border-radius: 5px 0px 0px 5px;
+  }
+  .pih:last-child {
+    border-right: #888 1px solid;
+    border-radius: 0px 5px 5px 0px;
+  }
+  .active {
+    background: #fff;
+    color: #333;
+  }
+  .pih-bookmark{}
+  .pih-like {}
+  .pih-reply {}
+  .pih-media {}
+}
+
+.post-create-form {
+  position: fixed;
+  right: 30px;
+  bottom: 100px;
+}
+.post-create-form-add-btn {
+
+}

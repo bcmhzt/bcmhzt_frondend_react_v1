@@ -1,13 +1,10 @@
 /** 24e462cd */
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { Search } from 'react-bootstrap-icons';
-// import ReplyBoard from '../ReplyBoard';
-// import PostUserMenu from '../PostUserMenu';
-// import DOMPurify from 'dompurify';
 import GetGenderIcon from '../commons/GetGenderIcon';
 import {
   buildStorageUrl,
@@ -16,14 +13,11 @@ import {
 import { UseOgpFrameWidth100 } from '../../utility/UseOgpFrame';
 import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
 import PostLike from '../../components/posts/PostLike';
-import {
-  // PersonWalking,
-  // PersonStanding,
-  // PersonStandingDress,
-  ThreeDotsVertical,
-  BookmarkFill,
-  ChatRightDotsFill,
-} from 'react-bootstrap-icons';
+import PostBookmark from '../../components/posts/PostBookmark';
+import PostCreateForm from '../../components/posts/PostCreateForm';
+import { useQueryClient } from '@tanstack/react-query';
+import { ThreeDotsVertical, ChatRightDotsFill } from 'react-bootstrap-icons';
+import SkeletonImage from './SkeletonImage';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -91,6 +85,49 @@ const fetchPosts = async (
   return res.data as PostListResponse;
 };
 
+const PostImageWithLoader: React.FC<{
+  src: string;
+  alt: string;
+  className?: string;
+  width?: number;
+  height?: number;
+}> = ({ src, alt, className, width = 120, height = 120 }) => {
+  const [loaded, setLoaded] = useState(false);
+  const [retry, setRetry] = useState(0);
+
+  useEffect(() => {
+    setLoaded(false);
+    setRetry(0);
+  }, [src]);
+
+  return (
+    <>
+      {!loaded && <SkeletonImage width={width} height={height} />}
+      <img
+        key={retry}
+        src={src}
+        alt={alt}
+        className={className}
+        style={{
+          display: loaded ? 'block' : 'none',
+          width: '100%',
+          height: 'auto',
+          objectFit: 'cover',
+          borderRadius: 3,
+        }}
+        onLoad={() => setLoaded(true)}
+        onError={() => {
+          if (retry < 3) {
+            setTimeout(() => {
+              setRetry((r) => r + 1);
+            }, 1000);
+          }
+        }}
+      />
+    </>
+  );
+};
+
 /**
  * 24e462cd
  * [src/components/members/Memberlist.tsx:xx]
@@ -108,6 +145,7 @@ const PostList: React.FC = () => {
   const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL ?? '';
   const [inputKeyword, setInputKeyword] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
+  const queryClient = useQueryClient();
 
   const {
     data,
@@ -170,8 +208,38 @@ const PostList: React.FC = () => {
     );
   }
 
+  function handlePostSuccess(newPost: any): void {
+    const now = new Date().toISOString();
+    // サーバー返却と同じ型に合わせる
+    const optimisticPost = {
+      post_updated_at: now,
+      replies_count: 0,
+      ...newPost,
+      post_images: Array.isArray(newPost.post_images)
+        ? JSON.stringify(newPost.post_images)
+        : newPost.post_images,
+    };
+    queryClient.setQueryData(['posts', token, searchKeyword], (old: any) => {
+      if (!old) return old;
+      return {
+        ...old,
+        pages: [
+          {
+            ...old.pages[0],
+            data: {
+              ...old.pages[0].data,
+              data: [optimisticPost, ...old.pages[0].data.data],
+            },
+          },
+          ...old.pages.slice(1),
+        ],
+      };
+    });
+  }
+
   return (
     <>
+      <PostCreateForm onPostSuccess={handlePostSuccess} />
       <div className="col-12">
         <div className="input-group mb20">
           <input
@@ -259,7 +327,7 @@ const PostList: React.FC = () => {
                   {/* 投稿テキスト */}
                   <p
                     dangerouslySetInnerHTML={{
-                      __html: p?.post ?? '',
+                      __html: (p?.post ?? '').replace(/\n/g, '<br />'),
                     }}
                   />
                   {/* OGP */}
@@ -301,11 +369,32 @@ const PostList: React.FC = () => {
                         <div className="">
                           {images.map((img, i) => (
                             <Link to="" key={i}>
-                              <img
+                              <PostImageWithLoader
                                 src={buildStoragePostImageUrl(img, '_medium')}
                                 alt={`img-${i}`}
                                 className="img-fluid"
                               />
+                              {/* <img
+                                src={buildStoragePostImageUrl(img, '_medium')}
+                                alt={`img-${i}`}
+                                className="img-fluid"
+                                onError={(e) => {
+                                  const target = e.currentTarget;
+                                  if (!target.dataset.retry)
+                                    target.dataset.retry = '0'; // ← stringに
+                                  if (Number(target.dataset.retry) < 3) {
+                                    setTimeout(() => {
+                                      target.dataset.retry = String(
+                                        Number(target.dataset.retry) + 1
+                                      ); // ← stringに
+                                      target.src = buildStoragePostImageUrl(
+                                        img,
+                                        '_medium'
+                                      );
+                                    }, 1000);
+                                  }
+                                }}
+                              /> */}
                             </Link>
                           ))}
                         </div>
@@ -314,7 +403,9 @@ const PostList: React.FC = () => {
                   )}
                   {/* 日付・post ID */}
                   <div className="date-link">
-                    {convertUtcToTimeZone(p.post_updated_at, 'JST')}{' '}
+                    {p.post_updated_at
+                      ? convertUtcToTimeZone(p.post_updated_at, 'JST')
+                      : ''}
                     <Link to={`/post/${p.post_id}`} className="post-link">
                       No.{p.post_id}
                     </Link>
@@ -342,14 +433,7 @@ const PostList: React.FC = () => {
                   </div>
                   {/* ブックマーク */}
                   <div className="me-2">
-                    <BookmarkFill
-                      style={{
-                        fontSize: '20px',
-                        color: '#c1c1c1c1',
-                        verticalAlign: 'middle',
-                      }}
-                    />
-                    <span className="badge bg-secondary ms-1">99</span>
+                    <PostBookmark key={p.post_id} item={p} />
                   </div>
                   <div className="post-tooles-button">
                     <ThreeDotsVertical style={{ fontSize: '20px' }} />

@@ -10,6 +10,7 @@ export function getGenderJp(genderId: string): string {
  * 20,30,40という文字列を20代, 30代, 40代という文字列に変換する
  */
 export function getAgeRangeJp(ageRange: string): string {
+  if (!ageRange) return '—';
   if (ageRange.includes(',')) {
     return ageRange
       .split(',')
