@@ -1,12 +1,24 @@
-import React, { useRef } from 'react';
+import {
+  useInfiniteQuery,
+  useQueryClient,
+  useMutation,
+} from '@tanstack/react-query';
+import React, { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 // import PostCard from './PostCard';
 import { PostData } from '../../types/post';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import GetGenderIcon from '../commons/GetGenderIcon';
+import { Send } from 'react-bootstrap-icons';
+import { useMessage } from '../../contexts/MessageContext';
+
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log('[src/components/posts/PostReplyList.tsx:xx] debug:', debug);
+}
 
 interface PostReplyListProps {
   id: number;
@@ -45,14 +57,18 @@ const fetchReplies = async (
 };
 
 const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
-  const { token } = useAuth();
+  const { token, currentUser, currentUserProfile } = useAuth();
+  const queryClient = useQueryClient();
+  const [replyText, setReplyText] = useState('');
+  const [replyTextCount, setReplyTextCount] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
+  const { showMessage } = useMessage();
 
   const {
     data,
     isLoading,
-    isError,
-    error,
+    // isError,
+    // error,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
@@ -67,6 +83,77 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
     },
     retry: 1,
     initialPageParam: 1,
+  });
+
+  const replyMutation = useMutation({
+    mutationFn: async () => {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_ENDPOINT}/v1/create/reply`,
+        {
+          post_id: id,
+          uid: currentUser?.uid,
+          post: replyText.trim(),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      return response.data;
+    },
+    onMutate: async () => {
+      // 楽観的更新のために既存のキャッシュデータを取得
+      const previousReplies = queryClient.getQueryData(['replies', id]);
+
+      // 楽観的に新しい返信を追加
+      queryClient.setQueryData(['replies', id], (old: any) => {
+        if (!old?.pages?.[0]) return old;
+
+        const optimisticReply = {
+          post_id: 'temp-' + new Date().getTime(),
+          reply_id: 'temp-' + new Date().getTime(),
+          post: replyText,
+          created_at: new Date().toISOString(),
+          profile_images: currentUserProfile?.profile_images,
+          nickname: currentUserProfile?.nickname,
+          bcuid: currentUserProfile?.bcuid,
+          gender: currentUserProfile?.gender,
+          location: currentUserProfile?.location,
+          isOptimistic: true,
+        };
+
+        const newPages = [...old.pages];
+        newPages[0] = {
+          ...newPages[0],
+          data: {
+            ...newPages[0].data,
+            replies: {
+              ...newPages[0].data.replies,
+              data: [optimisticReply, ...newPages[0].data.replies.data],
+            },
+          },
+        };
+
+        return { ...old, pages: newPages };
+      });
+
+      return { previousReplies };
+    },
+    onError: (err, variables, context) => {
+      // エラー時は以前のデータに戻す
+      if (context?.previousReplies) {
+        queryClient.setQueryData(['replies', id], context.previousReplies);
+      }
+      alert('返信の投稿に失敗しました');
+    },
+    onSuccess: () => {
+      setReplyText(''); // フォームをクリア
+      setReplyTextCount(0);
+      showMessage('Replyが投稿されました。', 'success', 3000); // 必要なら
+    },
+    onSettled: () => {
+      // 成功・失敗にかかわらずデータを再取得
+      queryClient.invalidateQueries({ queryKey: ['replies', id] });
+    },
   });
 
   const lastItemRef = React.useCallback(
@@ -99,32 +186,120 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
     );
   }
 
-  if (replies.length === 0) {
-    return (
-      <div className="alert alert-secondary mt30">
-        この投稿にはまだ返信がありません。
-      </div>
-    );
-  }
+  // const handleReplySubmit = async () => {
+  //   // ここに返信投稿のロジックを追加
+  //   const replyText = (
+  //     document.querySelector('.reply-form-textarea') as HTMLTextAreaElement
+  //   )?.value;
 
-  if (isError) {
-    return (
-      <div className="alert alert-danger mt30">
-        エラーが発生しました: {error.message}
-      </div>
-    );
-  }
+  //   if (!replyText || replyText.trim() === '') {
+  //     alert('返信内容を入力してください。');
+  //     return;
+  //   }
+
+  //   try {
+  //     const response = await axios.post(
+  //       `${process.env.REACT_APP_API_ENDPOINT}/v1/create/reply`,
+  //       {
+  //         post_id: id,
+  //         uid: token, // Assuming `token` is the user's UID
+  //         post: replyText.trim(),
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     if (response.data.success) {
+  //       alert('返信が投稿されました。');
+  //       // Optionally clear the textarea after successful submission
+  //       (
+  //         document.querySelector('.reply-form-textarea') as HTMLTextAreaElement
+  //       ).value = '';
+  //     } else {
+  //       alert(`返信の投稿に失敗しました: ${response.data.message}`);
+  //     }
+  //   } catch (error) {
+  //     console.error('返信の投稿中にエラーが発生しました:', error);
+  //     alert('返信の投稿中にエラーが発生しました。');
+  //   }
+  //   if (debug === 'true') {
+  //     console.log(
+  //       '[src/components/posts/PostReplyList.tsx:xx] handleReplySubmit:'
+  //     );
+  //   }
+  // };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (replyText.trim()) {
+      replyMutation.mutate();
+    }
+  };
+
+  const handleReplyTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const text = e.target.value;
+    setReplyText(text);
+    setReplyTextCount(text.length);
+  };
+
+  // if (replies.length === 0) {
+  //   return (
+  //     <div className="alert alert-secondary mt30">
+  //       この投稿にはまだ返信がありません。
+  //     </div>
+  //   );
+  // }
+
+  // if (isError) {
+  //   return (
+  //     <div className="alert alert-danger mt30">
+  //       エラーが発生しました: {error.message}
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="post-replies mt30">
       <hr />
+      {replyTextCount > 0 && (
+        <>
+          <span className="ml10">{replyTextCount}</span>
+        </>
+      )}
+
+      <div className="reply-form mb20">
+        <textarea
+          className="form-control reply-form-textarea"
+          placeholder="返信を入力してください..."
+          rows={3}
+          value={replyText}
+          onChange={handleReplyTextChange}
+          disabled={replyMutation.isPending}
+        />
+        <div className="d-flex justify-content-end mt10">
+          <button
+            className="btn btn-primary bcmhzt-btn"
+            onClick={handleSubmit}
+            disabled={!replyText.trim() || replyMutation.isPending}
+          >
+            {replyMutation.isPending ? (
+              <div className="spinner-border spinner-border-sm" />
+            ) : (
+              <Send />
+            )}
+          </button>
+        </div>
+      </div>
 
       {replies.length === 0 ? (
         <div className="text-muted">まだ返信はありません</div>
       ) : (
         <div className="replies-list">
           <div className="replies-list-header mb20">
-            <div className="replies-list-title">Reply list</div>
+            {/* <div className="replies-list-title">Reply list</div> */}
           </div>
           {replies.map((reply, index) => (
             <>

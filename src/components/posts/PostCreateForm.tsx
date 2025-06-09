@@ -4,6 +4,7 @@ import { Spinner } from 'react-bootstrap';
 import { usePostImageUploader } from '../../utility/usePostImageUploader';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
+import { useMessage } from '../../contexts/MessageContext';
 
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
@@ -23,6 +24,7 @@ const PostCreateForm: React.FC<PostCreateFormProps> = ({
   const [post, setPost] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [postError, setPostError] = useState<string>('');
+  const { showMessage } = useMessage();
 
   // 認証情報
   const auth = useAuth();
@@ -98,7 +100,7 @@ const PostCreateForm: React.FC<PostCreateFormProps> = ({
         setPost('');
         addFiles([]);
         handleClose();
-        // showMessage('POSTが投稿されました。', 'success', 3000); // 必要なら
+        showMessage('POSTが投稿されました。', 'success', 3000); // 必要なら
       } else {
         throw new Error('投稿に失敗しました');
       }

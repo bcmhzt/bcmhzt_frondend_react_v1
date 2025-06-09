@@ -21,6 +21,7 @@ import { useQueryClient } from '@tanstack/react-query';
 //src/components/posts/PostCard.tsx
 import PostCard from '../../components/posts/PostCard';
 import { PostData } from '../../types/post';
+// import { useMessage } from '../../contexts/MessageContext';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -125,6 +126,7 @@ const PostList: React.FC = () => {
   const [inputKeyword, setInputKeyword] = useState('');
   const [searchKeyword, setSearchKeyword] = useState('');
   const queryClient = useQueryClient();
+  // const { showMessage } = useMessage();
 
   const {
     data,
