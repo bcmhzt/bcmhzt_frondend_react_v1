@@ -215,7 +215,7 @@ const BookmarkList: React.FC = () => {
                 className="bookmark-item mb20"
                 ref={i === bookmarks.length - 1 ? lastItemRef : null}
               >
-                <div className="d-flex justify-content-between align-items-center px-3">
+                <div className="d-flex justify-content-between align-items-start px-3">
                   <div className="avatar">
                     <Link to={`/member/${b.bcuid}`}>
                       <img

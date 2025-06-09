@@ -86,7 +86,9 @@ const Header = () => {
               <Link to="/">Bcmhzt</Link>
             )}
           </h1>
+
           <ul>
+            {/* ログイン時 */}
             {isLogin ? (
               <>
                 <li>
@@ -96,12 +98,11 @@ const Header = () => {
                   <Link to="/members">Members</Link>
                 </li>
                 <li>
-                  <Link to="https://portal.bcmhzt.net/%e3%81%94%e5%88%a9%e7%94%a8%e6%96%b9%e6%b3%95-usage/">
-                    Usage
-                  </Link>
+                  <Link to="/posts">Posts</Link>
                 </li>
               </>
             ) : (
+              // ログアウト時
               <>
                 <li>
                   <Link to="https://portal.bcmhzt.net/%e3%81%94%e5%88%a9%e7%94%a8%e6%96%b9%e6%b3%95-usage/">
@@ -116,6 +117,7 @@ const Header = () => {
           </ul>
         </div>
 
+        {/* ログイン時 */}
         <div className="member-section">
           {isLogin ? (
             <>
@@ -185,7 +187,7 @@ const Header = () => {
 
       {isLogin && (
         <div className={`sidebar${sidebarOpen ? ' open' : ''}`}>
-          <button className="close-btn mt10 ml10" onClick={handleCloseSidebar}>
+          <button className="close-btn mt20 ml10" onClick={handleCloseSidebar}>
             <XLg className="close-xlg" />
           </button>
 
