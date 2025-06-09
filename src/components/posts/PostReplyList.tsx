@@ -13,6 +13,8 @@ import { buildStorageUrl } from '../../utility/GetUseImage';
 import GetGenderIcon from '../commons/GetGenderIcon';
 import { Send } from 'react-bootstrap-icons';
 import { useMessage } from '../../contexts/MessageContext';
+// src/utility/GetCommonFunctions.tsx
+import { convertFormattedText } from '../../utility/GetCommonFunctions';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -337,7 +339,11 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
                   </div>
                 </div>
                 <div className="body">
-                  <p>{reply.post}</p>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: convertFormattedText(reply.post),
+                    }}
+                  />
                 </div>
                 <div className="footer"></div>
               </div>
