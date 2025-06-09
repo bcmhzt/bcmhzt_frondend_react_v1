@@ -87,3 +87,24 @@
 .post-create-form-add-btn {
 
 }
+
+
+.post-replies {
+  .replies-list-header {
+    .replies-list-title {
+      font-size: 16px;
+      color: #333;
+    }
+  }
+  .post-reply-item {
+    // background: #ffd700;
+    border-top: #c1c1c1 1px dashed;
+    .header {
+      margin: 0;
+      padding: 0;
+    }
+    .body {
+      padding: 10px;
+    }
+  }
+}
