@@ -223,7 +223,9 @@ const Header = () => {
               </li>
               <li>
                 <Mailbox className="icon-lg" />
-                <Link to="/contact">お問い合わせ</Link>
+                <Link to="https://portal.bcmhzt.net/contact/" target="_blank">
+                  お問い合わせ
+                </Link>
               </li>
 
               {env === 'local' || env === 'test' || env === 'dev' ? (

@@ -1,5 +1,8 @@
+/** b74cec9b */
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import MessageList from '../../components/messages/MessageList';
+
 const Messages = () => {
   return (
     <div className="app-body">
@@ -7,8 +10,8 @@ const Messages = () => {
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left">
-            <h2>Messages</h2>
-            <p className="">Posts</p>
+            <h2 className="page-title mb20">Messages</h2>
+            <MessageList />
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">
             <h2>foo</h2>

@@ -43,7 +43,7 @@ const Dashboard = () => {
           <div className="col-12 col-md-6 bc-left dashboard">
             <Instructor />
 
-            {/* <h2>Dashboard</h2> */}
+            <h2 className="page-title mb20">Dashboard</h2>
             {/* <ArchtectTemplate /> */}
             <LikedMeCardLimit />
             <MatchedMemberLimit />

@@ -92,7 +92,15 @@ const Archtect: React.FC = () => {
               <p>{JSON.stringify(data, null, 2)}</p>
             </div>
             <div className="d-none d-md-block col-md-6 bc-right">
-              barbarbarbarbarbarbarbarbarbarbarbarbarbar
+              <div
+                style={{
+                  background: '#f1f1f1',
+                  height: '100%',
+                  padding: '20px',
+                }}
+              >
+                広告エリア / サブエリア
+              </div>
             </div>
           </div>
         )}

@@ -9,8 +9,9 @@ import {
   getAgeRangeJp,
   convertFormattedText,
 } from '../../utility/GetCommonFunctions';
-import { X } from 'react-bootstrap-icons';
+import { X, CardText } from 'react-bootstrap-icons';
 import MemberTools from './MemberTools';
+import { Link } from 'react-router-dom';
 
 /**
  * props
@@ -165,6 +166,12 @@ const MemberProfile: React.FC<MemberProfileProps> = ({ bcuid }) => {
             <div className="location">
               <GetGenderIcon genderId={member?.member?.gender ?? ''} />　
               {member?.member?.location}
+            </div>
+            <div className="post-count mt5">
+              <Link to={`/member/post/${member.member.bcuid}`}>
+                <CardText className="mr5" style={{ fontSize: '23px' }} />
+                投稿を見る
+              </Link>
             </div>
           </div>
         </div>

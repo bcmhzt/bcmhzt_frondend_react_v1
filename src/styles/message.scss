@@ -1,0 +1,40 @@
+.chat-rooms-block {
+  // background: #ffd700;
+  ul.chat-rooms {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      padding: 10px;
+      border-bottom: 1px dashed #ccc;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #f0e68c;
+      }
+    }
+  }
+}
+
+.message-room {
+  padding: 1rem;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.member-avator {
+  object-fit: cover;
+}
+
+.chat-messages-container {
+  min-height: 400px;
+  max-height: 60vh;
+  overflow-y: auto;
+}

@@ -15,6 +15,8 @@ import { Send } from 'react-bootstrap-icons';
 import { useMessage } from '../../contexts/MessageContext';
 // src/utility/GetCommonFunctions.tsx
 import { convertFormattedText } from '../../utility/GetCommonFunctions';
+import BcmhztLinkCollections from '../../components/dashboards/BcmhztLinkCollections';
+//src/components/dashboards/BcmhztLinkCollections.tsx
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -271,7 +273,6 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           <span className="ml10">{replyTextCount}</span>
         </>
       )}
-
       <div className="reply-form mb20">
         <textarea
           className="form-control reply-form-textarea"
@@ -295,7 +296,6 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           </button>
         </div>
       </div>
-
       {replies.length === 0 ? (
         <div className="text-muted">まだ返信はありません</div>
       ) : (
@@ -352,7 +352,6 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           ))}
         </div>
       )}
-
       {isFetchingNextPage && (
         <div className="text-center my-3">
           <div className="spinner-border" role="status">
@@ -360,6 +359,9 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           </div>
         </div>
       )}
+      <div className="mt50 mb50">
+        <BcmhztLinkCollections />
+      </div>
     </div>
   );
 };

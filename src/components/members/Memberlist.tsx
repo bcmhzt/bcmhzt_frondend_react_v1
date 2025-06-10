@@ -376,13 +376,14 @@ const MemberList: React.FC = () => {
                       <GetGenderIcon genderId={m.user_details_gender ?? ''} />　
                       {m.user_details_location ?? 'no location'}
                     </div>
+
                     <div className="post-count mt5">
-                      <Link to="/">
+                      <Link to={`/member/post/${m.bcuid}`}>
                         <CardText
                           className="mr5"
                           style={{ fontSize: '23px' }}
                         />
-                        投稿(999)
+                        投稿を見る
                       </Link>
                     </div>
                   </div>

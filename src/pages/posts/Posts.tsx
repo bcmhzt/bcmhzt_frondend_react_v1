@@ -15,6 +15,7 @@ const Posts = () => {
             className="col-12 col-md-6 bc-left"
             style={{ position: 'relative' }}
           >
+            <h2 className="page-title mb20">Posts</h2>
             <PostIndexHeader page={window.location.pathname} />
             <PostList />
           </div>

@@ -38,6 +38,7 @@ const Members = () => {
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left">
+            <h2 className="page-title mb20">Members</h2>
             <MemberList />
           </div>
 

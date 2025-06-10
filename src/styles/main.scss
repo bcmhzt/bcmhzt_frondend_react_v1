@@ -12,6 +12,7 @@
 @import './settings.scss';
 @import './posts.scss';
 @import './postbookmark.scss';
+@import './message.scss';
 
 
 // @media (max-width: 575px) { margin-top: 30px; }
@@ -31,6 +32,14 @@ body {
     background-color: #fff;
     margin-top: 10px;
     margin-bottom: $footer-height+10;
+    h2.page-title {
+      font-size: 12px;
+      border: #666 1px solid;
+      padding: 2px 7px;
+      display: inline-block;
+      border-radius: 3px;
+      background: #f1f1f1;
+    }
   }
   .bc-right {
     // background-color: #f1f1f1;

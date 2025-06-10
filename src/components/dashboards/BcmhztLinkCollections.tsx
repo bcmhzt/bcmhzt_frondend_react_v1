@@ -4,7 +4,7 @@ const BcmhztLinkCollections = () => {
     <>
       <div className="bcmhzt-link-collections">
         {/* <div className="mb10">BcmhztLinkCollections</div> */}
-        <ul>
+        <ul style={{ listStyleType: 'none', padding: 0 }}>
           <li>
             <div className="post-ogp">
               <div className="post-ogp-item">

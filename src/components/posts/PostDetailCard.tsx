@@ -122,7 +122,7 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({ id }) => {
             className="btn btn btn-light"
             onClick={() => window.history.back()}
           >
-            投稿一覧へ戻る
+            前のページへ戻る
           </button>
         </div>
         <div className="post-thread-header d-flex align-items-center mt10">

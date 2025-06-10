@@ -12,6 +12,7 @@ import PasswordReset from './pages/auth/PasswordReset';
 import Dashboard from "./pages/Dashboard";
 import Members from "./pages/members/Members";
 import MemberDetail from "./pages/members/MemberDetail";
+import MemberPosts from "./pages/members/MemberPosts";
 import Posts from "./pages/posts/Posts";
 import PostsLikeList from "./pages/posts/PostsLikeList";
 import PostsReplyList from "./pages/posts/PostsReplyList";
@@ -68,6 +69,7 @@ const routes: RoutesObject = {
     { path: "/dashboard", component: Dashboard },
     { path: "/members", component: Members },
     { path: "/member/:bcuid", component: MemberDetail },
+    { path: "/member/post/:bcuid", component: MemberPosts },
     { path: "/posts", component: Posts },
     { path: "/posts_like", component: PostsLikeList },
     { path: "/posts_reply", component: PostsReplyList },
