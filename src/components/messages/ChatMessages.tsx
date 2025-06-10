@@ -9,10 +9,12 @@ import {
   getDocs,
   DocumentData,
   QuerySnapshot,
+  limitToLast,
 } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
 import { ChatMessage as ChatMessageType } from '../../types/chat';
 import ChatMessage from './ChatMessage';
+import { QueryConstraint, endAt } from 'firebase/firestore';
 
 interface ChatMessagesProps {
   roomId: string;
@@ -29,48 +31,19 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
   const [lastVisible, setLastVisible] = useState<DocumentData | null>(null);
 
   useEffect(() => {
-    console.log(
-      '[src/components/messages/ChatMessages.tsx:26] === ChatMessages Debug ==='
-    );
-    console.log(
-      '[src/components/messages/ChatMessages.tsx:27] roomId:',
-      roomId
-    );
-    console.log(
-      '[src/components/messages/ChatMessages.tsx:28] currentUserId:',
-      currentUserId
-    );
+    if (!roomId) return;
 
-    // roomIdの存在チェックを追加
-    if (!roomId) {
-      console.warn('[ChatMessages] roomId is undefined or null');
-      setLoading(false);
-      return;
-    }
-    // roomIdの存在チェックの直後に追加
     const messagesRef = collection(firestore, 'chats', roomId, 'messages');
     const baseQuery = query(
       messagesRef,
-      orderBy('created_at', 'desc'),
-      limit(30)
+      orderBy('created_at', 'asc'),
+      limitToLast(30) // limitToLastを使用
     );
 
     const unsubscribe = onSnapshot(
       baseQuery,
       (snapshot: QuerySnapshot<DocumentData>) => {
-        console.log(
-          '[src/components/messages/ChatMessages.tsx:999] Snapshot size:',
-          snapshot.size
-        );
-        console.log(
-          '[src/components/messages/ChatMessages.tsx:999] Snapshot empty:',
-          snapshot.empty
-        );
-
         if (snapshot.empty) {
-          console.log(
-            '[src/components/messages/ChatMessages.tsx:999] No messages found in this room'
-          );
           setMessages([]);
           setLoading(false);
           return;
@@ -78,18 +51,6 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
 
         const fetchedMessages = snapshot.docs.map((doc) => {
           const data = doc.data();
-          console.log(
-            '[src/components/messages/ChatMessages.tsx:61] Message:',
-            {
-              id: doc.id,
-              sender_id: data.sender_id,
-              text: data.text,
-              created_at: data.created_at?.toDate(),
-              image_url: data.image_url || [],
-              read_by: data.read_by || [],
-              is_deleted: data.is_deleted || false,
-            }
-          );
           return {
             id: doc.id,
             ...data,
@@ -100,29 +61,18 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
           };
         }) as ChatMessageType[];
 
-        console.log(
-          '[src/components/messages/ChatMessages.tsx:73] Total fetched messages:',
-          fetchedMessages.length
-        );
-
-        setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
-        setMessages(fetchedMessages.reverse());
+        setMessages(fetchedMessages);
+        setLastVisible(snapshot.docs[0]); // 最も古いメッセージを参照として保存
         setLoading(false);
       },
       (error) => {
-        console.error(
-          '[src/components/messages/ChatMessages.tsx:87] Firestore error:',
-          error
-        );
+        console.error('[Firestore error]:', error);
         setLoading(false);
       }
     );
 
-    return () => {
-      console.log('[ChatMessages] Cleanup - unsubscribing');
-      unsubscribe();
-    };
-  }, [roomId, currentUserId]);
+    return () => unsubscribe();
+  }, [roomId]);
 
   const loadMoreMessages = async () => {
     if (!hasMore || !lastVisible || loading) return;
@@ -131,9 +81,9 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       console.log('[DEBUG] Loading more messages...');
       const nextQuery = query(
         collection(firestore, 'chats', roomId, 'messages'),
-        orderBy('created_at', 'desc'),
-        startAfter(lastVisible),
-        limit(30)
+        orderBy('created_at', 'asc'), // ascに変更
+        endAt(lastVisible), // startAfterからendAtに変更
+        limitToLast(30) // limitからlimitToLastに変更
       );
 
       const nextSnapshot = await getDocs(nextQuery);
@@ -157,8 +107,8 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
         };
       }) as ChatMessageType[];
 
-      setLastVisible(nextSnapshot.docs[nextSnapshot.docs.length - 1]);
-      setMessages((prev) => [...prev, ...nextMessages.reverse()]);
+      setLastVisible(nextSnapshot.docs[0]); // 最も古いメッセージを参照として保存
+      setMessages((prev) => [...nextMessages, ...prev]); // 古いメッセージを前に追加
     } catch (error) {
       console.error('[ERROR] Loading more messages failed:', error);
     }

@@ -16,10 +16,17 @@ import { ChatRoom, MatchedUser } from '../types/chat';
  * チャットルームIDをUIDペアからSHA-256で生成
  */
 async function generateChatRoomId(uids: string[]): Promise<string> {
-  const sortedUids = [...uids].sort();
-  return sortedUids.join('_');
-}
+  const sorted = [...uids].sort();
+  const joined = sorted.join("_");
 
+  const encoder = new TextEncoder();
+  const data = encoder.encode(joined);
+
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(hashBuffer)]
+    .map(b => b.toString(16).padStart(2, "0"))
+    .join("");
+}
 /**
  * チャットルームを作成
  */
