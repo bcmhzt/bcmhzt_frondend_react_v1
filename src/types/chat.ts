@@ -29,6 +29,7 @@ export interface ChatMessage {
   created_at: Timestamp; // 作成日時
 }
 
+
 // UI表示用に拡張したチャットルーム情報
 export interface OpenChatRoom extends ChatRoom {
   id: string;                     // FirestoreのドキュメントID
