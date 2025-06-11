@@ -4,6 +4,15 @@ import { getImageWithSuffix } from '../../utility/GetUseImage';
 import { OpenChatRoom } from '../../types/chat';
 import ChatMessages from './ChatMessages';
 import { sendMessage } from '../../services/firestoreChat';
+import {
+  CollectionReference,
+  DocumentData,
+  collection,
+  getFirestore,
+  getDocs,
+  DocumentReference,
+  deleteDoc,
+} from 'firebase/firestore';
 
 interface MessageRoomProps {
   room: OpenChatRoom;
@@ -28,6 +37,54 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
       console.error('Error sending message:', error);
     } finally {
       setSending(false);
+    }
+  };
+
+  // メッセージ全削除処理を追加
+  const handleDeleteAllMessages = async () => {
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === 'production') return;
+    if (!window.confirm('本当にすべてのメッセージを削除しますか？')) return;
+
+    console.log(
+      '[src/components/messages/MessageRoom.tsx] Room ID:',
+      room.id,
+      'Messages count:'
+    );
+    try {
+      const db = getFirestore();
+      // パスの指定方法を修正
+      const messagesRef = collection(db, 'chats', room.id, 'messages');
+      const snapshot = await getDocs(messagesRef);
+
+      console.log(
+        '[src/components/messages/MessageRoom.tsx] Room ID:',
+        room.id,
+        'Messages count:',
+        snapshot.docs.length
+      );
+
+      if (snapshot.empty) {
+        console.log(
+          '[src/components/messages/MessageRoom.tsx] No messages found'
+        );
+        return;
+      }
+
+      // 一件ずつ削除
+      for (const doc of snapshot.docs) {
+        await deleteDoc(doc.ref);
+        console.log(
+          '[src/components/messages/MessageRoom.tsx] Deleted message:',
+          doc.id
+        );
+      }
+
+      console.log(
+        '[src/components/messages/MessageRoom.tsx] All messages deleted:',
+        snapshot.docs.length
+      );
+    } catch (error) {
+      console.error('[src/components/messages/MessageRoom.tsx] Error:', error);
     }
   };
 
@@ -75,9 +132,13 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
         id={`chatModal-${room.id}`}
         tabIndex={-1}
         aria-hidden="true"
+        data-bs-scroll="true"
+        chat-room-id={room.id}
+        current-user-uid={currentUser?.uid}
+        partner-user-uid={room.userInfo?.matched_uid}
       >
         <div
-          className="modal-dialog modal-lg"
+          className="modal-dialog modal-lg modal-dialog-scrollable"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="modal-content">
@@ -85,6 +146,15 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
               <h5 className="modal-title">
                 {room.userInfo?.nickname ?? ''}とのチャット
               </h5>
+              {process.env.REACT_APP_ENV !== 'prod' && (
+                <button
+                  type="button"
+                  className="btn btn-danger btn-sm ms-2"
+                  onClick={handleDeleteAllMessages}
+                >
+                  全メッセージ削除（開発用）
+                </button>
+              )}
               <button
                 type="button"
                 className="btn-close"
@@ -131,5 +201,4 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
     </>
   );
 };
-
 export default MessageRoom;
