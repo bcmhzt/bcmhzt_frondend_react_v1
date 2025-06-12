@@ -14,7 +14,7 @@ import Members from "./pages/members/Members";
 import MemberDetail from "./pages/members/MemberDetail";
 import MemberPosts from "./pages/members/MemberPosts";
 import Posts from "./pages/posts/Posts";
-import PostsLikeList from "./pages/posts/PostsLikeList";
+import PostsLike from "./pages/posts/PostsLike";
 import PostsReplyList from "./pages/posts/PostsReplyList";
 import PostsBookmarks from "./pages/posts/PostsBookmarks";
 import PostsMediaList from "./pages/posts/PostsMediaList";
@@ -71,7 +71,7 @@ const routes: RoutesObject = {
     { path: "/member/:bcuid", component: MemberDetail },
     { path: "/member/post/:bcuid", component: MemberPosts },
     { path: "/posts", component: Posts },
-    { path: "/posts_like", component: PostsLikeList },
+    { path: "/posts_like", component: PostsLike },
     { path: "/posts_reply", component: PostsReplyList },
     { path: "/posts_bookmark", component: PostsBookmarks },
     { path: "/posts_media", component: PostsMediaList },

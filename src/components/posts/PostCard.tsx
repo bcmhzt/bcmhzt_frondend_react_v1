@@ -3,11 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ThreeDotsVertical, ChatRightDotsFill } from 'react-bootstrap-icons';
 import { PostData } from '../../types/post';
-import GetGenderIcon from '../commons/GetGenderIcon';
-import {
-  buildStorageUrl,
-  buildStoragePostImageUrl,
-} from '../../utility/GetUseImage';
+// import GetGenderIcon from '../commons/GetGenderIcon';
+import { buildStoragePostImageUrl } from '../../utility/GetUseImage';
 import { UseOgpFrameWidth100 } from '../../utility/UseOgpFrame';
 import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
 import PostLike from './PostLike';
@@ -83,40 +80,6 @@ const PostCard: React.FC<PostCardProps> = ({
       className="post-thread"
       ref={isLastItem ? lastItemRef : null}
     >
-      <div className="post-thread-header d-flex align-items-center">
-        {/* プロフィール画像 */}
-        <div className="avatar-section">
-          <Link to={`/member/${post.bcuid}`}>
-            <img
-              className="avatar-64"
-              src={
-                buildStorageUrl(
-                  process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL || '',
-                  post.profile_images ?? '',
-                  '_thumbnail'
-                ) || '/assets/images/dummy/dummy_avatar.png'
-              }
-              alt={post.bcuid}
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).src =
-                  '/assets/images/dummy/dummy_avatar.png';
-              }}
-            />
-          </Link>
-        </div>
-        <div className="nickname-section">
-          {/* メンバー情報 */}
-          <div className="nickname">
-            {post.nickname}
-            <span className="bcuid">@{post.bcuid}</span>
-          </div>
-          <div className="gender">
-            <GetGenderIcon genderId={post.gender ?? ''} />　
-            {post.location || '不明'}
-          </div>
-        </div>
-      </div>
-
       <div className="post-thread-body">
         {/* 投稿テキスト */}
         <p
