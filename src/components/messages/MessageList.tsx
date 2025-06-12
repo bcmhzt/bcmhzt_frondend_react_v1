@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { getImageWithSuffix } from '../../utility/GetUseImage';
+// import { getImageWithSuffix } from '../../utility/GetUseImage';
 import MessageRoom from './MessageRoom';
 import { syncChatRooms, fetchChatRooms } from '../../services/firestoreChat';
 import { fetchMatchedList } from '../../services/chatApi';
@@ -75,6 +75,8 @@ const MessageList: React.FC = () => {
 
   return (
     <div className="message-list">
+      {/* <pre>{JSON.stringify(matchedList, null, 2)}</pre> */}
+      <pre>{JSON.stringify(matchedList.length, null, 2)}</pre>
       <ul className="chat-rooms">
         {openChatRooms.map((room) => (
           <li key={room.id} className="chat-room-item mb-3">

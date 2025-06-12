@@ -1,6 +1,6 @@
 /** 6eb3e0a6 */
-import React, { useRef, useState } from 'react';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
+import React, { useRef } from 'react';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import PostCard from '../posts/PostCard';

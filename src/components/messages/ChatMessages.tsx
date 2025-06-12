@@ -3,27 +3,27 @@ import {
   collection,
   query,
   orderBy,
-  limit,
   onSnapshot,
-  startAfter,
   getDocs,
   DocumentData,
   QuerySnapshot,
   limitToLast,
+  endAt,
 } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
 import { ChatMessage as ChatMessageType } from '../../types/chat';
 import ChatMessage from './ChatMessage';
-import { QueryConstraint, endAt } from 'firebase/firestore';
 
 interface ChatMessagesProps {
   roomId: string;
   currentUserId: string;
+  onNewMessage?: () => void;
 }
 
 const ChatMessages: React.FC<ChatMessagesProps> = ({
   roomId,
   currentUserId,
+  onNewMessage,
 }) => {
   const [messages, setMessages] = useState<ChatMessageType[]>([]);
   const [loading, setLoading] = useState(true);
@@ -64,6 +64,11 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
         setMessages(fetchedMessages);
         setLastVisible(snapshot.docs[0]); // 最も古いメッセージを参照として保存
         setLoading(false);
+
+        const changes = snapshot.docChanges();
+        if (changes.some((change) => change.type === 'added')) {
+          onNewMessage?.();
+        }
       },
       (error) => {
         console.error('[Firestore error]:', error);
@@ -72,7 +77,7 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
     );
 
     return () => unsubscribe();
-  }, [roomId]);
+  }, [roomId, onNewMessage]);
 
   const loadMoreMessages = async () => {
     if (!hasMore || !lastVisible || loading) return;
@@ -113,6 +118,13 @@ const ChatMessages: React.FC<ChatMessagesProps> = ({
       console.error('[ERROR] Loading more messages failed:', error);
     }
   };
+
+  // // スクロール制御関数を追加
+  // const scrollToBottom = () => {
+  //   if (modalBodyRef.current) {
+  //     modalBodyRef.current.scrollTop = modalBodyRef.current.scrollHeight;
+  //   }
+  // };
 
   if (loading) {
     return (

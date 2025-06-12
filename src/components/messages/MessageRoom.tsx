@@ -1,18 +1,22 @@
-import React, { useState } from 'react'; // useStateを追加
+import React, { useState, useRef, useEffect } from 'react'; // useStateを追加
 import { useAuth } from '../../contexts/AuthContext';
 import { getImageWithSuffix } from '../../utility/GetUseImage';
 import { OpenChatRoom } from '../../types/chat';
 import ChatMessages from './ChatMessages';
 import { sendMessage } from '../../services/firestoreChat';
 import {
-  CollectionReference,
-  DocumentData,
+  // CollectionReference,
+  // DocumentData,
   collection,
   getFirestore,
   getDocs,
-  DocumentReference,
+  // DocumentReference,
   deleteDoc,
+  doc,
+  updateDoc,
+  getDoc,
 } from 'firebase/firestore';
+import { firestore } from '../../firebaseConfig';
 
 interface MessageRoomProps {
   room: OpenChatRoom;
@@ -24,6 +28,53 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
   const [sending, setSending] = useState(false); // 送信中状態管理用のstate
   const storage_base_url =
     process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL || '';
+  const modalBodyRef = useRef<HTMLDivElement>(null);
+
+  // モーダルが表示された時にスクロールを最下部に移動
+  useEffect(() => {
+    const modalElement = document.getElementById(`chatModal-${room.id}`);
+    if (!modalElement) return;
+
+    const handleModalShow = async () => {
+      console.log('[DEBUG] Modal shown');
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTop = modalBodyRef.current.scrollHeight;
+      }
+      // 未読カウントをリセット
+      // 未読カウントをリセット
+      if (currentUser?.uid) {
+        try {
+          const roomRef = doc(firestore, 'chats', room.id);
+          const roomDoc = await getDoc(roomRef);
+
+          // 未読カウントの確認（デバッグ用）
+          const unreadCounts = roomDoc.data()?.unread_counts || {};
+          console.log('[DEBUG] All unread counts:', unreadCounts);
+
+          // 強制的に未読カウントを0に設定（条件チェックなし）
+          await updateDoc(roomRef, {
+            [`unread_counts.${currentUser.uid}`]: 0,
+          });
+          console.log('[DEBUG] Force reset unread count to 0');
+
+          // 更新確認
+          const verifyDoc = await getDoc(roomRef);
+          console.log('[DEBUG] After reset:', verifyDoc.data()?.unread_counts);
+        } catch (error) {
+          console.error('[MessageRoom] Failed to reset unread count:', error);
+        }
+      } else {
+        console.log('[DEBUG] No currentUser.uid'); // デバッグログ追加
+      }
+
+      console.log('[DEBUG] Modal shown end'); // デバッグログ追加
+      alert('reset unread count');
+    };
+
+    modalElement.addEventListener('shown.bs.modal', handleModalShow);
+    return () =>
+      modalElement.removeEventListener('shown.bs.modal', handleModalShow);
+  }, [room.id, currentUser?.uid]);
 
   // メッセージ送信処理を追加
   const handleSendMessage = async () => {
@@ -33,6 +84,10 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
       setSending(true);
       await sendMessage(room.id, currentUser.uid, newMessage.trim());
       setNewMessage('');
+      // 送信後にスクロール
+      if (modalBodyRef.current) {
+        modalBodyRef.current.scrollTop = modalBodyRef.current.scrollHeight;
+      }
     } catch (error) {
       console.error('Error sending message:', error);
     } finally {
@@ -85,6 +140,13 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
       );
     } catch (error) {
       console.error('[src/components/messages/MessageRoom.tsx] Error:', error);
+    }
+  };
+
+  // スクロール制御関数を追加
+  const scrollToBottom = () => {
+    if (modalBodyRef.current) {
+      modalBodyRef.current.scrollTop = modalBodyRef.current.scrollHeight;
     }
   };
 
@@ -161,11 +223,12 @@ const MessageRoom: React.FC<MessageRoomProps> = ({ room, onRoomClick }) => {
                 data-bs-dismiss="modal"
               />
             </div>
-            <div className="modal-body">
+            <div className="modal-body" ref={modalBodyRef}>
               {currentUser && (
                 <ChatMessages
                   roomId={room.id}
                   currentUserId={currentUser.uid}
+                  onNewMessage={scrollToBottom}
                 />
               )}
             </div>
