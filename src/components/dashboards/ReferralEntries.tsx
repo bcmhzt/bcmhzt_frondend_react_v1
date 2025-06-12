@@ -175,6 +175,17 @@ const ReferralEntries = () => {
       const formData = new FormData();
       formData.append('email', email);
       formData.append('send_text', sendText);
+      formData.append('hash', hash);
+
+      // FormDataの内容をログ出力
+      for (let pair of formData.entries()) {
+        console.log(
+          '[src/components/dashboards/ReferralEntries.tsx:182] FormData:',
+          pair[0],
+          pair[1]
+        );
+      }
+
       const response = await axios.post(
         `${apiEndpoint}/v1/referral_entries/sendmail`, // `/api`を削除
         formData,
@@ -189,13 +200,25 @@ const ReferralEntries = () => {
       ]);
     } catch (error) {
       console.log('[src/components/dashboards/ReferralEntries.tsx:179]', error);
+
+      if (axios.isAxiosError(error)) {
+        console.error(
+          '[src/components/dashboards/ReferralEntries.tsx:205] API Error:',
+          {
+            status: error.response?.status,
+            data: error.response?.data,
+            headers: error.response?.headers,
+          }
+        );
+      }
+      throw error;
     } finally {
     }
   };
 
   return (
     <>
-      <pre>{JSON.stringify(referralMethod, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(referralMethod, null, 2)}</pre> */}
       {restCount >= 0 ? (
         <>
           <div className="referral-entries">
