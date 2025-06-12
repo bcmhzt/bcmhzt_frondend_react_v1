@@ -7,7 +7,7 @@ import axios from 'axios';
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
   console.log(
-    '[src/components/v1/dashboard/ReferralEntries.js:13] debug:',
+    '[src/components/dashboards/ReferralEntries.tsx:13] debug:',
     debug
   );
 }
@@ -22,6 +22,8 @@ const ReferralEntries = () => {
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
   const { currentUserProfile, token } = useAuth();
   const { showMessage } = useMessage();
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
 
   /** 残り人数の取得 */
   useEffect(() => {
@@ -39,18 +41,18 @@ const ReferralEntries = () => {
 
         if (debug) {
           console.log(
-            '[src/components/v1/dashboard/ReferralEntries.js:13] response.data:',
+            '[src/components/dashboards/ReferralEntries.tsx:42] response.data:',
             data
           );
           console.log(
-            '[src/components/v1/dashboard/ReferralEntries.js:13] response.data:',
+            '[src/components/dashboards/ReferralEntries.tsx:46] response.data:',
             data.data.rest_count
           );
         }
         setRestCount(data.data.rest_count);
       } catch (error) {
         console.error(
-          '[src/components/v1/dashboard/ReferralEntries.js:13] Error fetching restCount:',
+          '[src/components/dashboards/ReferralEntries.tsx:53] Error fetching restCount:',
           error
         );
       }
@@ -71,11 +73,11 @@ const ReferralEntries = () => {
       setRestCount(response.data.data.rest_count);
       if (debug) {
         console.log(
-          '[src/components/v1/dashboard/ReferralEntries.js:13] rest_count: ',
+          '[src/components/dashboards/ReferralEntries.tsx:13] rest_count: ',
           response.data.data
         );
         console.log(
-          '[src/components/v1/dashboard/ReferralEntries.js:13] rest_count: ',
+          '[src/components/dashboards/ReferralEntries.tsx:13] rest_count: ',
           response.data.data.introduced_hash
         );
       }
@@ -83,7 +85,7 @@ const ReferralEntries = () => {
       setRegisterUrl(shareUrl);
       if (debug) {
         console.log(
-          '[src/components/v1/dashboard/ReferralEntries.js:13] registerUrl: ',
+          '[src/components/dashboards/ReferralEntries.tsx:13] registerUrl: ',
           registerUrl
         );
       }
@@ -126,82 +128,157 @@ const ReferralEntries = () => {
       });
 
       showMessage('あなたはメンバーを招待しました！', 'success', 3000);
-    } catch (e) {
-      showMessage('招待状の送信に失敗しました。', 'error');
-      console.error('招待状の送信に失敗しました。', e);
+    } catch (error) {
+      const status =
+        (axios.isAxiosError(error) && error.response?.status) || 'unknown';
+      const message =
+        (axios.isAxiosError(error) && error.response?.data.message) ||
+        'unknown';
+      if (status === 400) {
+        showMessage('招待状人数の上限に達しました。', 'error');
+      } else {
+        showMessage('招待状の送信に失敗しました。', 'error');
+      }
+      console.error(
+        `[src/components/dashboards/ReferralEntries.tsx:131] Error 招待状の送信に失敗しました。HTTP Status: ${status}`,
+        [error, message]
+      );
     }
   };
 
   /** Emailで共有する（招待する） */
   const handleEmail = async () => {
-    showMessage('あなたはメンバーを招待しました！', 'success', 3000);
+    // console.log(email);
+    setNickname(currentUserProfile.user_profile.nickname);
+    console.log(
+      '[src/components/dashboards/ReferralEntries.tsx:159] handleEmail start',
+      [nickname]
+    );
+    if (!email) {
+      setEmailError('メールアドレスを入力してください。');
+      return;
+    }
+
+    try {
+      console.log(
+        '[src/components/dashboards/ReferralEntries.tsx:159] handleEmail start'
+      );
+
+      // 1) 招待レコードを作成してハッシュを取得
+      const hash = await createReferralMember();
+      // 2) URL を組み立て
+      const shareUrl = `${siteUrl}/register?referral_hash=${hash}`;
+
+      const sendText = `${nickname}さんが、あなたをBcmhzt（バクムーツ）に招待しています。<br />\n以下のリンクから登録してください。<br />\n${shareUrl}<br /><br />\n\nもし、招待されていない場合は無視してください。`;
+
+      // 3) メール送信APIを呼び出す
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('send_text', sendText);
+      const response = await axios.post(
+        `${apiEndpoint}/v1/referral_entries/sendmail`, // `/api`を削除
+        formData,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      if (response.data.success) {
+        showMessage('招待メールを送信しました', 'success');
+      }
+      console.log('[src/components/dashboards/ReferralEntries.tsx:175]', [
+        response.data,
+      ]);
+    } catch (error) {
+      console.log('[src/components/dashboards/ReferralEntries.tsx:179]', error);
+    } finally {
+    }
   };
 
   return (
-    <div className="referral-entries">
-      <h2 className="referral-entries-title">紹介する</h2>
-      <p className="small-comment">メンバーリファラル制度</p>
-      残り人数: {restCount}人
-      <img src="/assets/images/referral-entries.png" alt="Referral Entries" />
-      <div className="referral-entries-content">
-        <div className="form-check form-switch">
-          <input
-            className="form-check-input switch-radio"
-            type="checkbox"
-            role="switch"
-            id="referralShare"
-            checked={referralMethod === 'share'}
-            onChange={() => handleReferralChange('share')}
-          />
-          <label className="form-check-label" htmlFor="referralShare">
-            アプリの共有で紹介する
-          </label>
-        </div>
-
-        <div className="form-check form-switch">
-          <input
-            className="form-check-input switch-radio"
-            type="checkbox"
-            role="switch"
-            id="referralEmail"
-            checked={referralMethod === 'email'}
-            onChange={() => handleReferralChange('email')}
-          />
-          <label className="form-check-label" htmlFor="referralEmail">
-            メールアドレスで紹介する
-          </label>
-        </div>
-
-        {shareOpen ? (
-          <div className="share-content">
-            <p>
-              以下のボタンをクリックして、友達にこのサイトを共有してください。
-            </p>
-            <button
-              onClick={handleShare}
-              className="btn bcmhzt-btn btn-primary"
-            >
-              Bcmhztに知り合いを招待する
-            </button>
-          </div>
-        ) : (
-          <div className="email-content">
-            <p>友達のメールアドレスを入力して、招待状を送信してください。</p>
-            <input
-              type="email"
-              placeholder="メールアドレスを入力"
-              className="email-input form-control mb10"
+    <>
+      <pre>{JSON.stringify(referralMethod, null, 2)}</pre>
+      {restCount >= 0 ? (
+        <>
+          <div className="referral-entries">
+            <h2 className="referral-entries-title">紹介する</h2>
+            <p className="small-comment">メンバーリファラル制度</p>
+            残り人数: {restCount}人
+            <img
+              src="/assets/images/referral-entries.png"
+              alt="Referral Entries"
             />
-            <button
-              className="btn bcmhzt-btn btn-primary mt10"
-              onClick={handleEmail}
-            >
-              招待を送信
-            </button>
+            <div className="referral-entries-content">
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input switch-radio"
+                  type="checkbox"
+                  role="switch"
+                  id="referralShare"
+                  checked={referralMethod === 'share'}
+                  onChange={() => handleReferralChange('share')}
+                />
+                <label className="form-check-label" htmlFor="referralShare">
+                  アプリの共有で紹介する
+                </label>
+              </div>
+
+              <div className="form-check form-switch">
+                <input
+                  className="form-check-input switch-radio"
+                  type="checkbox"
+                  role="switch"
+                  id="referralEmail"
+                  checked={referralMethod === 'email'}
+                  onChange={() => handleReferralChange('email')}
+                />
+                <label className="form-check-label" htmlFor="referralEmail">
+                  メールアドレスで紹介する
+                </label>
+              </div>
+
+              {shareOpen ? (
+                <div className="share-content">
+                  <p>
+                    以下のボタンをクリックして、友達にこのサイトを共有してください。
+                  </p>
+                  <button
+                    onClick={handleShare}
+                    className="btn bcmhzt-btn btn-primary"
+                  >
+                    Bcmhztに知り合いを招待する
+                  </button>
+                </div>
+              ) : (
+                <div className="email-content">
+                  <p>
+                    友達のメールアドレスを入力して、招待状を送信してください。
+                  </p>
+                  <input
+                    type="email"
+                    placeholder="メールアドレスを入力"
+                    className="email-input form-control mb10"
+                    onChange={(e) => setEmail(e.target.value)}
+                    onFocus={() => setEmailError('')}
+                  />
+                  <p style={{ color: 'red', fontSize: '13px' }}>{emailError}</p>
+                  <button
+                    className="btn bcmhzt-btn btn-primary mt10"
+                    onClick={handleEmail}
+                  >
+                    招待を送信
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      ) : (
+        <div className="alert alert-warning" role="alert">
+          【紹介制度】
+          <br />
+          人数の上限に達しました。ご紹介ありがとうございました。
+        </div>
+      )}
+    </>
   );
 };
 

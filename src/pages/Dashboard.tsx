@@ -52,7 +52,15 @@ const Dashboard = () => {
           </div>
           <div className="col-12 col-md-6 bc-right dashboard">
             <ReferralEntries />
-            <p>bar</p>
+            <div
+              style={{
+                background: '#f1f1f1',
+                height: '100%',
+                padding: '20px',
+              }}
+            >
+              広告エリア / サブエリア
+            </div>
           </div>
         </div>
       </div>
