@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { PlusCircleFill, Image, XCircleFill } from 'react-bootstrap-icons';
+import { Image, XCircleFill } from 'react-bootstrap-icons';
 import { Spinner } from 'react-bootstrap';
 import { usePostImageUploader } from '../../utility/usePostImageUploader';
 import axios from 'axios';
@@ -121,7 +121,12 @@ const PostCreateForm: React.FC<PostCreateFormProps> = ({
           onClick={handleShow}
           style={{ cursor: 'pointer' }}
         >
-          <PlusCircleFill style={{ fontSize: '36px' }} />
+          <img
+            src="/assets/images/tools/post-add-btn.png"
+            alt="post-add-btn"
+            style={{ width: '48px', color: '#000' }}
+          />
+          {/* <PlusCircleFill style={{ fontSize: '36px', color: '#000' }} /> */}
         </div>
       </div>
       {open && (
