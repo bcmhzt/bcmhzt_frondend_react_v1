@@ -148,22 +148,14 @@ const ReferralEntries = () => {
 
   /** Emailで共有する（招待する） */
   const handleEmail = async () => {
-    // console.log(email);
     setNickname(currentUserProfile.user_profile.nickname);
-    console.log(
-      '[src/components/dashboards/ReferralEntries.tsx:159] handleEmail start',
-      [nickname]
-    );
+
     if (!email) {
       setEmailError('メールアドレスを入力してください。');
       return;
     }
 
     try {
-      console.log(
-        '[src/components/dashboards/ReferralEntries.tsx:159] handleEmail start'
-      );
-
       // 1) 招待レコードを作成してハッシュを取得
       const hash = await createReferralMember();
       // 2) URL を組み立て
@@ -178,28 +170,48 @@ const ReferralEntries = () => {
       formData.append('hash', hash);
 
       // FormDataの内容をログ出力
-      for (let pair of formData.entries()) {
-        console.log(
-          '[src/components/dashboards/ReferralEntries.tsx:182] FormData:',
-          pair[0],
-          pair[1]
-        );
+      if (debug === 'true') {
+        for (let pair of formData.entries()) {
+          console.log(
+            '[src/components/dashboards/ReferralEntries.tsx:182] FormData:',
+            pair[0],
+            pair[1]
+          );
+        }
       }
 
       const response = await axios.post(
-        `${apiEndpoint}/v1/referral_entries/sendmail`, // `/api`を削除
+        `${apiEndpoint}/v1/referral_entries/sendmail`,
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
       if (response.data.success) {
         showMessage('招待メールを送信しました', 'success');
+        document
+          .querySelector('.email-input')
+          ?.setAttribute('disabled', 'true');
       }
-      console.log('[src/components/dashboards/ReferralEntries.tsx:175]', [
-        response.data,
-      ]);
+      if (debug === 'true') {
+        console.log('[src/components/dashboards/ReferralEntries.tsx:175]', [
+          response.data,
+        ]);
+      }
     } catch (error) {
-      console.log('[src/components/dashboards/ReferralEntries.tsx:179]', error);
+      if (debug === 'true') {
+        console.log(
+          '[src/components/dashboards/ReferralEntries.tsx:179]',
+          error
+        );
+      }
+      if (axios.isAxiosError(error) && error.response?.status === 422) {
+        showMessage(
+          'すでに登録されているEmailアドレスです。招待メールの送信を中止しました。',
+          'error'
+        );
+        setEmail('');
+        setEmailError('すでに登録されているEmailアドレスです。');
+      }
 
       if (axios.isAxiosError(error)) {
         console.error(
@@ -211,7 +223,7 @@ const ReferralEntries = () => {
           }
         );
       }
-      throw error;
+      // throw error;
     } finally {
     }
   };
