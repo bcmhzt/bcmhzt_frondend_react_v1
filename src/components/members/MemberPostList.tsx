@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
-import PostCard from '../posts/PostCard';
+import MemberPostCard from '../posts/MemberPostCard';
 import { PostData } from '../../types/post';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import { convertFormattedText } from '../../utility/GetCommonFunctions';
@@ -247,7 +247,7 @@ const MemberPostList: React.FC<MemberPostListProps> = ({ bcuid }) => {
         ) : (
           <div className="posts-container posts">
             {posts.map((post, index) => (
-              <PostCard
+              <MemberPostCard
                 key={post.post_id}
                 post={post}
                 isLastItem={index === posts.length - 1}
