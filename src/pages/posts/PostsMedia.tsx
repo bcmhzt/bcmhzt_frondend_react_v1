@@ -3,8 +3,9 @@ import React from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PostIndexHeader from './PostIndexHeader';
+import PostsMediaList from '../../components/posts/PostsMediaList';
 
-const PostsMediaList = () => {
+const PostsMedia = () => {
   return (
     <>
       <div className="app-body">
@@ -13,7 +14,7 @@ const PostsMediaList = () => {
           <div className="row">
             <div className="col-12 col-md-6 bc-left">
               <PostIndexHeader page={window.location.pathname} />
-              投稿のメディアリスト PostsMediaList
+              <PostsMediaList />
             </div>
             <div className="d-none d-md-block col-md-6 bc-right">
               <div
@@ -33,4 +34,4 @@ const PostsMediaList = () => {
     </>
   );
 };
-export default PostsMediaList;
+export default PostsMedia;

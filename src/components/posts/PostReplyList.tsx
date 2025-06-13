@@ -15,7 +15,7 @@ import { Send } from 'react-bootstrap-icons';
 import { useMessage } from '../../contexts/MessageContext';
 // src/utility/GetCommonFunctions.tsx
 import { convertFormattedText } from '../../utility/GetCommonFunctions';
-import BcmhztLinkCollections from '../../components/dashboards/BcmhztLinkCollections';
+
 //src/components/dashboards/BcmhztLinkCollections.tsx
 
 /* debug */
@@ -297,7 +297,9 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
         </div>
       </div>
       {replies.length === 0 ? (
-        <div className="text-muted">まだ返信はありません</div>
+        <div className="text-muted mb50">
+          <div className="alert alert-secondary mb50">まだ返信はありません</div>
+        </div>
       ) : (
         <div className="replies-list">
           <div className="replies-list-header mb20">
@@ -359,9 +361,6 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           </div>
         </div>
       )}
-      <div className="mt50 mb50">
-        <BcmhztLinkCollections />
-      </div>
     </div>
   );
 };

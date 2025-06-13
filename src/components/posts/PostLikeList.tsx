@@ -21,6 +21,10 @@ interface LikeData {
   post_images: string | null;
   delete_flg: number;
   post_status: number;
+  bcuid: string;
+  nickname: string;
+  profile_images: string | null;
+  like_count: number;
 }
 
 interface LikeListResponse {
@@ -162,7 +166,10 @@ const PostLikeList: React.FC = () => {
         Total likes: <span className="total-likes">{totalCount}</span>
       </p>
       <div className="likes">
-        <ul className="like-list">
+        <ul
+          className="like-list"
+          style={{ listStyleType: 'none', paddingLeft: '0' }}
+        >
           {likes.map((l, i) => {
             let images: string[] = [];
             if (l.post_images) {
@@ -178,58 +185,84 @@ const PostLikeList: React.FC = () => {
               images = images.filter((img) => !!img && img !== 'null');
             }
             return (
-              <li
-                key={l.id + '-' + l.post_id + '-' + l.created_at}
-                className="like-item mb20"
-                ref={i === likes.length - 1 ? lastItemRef : null}
-              >
-                <div className="d-flex justify-content-between align-items-start px-3">
-                  <div className="avatar">
-                    <Link to={`/member/${l.target_uid}`}>
-                      <img
-                        src={
-                          buildStorageUrl(storageUrl ?? '', '', '_small') ||
-                          `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
-                        }
-                        alt="User Avatar"
-                        className="avatar-36"
-                        onError={(e) => {
-                          e.currentTarget.onerror = null;
-                          (e.currentTarget as HTMLImageElement).src =
-                            `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`;
-                        }}
-                      />
-                    </Link>
-                  </div>
-                  <div className="bookmark-summary">
-                    <div className="bookmark-text mt-2">
-                      {images[0] && (
+              <>
+                {/* <pre>{JSON.stringify(l.profile_images, null, 2)}</pre> */}
+                <li
+                  key={l.id + '-' + l.post_id + '-' + l.created_at}
+                  className="like-item mb20"
+                  ref={i === likes.length - 1 ? lastItemRef : null}
+                >
+                  <div className="d-flex justify-content-start align-items-start px-3">
+                    <div className="avatar">
+                      <Link to={`/member/${l.target_uid}`}>
                         <img
-                          src={images[0]}
-                          className="bookmark-list-image"
-                          alt="Post"
+                          src={
+                            buildStorageUrl(
+                              storageUrl ?? '',
+                              l.profile_images ?? '',
+                              '_small'
+                            ) ||
+                            `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
+                          }
+                          alt="User Avatar"
+                          className="avatar-36"
                           onError={(e) => {
                             e.currentTarget.onerror = null;
-                            e.currentTarget.style.display = 'none';
+                            (e.currentTarget as HTMLImageElement).src =
+                              `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`;
                           }}
                         />
-                      )}
-                      {(l.post ?? '(no text)').replace(/\r?\n/g, '').length >
-                      100
-                        ? `${(l.post ?? '(no text)').replace(/\r?\n/g, '').slice(0, 100)}...`
-                        : (l.post ?? '(no text)').replace(/\r?\n/g, '')}
-                      <span>
-                        <Link to={`/post/${l.post_id}`}>
-                          ... No. {l.post_id}
-                        </Link>
-                      </span>
+                      </Link>
+                    </div>
+                    <div className="bookmark-summary">
+                      <div className="bookmark-text mt-2">
+                        {images[0] && (
+                          <img
+                            src={images[0]}
+                            className="bookmark-list-image"
+                            alt="Post"
+                            onError={(e) => {
+                              e.currentTarget.onerror = null;
+                              e.currentTarget.style.display = 'none';
+                            }}
+                            style={{
+                              objectFit: 'cover',
+                              width: '36px',
+                              height: '36px',
+                              borderRadius: '2px',
+                            }}
+                          />
+                        )}
+                        {(l.post ?? '(no text)').replace(/\r?\n/g, '').length >
+                        100
+                          ? `${(l.post ?? '(no text)').replace(/\r?\n/g, '').slice(0, 100)}...`
+                          : (l.post ?? '(no text)').replace(/\r?\n/g, '')}
+                        <span>
+                          <Link to={`/post/${l.post_id}`}>
+                            ... No. {l.post_id}
+                          </Link>
+                        </span>
+                      </div>
+                    </div>
+                    <div className="bookmark-switch ms-auto">
+                      {/* このitemにわたす変数を作成する */}
+                      {/* item: {
+                        post_id: number;
+                        uid: string;
+                        likes_count?: number;
+                      }; */}
+                      {(() => {
+                        const item = {
+                          post_id: l.post_id,
+                          uid: l.target_uid,
+                          likes_count: l.like_count,
+                        };
+                        return <PostLike key={l.post_id} item={item} />;
+                      })()}
                     </div>
                   </div>
-                  <div className="bookmark-switch">
-                    <PostLike key={l.post_id} item={l} />
-                  </div>
-                </div>
-              </li>
+                </li>
+              </>
             );
           })}
         </ul>

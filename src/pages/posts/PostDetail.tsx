@@ -4,6 +4,7 @@ import Footer from '../../components/Footer';
 // import PostDetailSection from '../../components/posts/PostDetailSection';
 // src/components/posts/PostDetailCard.tsx
 import PostDetailCard from '../../components/posts/PostDetailCard';
+import BcmhztLinkCollections from '../../components/dashboards/BcmhztLinkCollections';
 
 /** 84e033cb */
 const PostDetail = () => {
@@ -16,6 +17,7 @@ const PostDetail = () => {
           <div className="row">
             <div className="col-12 col-md-6 bc-left">
               <PostDetailCard id={post_id} />
+              <BcmhztLinkCollections />
             </div>
             <div className="d-none d-md-block col-md-6 bc-right">
               <div

@@ -124,3 +124,19 @@
   }
 }
 
+
+/** メディア */
+.member-images {
+  .member-image {
+    // background : #ffd700;
+    img.image-item {
+      width: 64px;
+      height: 64px;
+      border-radius: 2px;
+      object-fit: cover;
+      aspect-ratio: 1 / 1;
+      margin: 0;
+      padding:0;
+    }
+  }
+}

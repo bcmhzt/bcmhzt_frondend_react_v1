@@ -17,7 +17,7 @@ import Posts from "./pages/posts/Posts";
 import PostsLike from "./pages/posts/PostsLike";
 import PostsReplyList from "./pages/posts/PostsReplyList";
 import PostsBookmarks from "./pages/posts/PostsBookmarks";
-import PostsMediaList from "./pages/posts/PostsMediaList";
+import PostsMedia from "./pages/posts/PostsMedia";
 import PostDetail from "./pages/posts/PostDetail"
 import Notice from "./pages/notice/Notice";
 import Messages from "./pages/messages/Messages"
@@ -56,43 +56,42 @@ type RoutesObject = {
 
 const routes: RoutesObject = {
   publicRoutes: [
-    { path: "/", component: Top },
-    { path: "/about", component: About },
-    { path: "/register", component: Register },
-    { path: "/verifyemail/:hash", component: VerifyEmail },
-    { path: "/login", component: Login },
-    { path: "/forgotmypassword", component: ForgotMyPassword },
-    { path: "/passwordreset/:hash", component: PasswordReset }
+    { path: "/", component: Top },// Topページ
+    { path: "/about", component: About },// Aboutページ
+    { path: "/register", component: Register },// 新規登録
+    { path: "/verifyemail/:hash", component: VerifyEmail },// メール認証
+    { path: "/login", component: Login },// ログイン
+    { path: "/forgotmypassword", component: ForgotMyPassword },// パスワードをお忘れの方
+    { path: "/passwordreset/:hash", component: PasswordReset } // パスワードリセット
   ],
   privateRoutes: [
-    { path: "/develop/authenticate", component: DevAuthenticate },
-    { path: "/dashboard", component: Dashboard },
-    { path: "/members", component: Members },
-    { path: "/member/:bcuid", component: MemberDetail },
-    { path: "/member/post/:bcuid", component: MemberPosts },
-    { path: "/posts", component: Posts },
-    { path: "/posts_like", component: PostsLike },
-    { path: "/posts_reply", component: PostsReplyList },
-    { path: "/posts_bookmark", component: PostsBookmarks },
-    { path: "/posts_media", component: PostsMediaList },
-    { path: "/post/:post_id", component: PostDetail },
-    { path: "/notice", component: Notice },
-    { path: "/messages", component: Messages },
-    { path: "/loop_tutorial", component: LoopTutorial },
-    { path: "/myprofile", component: MyProfile },
-    { path: "/liked_me", component: LikedMeCard },
-    { path: "/matched", component: MatchedCard },
-    { path: "/i_liked", component: ILikedCard },
+    { path: "/develop/authenticate", component: DevAuthenticate },// 認証ページテスト(開発)
+    { path: "/dashboard", component: Dashboard },// ダッシュボード
+    { path: "/members", component: Members },// メンバー一覧
+    { path: "/member/:bcuid", component: MemberDetail },// メンバー詳細
+    { path: "/member/post/:bcuid", component: MemberPosts },// メンバー投稿一覧
+    { path: "/posts", component: Posts },// 投稿一覧
+    { path: "/posts_like", component: PostsLike },// いいね一覧
+    { path: "/posts_reply", component: PostsReplyList },// 返信一覧
+    { path: "/posts_bookmark", component: PostsBookmarks },// ブックマーク一覧
+    { path: "/posts_media", component: PostsMedia },// メディア一覧
+    { path: "/post/:post_id", component: PostDetail },// 投稿詳細
+    { path: "/notice", component: Notice },// 通知
+    { path: "/messages", component: Messages },// メッセージルーム（チャット）
+    { path: "/loop_tutorial", component: LoopTutorial },// ループチュートリアル
+    { path: "/myprofile", component: MyProfile },// マイプロフィール更新・変更
+    { path: "/liked_me", component: LikedMeCard },// いいねしてくれた人（全量）
+    { path: "/matched", component: MatchedCard },// マッチングした人（全量）
+    { path: "/i_liked", component: ILikedCard },// 自分がいいねした人（全量）
     /** user */
     { path: "/settings", component: Settings },
     // { path: "/metaaccount", component: MetaAccount }
   ],
   errorRoutes: [],
   devRoutes: [
-    { path: "/list", component: List },
-    { path: "/develop/archtect", component: Archtect },
-    { path: "/develop/archtect/page", component: DevArchtectPage },
-    
+    { path: "/list", component: List },// ページ一覧（開発）
+    { path: "/develop/archtect", component: Archtect },// 雛形（開発）
+    { path: "/develop/archtect/page", component: DevArchtectPage },// 雛形（開発）
   ],
   notFound: { path: "*", component: NotFound404 }
 };
