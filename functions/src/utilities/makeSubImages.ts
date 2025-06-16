@@ -242,7 +242,7 @@ export const makeSubImages = onRequest(
       logger.error('❌ Fatal error:', err);
       res.status(500).send({
         error: 'An error occurred during sub-image generation',
-        message: err.message
+        message: err instanceof Error ? err.message : 'Unknown error'
       });
     }
   }

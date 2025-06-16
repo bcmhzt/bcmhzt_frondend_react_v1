@@ -5,6 +5,8 @@ import Footer from '../../components/Footer';
 import PostIndexHeader from './PostIndexHeader';
 import PostsMediaList from '../../components/posts/PostsMediaList';
 
+/** 投稿のメディアだけ取り出す */
+
 const PostsMedia = () => {
   return (
     <>

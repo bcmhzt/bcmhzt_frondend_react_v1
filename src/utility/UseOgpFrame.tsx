@@ -18,7 +18,7 @@ export function UseOgpFrameWidth100(
 ): string {
   return `
   <div class="ogp-item d-flex flex-row align-items-start justify-content-start">
-      <div class="image me-3">
+      <div class="image mr10">
         <img src="${image}" alt="${title}" />
       </div>
       <div class="text">

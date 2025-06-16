@@ -25,6 +25,9 @@
           .avatar-section {}
           .nickname-section {
             // background: #ffd700;
+            word-wrap: break-word;
+            overflow: hidden;
+            line-height: 30px;
             .nickname {
               font-size: 23px;
 

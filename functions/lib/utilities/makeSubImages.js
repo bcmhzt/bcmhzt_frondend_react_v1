@@ -15,23 +15,13 @@ var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (
 }) : function(o, v) {
     o["default"] = v;
 });
-var __importStar = (this && this.__importStar) || (function () {
-    var ownKeys = function(o) {
-        ownKeys = Object.getOwnPropertyNames || function (o) {
-            var ar = [];
-            for (var k in o) if (Object.prototype.hasOwnProperty.call(o, k)) ar[ar.length] = k;
-            return ar;
-        };
-        return ownKeys(o);
-    };
-    return function (mod) {
-        if (mod && mod.__esModule) return mod;
-        var result = {};
-        if (mod != null) for (var k = ownKeys(mod), i = 0; i < k.length; i++) if (k[i] !== "default") __createBinding(result, mod, k[i]);
-        __setModuleDefault(result, mod);
-        return result;
-    };
-})();
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -73,10 +63,10 @@ const targets = [
 ];
 // 手動指定したUID配列（初期運用）
 const defaultUids = [
-    '58kCsmKYkiPO5MXs50d9dfGZTl33', //膝つき緊縛 開発用ユーザー@309-cea6fc1b
-    'StJtiHq69qUr1sSCQHNM6V2n94l1', //デビルマン 森利散@b60-22070ec4
-    '0RIaflqb1DXhcyhNOb8MHolEtPg1', //ミロのビーナス roughlangx+b@0d0-7a20f08e
-    'eMskuHQcjmb2knuPFt9QemlkAMf2', //戦国武将が猫の散歩しているやつ osamu@061-7013c6d5
+    '58kCsmKYkiPO5MXs50d9dfGZTl33',
+    'StJtiHq69qUr1sSCQHNM6V2n94l1',
+    '0RIaflqb1DXhcyhNOb8MHolEtPg1',
+    'eMskuHQcjmb2knuPFt9QemlkAMf2',
     'Ptp2VzffuSOklLbFADqeSEvgbXW2',
     '58kCsmKYkiPO5MXs50d9dfGZTl33',
     'zrTgTgyLfnbVmy0CJyc1poyf0Wu2',
@@ -254,7 +244,7 @@ exports.makeSubImages = (0, https_1.onRequest)({ region: 'us-central1', timeoutS
         firebase_functions_1.logger.error('❌ Fatal error:', err);
         res.status(500).send({
             error: 'An error occurred during sub-image generation',
-            message: err.message
+            message: err instanceof Error ? err.message : 'Unknown error'
         });
     }
 }));

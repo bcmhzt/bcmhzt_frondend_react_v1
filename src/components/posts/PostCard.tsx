@@ -121,11 +121,17 @@ const PostCard: React.FC<PostCardProps> = ({
         {/* 投稿テキスト */}
         <p
           dangerouslySetInnerHTML={{
-            __html: (post?.post ?? '').replace(/\n/g, '<br />'),
+            __html: ((post?.post ?? '').length > 300
+              ? (post?.post ?? '').slice(0, 300) + '...'
+              : (post?.post ?? '')
+            ).replace(/\n/g, '<br />'),
           }}
         />
+        <Link to={`/post/${post.post_id}`} className="post-link">
+          ...すべての投稿を見る
+        </Link>
         {/* OGP */}
-        <div className="ogps">
+        <div className="ogps mt10">
           {post.ogps &&
             Array.isArray(post.ogps) &&
             post.ogps.length > 0 &&
@@ -179,6 +185,7 @@ const PostCard: React.FC<PostCardProps> = ({
           {post.post_updated_at
             ? convertUtcToTimeZone(post.post_updated_at, 'JST')
             : ''}
+          　
           <Link to={`/post/${post.post_id}`} className="post-link">
             No.{post.post_id}
           </Link>

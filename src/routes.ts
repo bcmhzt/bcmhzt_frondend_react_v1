@@ -37,6 +37,7 @@ import Settings from "./pages/user/Settings";
 import List from "./pages/List";
 import Archtect from "./pages/Archtect";
 import DevAuthenticate from "./pages/develop/DevAuthenticate";
+import DevFirestoreSnapshot from "./pages/develop/DevFirestoreSnapshot"
 /** not fount 404 */
 import NotFound404 from "./pages/errors/NotFound404";
 
@@ -92,6 +93,7 @@ const routes: RoutesObject = {
     { path: "/list", component: List },// ページ一覧（開発）
     { path: "/develop/archtect", component: Archtect },// 雛形（開発）
     { path: "/develop/archtect/page", component: DevArchtectPage },// 雛形（開発）
+    { path: "/develop/firestore_snapshot", component: DevFirestoreSnapshot },// チャットの開発
   ],
   notFound: { path: "*", component: NotFound404 }
 };
