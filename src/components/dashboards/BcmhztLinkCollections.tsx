@@ -2,7 +2,7 @@
 const BcmhztLinkCollections = () => {
   return (
     <>
-      <div className="bcmhzt-link-collections">
+      <div className="bcmhzt-link-collections mt20">
         {/* <div className="mb10">BcmhztLinkCollections</div> */}
         <ul>
           <li>

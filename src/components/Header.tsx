@@ -22,6 +22,7 @@ import { useAuth } from '../contexts/AuthContext';
 // import useCommon from "../hooks/useCommon";
 import { getImageWithSuffix } from '../utility/GetUseImage';
 import TopHeaderBar from './TopHeaderBar';
+import DisorderMessage from './header/DisorderMessage';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -73,6 +74,7 @@ const Header = () => {
   return (
     <>
       <TopHeaderBar />
+      <DisorderMessage />
 
       <div className="header">
         <div className="header-section">
