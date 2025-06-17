@@ -1,7 +1,7 @@
 /** 494a8974 */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ThreeDotsVertical, ChatRightDotsFill } from 'react-bootstrap-icons';
+import { ChatRightDotsFill } from 'react-bootstrap-icons';
 import { PostData } from '../../types/post';
 // import GetGenderIcon from '../commons/GetGenderIcon';
 import { buildStoragePostImageUrl } from '../../utility/GetUseImage';
@@ -10,6 +10,7 @@ import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
 import PostLike from './PostLike';
 import PostBookmark from './PostBookmark';
 import SkeletonImage from './SkeletonImage';
+import PostTools from '../../components/posts/PostTools';
 
 interface MemberPostCardProps {
   post: PostData;
@@ -171,7 +172,8 @@ const MemberPostCard: React.FC<MemberPostCardProps> = ({
           <PostBookmark key={post.post_id} item={post} />
         </div>
         <div className="post-tooles-button">
-          <ThreeDotsVertical style={{ fontSize: '20px' }} />
+          {/* <ThreeDotsVertical style={{ fontSize: '20px' }} /> */}
+          <PostTools />
         </div>
       </div>
     </div>
