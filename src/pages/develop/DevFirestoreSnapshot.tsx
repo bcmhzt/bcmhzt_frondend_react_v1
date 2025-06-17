@@ -6,7 +6,8 @@ import { useAuth } from '../../contexts/AuthContext';
  * Firebase storage
  * Firebase firestore
  */
-import { auth, storage, firestore } from '../../firebaseConfig';
+// import { auth, storage, firestore } from '../../firebaseConfig';
+import { firestore } from '../../firebaseConfig';
 import {
   collection,
   getDocs,
@@ -146,7 +147,8 @@ interface OpenTalk {
 /** チャットのようなリアルタイムの更新などの練習帳 */
 const DevFirestoreSnapshot: React.FC<DevFirestoreSnapshotProps> = () => {
   const [openTalks, setOpenTalks] = React.useState<OpenTalk[]>([]);
-  const { currentUserProfile, token } = useAuth();
+  const { currentUserProfile } = useAuth();
+  // const { currentUserProfile, token } = useAuth();
   const [loading, setLoading] = React.useState(true);
   // const [uid, setUid] = React.useState<string>('');
   // const [bcuid, setBcuid] = React.useState<string>('');
@@ -189,7 +191,7 @@ const DevFirestoreSnapshot: React.FC<DevFirestoreSnapshotProps> = () => {
         }
       );
     }
-  }, [currentUserProfile]);
+  }, [currentUserProfile, formData]);
 
   useEffect(() => {
     const init = async () => {
@@ -244,18 +246,18 @@ const DevFirestoreSnapshot: React.FC<DevFirestoreSnapshotProps> = () => {
     }
   };
 
-  const handleArrayInput = (
-    field: keyof Pick<
-      OpenTalk,
-      'mentioned_uids' | 'mentioned_bcuids' | 'mentioned_nicknames'
-    >,
-    value: string
-  ) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value.split(',').map((item) => item.trim()),
-    }));
-  };
+  // const handleArrayInput = (
+  //   field: keyof Pick<
+  //     OpenTalk,
+  //     'mentioned_uids' | 'mentioned_bcuids' | 'mentioned_nicknames'
+  //   >,
+  //   value: string
+  // ) => {
+  //   setFormData((prev) => ({
+  //     ...prev,
+  //     [field]: value.split(',').map((item) => item.trim()),
+  //   }));
+  // };
 
   return (
     <div className="container">
