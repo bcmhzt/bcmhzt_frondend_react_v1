@@ -204,14 +204,18 @@ const DevFirestoreSnapshot = () => {
    */
   async function handleSubmit(message: string) {
     try {
-      // 画像データの準備
+      // 画像データの準備（パスをエンコード）
       const imageData =
         selectedImages.length > 0
-          ? selectedImages.map((file) => ({
-              path: `open_talks/${currentUserProfile.user_profile.uid}/${Date.now()}_${file.name}`,
-              size: file.size,
-              name: file.name,
-            }))
+          ? selectedImages.map((file) => {
+              // Firestoreに保存するパスはエンコード
+              const encodedPath = `open_talks%2F${currentUserProfile.user_profile.uid}%2F${Date.now()}_${file.name}`;
+              return {
+                path: encodedPath,
+                size: file.size,
+                name: file.name,
+              };
+            })
           : [];
 
       const messageData = {
@@ -231,10 +235,10 @@ const DevFirestoreSnapshot = () => {
         messageData
       );
 
-      // 画像が選択されている場合、Storageにアップロード
+      // 画像アップロード時にもエンコードされたパスを使用
       if (selectedImages.length > 0) {
-        const uploadPromises = selectedImages.map((file, index) =>
-          uploadImage(file, imageData[index].path)
+        const uploadPromises = selectedImages.map(
+          (file, index) => uploadImage(file, imageData[index].path) // エンコード済みパスを使用
         );
         await Promise.all(uploadPromises);
       }
@@ -255,14 +259,13 @@ const DevFirestoreSnapshot = () => {
   /**
    * 画像をStorageにアップロード
    */
-  /**
-   * 画像をStorageにアップロード
-   */
   const uploadImage = async (file: File, path: string) => {
     try {
-      const storageRef = ref(firebaseStorage, path); // firebaseStorageを使用
+      // パスをデコードしてからStorageに渡す
+      const decodedPath = decodeURIComponent(path);
+      const storageRef = ref(firebaseStorage, decodedPath);
       await uploadBytes(storageRef, file);
-      console.log('Image uploaded successfully:', path);
+      console.log('Image uploaded successfully:', decodedPath);
     } catch (error) {
       console.error('Error uploading image:', error);
       throw error;
@@ -375,7 +378,7 @@ const DevFirestoreSnapshot = () => {
                     }}
                     key={talk.id}
                   >
-                    <pre>{JSON.stringify(talk, null, 2)}</pre>
+                    {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
                     <div className="d-flex justify-content-end align-items-end">
                       <div>
                         <div>
@@ -401,6 +404,23 @@ const DevFirestoreSnapshot = () => {
                           />
                         </Link>
                       </div>
+                    </div>
+                    <div>
+                      {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
+                      {talk.images &&
+                        talk.images.map((image, index) => (
+                          <div key={index}>
+                            {/* <span>{image.path}</span> */}
+                            <img
+                              src={buildStorageUrl(
+                                storage ?? '',
+                                image.path,
+                                '_medium'
+                              )}
+                              alt="foobar"
+                            />
+                          </div>
+                        ))}
                     </div>
                   </div>
                 ) : (
@@ -435,6 +455,23 @@ const DevFirestoreSnapshot = () => {
                           ? formatFirestoreTimestamp(talk.createdAt)
                           : ''}
                       </div>
+                    </div>
+                    <div>
+                      {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
+                      {talk.images &&
+                        talk.images.map((image, index) => (
+                          <div key={index}>
+                            {/* <span>{image.path}</span> */}
+                            <img
+                              src={buildStorageUrl(
+                                storage ?? '',
+                                image.path,
+                                '_medium'
+                              )}
+                              alt="foobar"
+                            />
+                          </div>
+                        ))}
                     </div>
                   </div>
                 )
