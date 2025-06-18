@@ -115,3 +115,25 @@
     }
   }
 }
+
+.disorder-message {
+  background: #880000;
+  color: #fff;
+  padding: 7px;
+  .text-muted {
+    color: #fff !important;
+    p {
+      margin: 0;
+      padding: 0;
+      a {
+        color: #fff !important;
+        text-decoration: underline;
+        &:hover {
+          text-decoration: none;
+          color: #888;
+        }
+      }
+
+    }
+  }
+}

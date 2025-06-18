@@ -23,6 +23,10 @@ import {
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { buildStorageUrl } from '../../utility/GetUseImage';
+import { formatFirestoreTimestamp } from '../../utility/GetCommonFunctions';
+import { Images } from 'react-bootstrap-icons';
+import { storage as firebaseStorage } from '../../firebaseConfig';
+import { ref, uploadBytes } from 'firebase/storage';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -40,6 +44,11 @@ interface OpenTalk {
   profile_images: string;
   deleted: boolean;
   createdAt: Timestamp;
+  images?: {
+    path: string;
+    size: number;
+    name: string;
+  }[];
 }
 
 /**
@@ -60,6 +69,10 @@ const DevFirestoreSnapshot = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const observerTarget = useRef<HTMLDivElement>(null);
   const DOCS_PER_PAGE = 100;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  // const storage = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL; // URL用
 
   /* 追加データ取得 */
   const fetchMoreData = useCallback(async () => {
@@ -146,43 +159,115 @@ const DevFirestoreSnapshot = () => {
     };
   }, [hasMore, isLoadingMore, fetchMoreData]);
 
+  useEffect(() => {
+    return () => {
+      // コンポーネントのアンマウント時にプレビューURLを解放
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
+
+  // 画像選択ハンドラー
+  const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    // ファイルサイズと形式のバリデーション
+    const validFiles = files.filter((file) => {
+      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB
+      const isValidType = ['image/jpeg', 'image/png', 'image/gif'].includes(
+        file.type
+      );
+      return isValidSize && isValidType;
+    });
+
+    // プレビューURL生成
+    const urls = validFiles.map((file) => URL.createObjectURL(file));
+    setPreviewUrls((prev) => [...prev, ...urls]);
+    setSelectedImages((prev) => [...prev, ...validFiles]);
+  };
+
+  // 画像選択ボタンクリックハンドラー
+  const handleImageButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  // プレビュー画像削除
+  const handleRemoveImage = (index: number) => {
+    URL.revokeObjectURL(previewUrls[index]);
+    setPreviewUrls((prev) => prev.filter((_, i) => i !== index));
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
   /**
    * 入力ルーティンはこれな！handleSubmitを参考に！
    * @param message
    */
-  function handleSubmit(message: string) {
-    const messageData = {
-      uid: currentUserProfile.user_profile.uid,
-      bcuid: currentUserProfile.user_profile.bcuid,
-      nickname: currentUserProfile.user_profile.nickname,
-      profile_images: currentUserProfile.user_profile.profile_images,
-      text: message,
-      deleted: false,
-      createdAt: serverTimestamp(),
-    };
+  async function handleSubmit(message: string) {
+    try {
+      // 画像データの準備
+      const imageData =
+        selectedImages.length > 0
+          ? selectedImages.map((file) => ({
+              path: `open_talks/${currentUserProfile.user_profile.uid}/${Date.now()}_${file.name}`,
+              size: file.size,
+              name: file.name,
+            }))
+          : [];
 
-    /* openTalks コレクションに書き込み */
-    const openTalksCollection = collection(firestore, 'openTalks');
-    /* 取得したオブジェクトにaddDoc */
-    addDoc(openTalksCollection, messageData)
-      .then(() => {
-        setMessage('');
-        console.log(
-          '[src/pages/develop/DevFirestoreSnapshot.tsx:46] Message added successfully',
-          [messageData]
+      const messageData = {
+        uid: currentUserProfile.user_profile.uid,
+        bcuid: currentUserProfile.user_profile.bcuid,
+        nickname: currentUserProfile.user_profile.nickname,
+        profile_images: currentUserProfile.user_profile.profile_images,
+        text: message,
+        deleted: false,
+        createdAt: serverTimestamp(),
+        images: imageData,
+      };
+
+      // Firestoreにドキュメントを追加
+      const docRef = await addDoc(
+        collection(firestore, 'openTalks'),
+        messageData
+      );
+
+      // 画像が選択されている場合、Storageにアップロード
+      if (selectedImages.length > 0) {
+        const uploadPromises = selectedImages.map((file, index) =>
+          uploadImage(file, imageData[index].path)
         );
-      })
-      .catch((error) => {
-        console.error(
-          '[src/pages/develop/DevFirestoreSnapshot.tsx:52] Error adding message:',
-          [error, messageData]
-        );
-      });
-    console.log(
-      '[src/pages/develop/DevFirestoreSnapshot.tsx:xx] handleSubmit:',
-      messageData
-    );
+        await Promise.all(uploadPromises);
+      }
+
+      // 状態をリセット
+      setMessage('');
+      setSelectedImages([]);
+      setPreviewUrls([]);
+
+      console.log(
+        '[DevFirestoreSnapshot] Message and images added successfully'
+      );
+    } catch (error) {
+      console.error('[DevFirestoreSnapshot] Error:', error);
+    }
   }
+
+  /**
+   * 画像をStorageにアップロード
+   */
+  /**
+   * 画像をStorageにアップロード
+   */
+  const uploadImage = async (file: File, path: string) => {
+    try {
+      const storageRef = ref(firebaseStorage, path); // firebaseStorageを使用
+      await uploadBytes(storageRef, file);
+      console.log('Image uploaded successfully:', path);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      throw error;
+    }
+  };
 
   return (
     <div className="app-body">
@@ -197,7 +282,7 @@ const DevFirestoreSnapshot = () => {
             </pre> */}
             {loading && <>Loading...</>}
             <form>
-              <div className="mb-3 d-flex align-items-center">
+              <div className="d-flex align-items-center">
                 <Link to={`/member/${currentUserProfile.user_profile.bcuid}`}>
                   <img
                     src={
@@ -220,6 +305,54 @@ const DevFirestoreSnapshot = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
+              </div>
+
+              {/* 画像プレビューエリア */}
+              {previewUrls.length > 0 && (
+                <div className="selected-images my-2">
+                  <div className="d-flex flex-wrap gap-2">
+                    {previewUrls.map((url, index) => (
+                      <div key={index} className="position-relative">
+                        <img
+                          src={url}
+                          alt={`選択された画像 ${index + 1}`}
+                          style={{
+                            width: '100px',
+                            height: '100px',
+                            objectFit: 'cover',
+                            borderRadius: '4px',
+                          }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                          onClick={() => handleRemoveImage(index)}
+                          style={{ padding: '2px 6px' }}
+                        >
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="d-flex align-items-center justify-content-end">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="d-none"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageSelect}
+                />
+                <button
+                  className="btn btn-primary bcmhzt-btn mr10"
+                  type="button"
+                  onClick={handleImageButtonClick}
+                >
+                  <Images style={{ fontSize: '20px' }} />
+                </button>
                 <button
                   onClick={() => handleSubmit(message)}
                   type="button"
@@ -242,9 +375,16 @@ const DevFirestoreSnapshot = () => {
                     }}
                     key={talk.id}
                   >
+                    <pre>{JSON.stringify(talk, null, 2)}</pre>
                     <div className="d-flex justify-content-end align-items-end">
                       <div>
-                        <div>{talk.text}</div>
+                        <div>
+                          {talk.text}
+                          <br />
+                          {talk.createdAt
+                            ? formatFirestoreTimestamp(talk.createdAt)
+                            : ''}
+                        </div>
                       </div>
                       <div>
                         <Link to={`/member/${talk.bcuid}`}>
@@ -290,6 +430,10 @@ const DevFirestoreSnapshot = () => {
                         {talk.nickname}@{talk.bcuid}
                         <br />
                         {talk.text}
+                        <br />
+                        {talk.createdAt
+                          ? formatFirestoreTimestamp(talk.createdAt)
+                          : ''}
                       </div>
                     </div>
                   </div>

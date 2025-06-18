@@ -16,6 +16,7 @@ import {
   Mailbox,
   CodeSlash,
   Braces,
+  ChatText,
 } from 'react-bootstrap-icons';
 import LanguageSelector from '../utility/LanguageSelector';
 import { useAuth } from '../contexts/AuthContext';
@@ -195,6 +196,10 @@ const Header = () => {
 
           <div className="sidebar-menu">
             <ul>
+              <li>
+                <ChatText className="icon-lg" />
+                <Link to="/develop/firestore_snapshot">オープントーク</Link>
+              </li>
               <li>
                 <WindowDock className="icon-lg" />
                 <Link to="/myprofile">プロフィールの設定</Link>

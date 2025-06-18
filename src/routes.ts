@@ -20,7 +20,8 @@ import PostsBookmarks from "./pages/posts/PostsBookmarks";
 import PostsMedia from "./pages/posts/PostsMedia";
 import PostDetail from "./pages/posts/PostDetail"
 import Notice from "./pages/notice/Notice";
-import Messages from "./pages/messages/Messages"
+import Messages from "./pages/messages/Messages";
+import Messages2 from "./pages/messages/Messages2";
 import LoopTutorial from "./pages/develop/LoopTutorial";
 import DevArchtectPage from "./pages/develop/DevArchtectPage";
 import MyProfile from "./pages/user/MyProfile";
@@ -79,6 +80,7 @@ const routes: RoutesObject = {
     { path: "/post/:post_id", component: PostDetail },// 投稿詳細
     { path: "/notice", component: Notice },// 通知
     { path: "/messages", component: Messages },// メッセージルーム（チャット）
+    { path: "/messages2", component: Messages2 },// メッセージルーム（チャット）
     { path: "/loop_tutorial", component: LoopTutorial },// ループチュートリアル
     { path: "/myprofile", component: MyProfile },// マイプロフィール更新・変更
     { path: "/liked_me", component: LikedMeCard },// いいねしてくれた人（全量）

@@ -163,3 +163,25 @@ export function convertUtcToTimeZone(
  * @param utcDate 例: "2025-06-05 20:26:53"
  * @returns JSTの日時文字列
  */
+
+/**
+ * Firestoreのタイムスタンプを日本語の日時文字列にフォーマットする
+ * "createdAt": {
+ * 　"seconds": 1750215135,
+ * 　"nanoseconds": 599000000
+ * }
+ * @param timestamp Firestoreのタイムスタンプ形式 { seconds: number; nanoseconds: number }
+ * @returns
+ */
+export const formatFirestoreTimestamp = (timestamp: any) => {
+  if (!timestamp || !timestamp.seconds) {
+    return '送信中...'; // または適切なデフォルト値
+  }
+  return new Date(timestamp.seconds * 1000).toLocaleString('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+};
