@@ -1,25 +1,20 @@
 /** bfe3a60e */
-import { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useRef, useEffect, useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
 import {
   collection,
-  /* input */
-  addDoc,
-  serverTimestamp,
-  /* select */
-  getDocs,
-  onSnapshot,
   query,
   orderBy,
-  Timestamp,
-  /* pagenation */
   limit,
   startAfter,
-  QueryDocumentSnapshot,
-  DocumentData,
+  getDocs,
+  addDoc,
+  serverTimestamp,
+  Timestamp,
 } from 'firebase/firestore';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { buildStorageUrl } from '../../utility/GetUseImage';
@@ -28,13 +23,14 @@ import { Images } from 'react-bootstrap-icons';
 import { storage as firebaseStorage } from '../../firebaseConfig';
 import { ref, uploadBytes } from 'firebase/storage';
 
-/* debug */
-let debug = process.env.REACT_APP_DEBUG;
-if (debug === 'true') {
-  console.log('[src/pages/develop/DevFirestoreSnapshot.tsx:xx] debug:', debug);
+const DOCS_PER_PAGE = 10;
+
+interface OpenTalkImage {
+  path: string;
+  size: number;
+  name: string;
 }
 
-/* select用のインターフェイス */
 interface OpenTalk {
   id: string;
   uid: string;
@@ -43,150 +39,90 @@ interface OpenTalk {
   text: string;
   profile_images: string;
   deleted: boolean;
-  createdAt: Timestamp;
-  images?: {
-    path: string;
-    size: number;
-    name: string;
-  }[];
+  createdAt: Timestamp | null;
+  images?: OpenTalkImage[];
 }
 
-/**
- *
- * @returns
- */
-const DevFirestoreSnapshot = () => {
-  const [message, setMessage] = useState('');
-  const { currentUserProfile } = useAuth();
-  const storage = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL;
-  /* select用のステート */
-  const [openTalks, setOpenTalks] = useState<OpenTalk[]>([]);
-  const [loading, setLoading] = useState(true);
-  /* 無限スクロール */
-  const [lastDoc, setLastDoc] =
-    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
-  const [hasMore, setHasMore] = useState(true);
-  const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const observerTarget = useRef<HTMLDivElement>(null);
-  const DOCS_PER_PAGE = 100;
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [selectedImages, setSelectedImages] = useState<File[]>([]);
-  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  // const storage = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL; // URL用
-
-  /* 追加データ取得 */
-  const fetchMoreData = useCallback(async () => {
-    if (!hasMore || isLoadingMore || !lastDoc) return;
-
-    setIsLoadingMore(true);
-    try {
-      const q = query(
-        collection(firestore, 'openTalks'),
-        orderBy('createdAt', 'desc'),
-        startAfter(lastDoc),
-        limit(DOCS_PER_PAGE)
-      );
-
-      const snapshot = await getDocs(q);
-      const newTalks = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as OpenTalk[];
-
-      setOpenTalks((prev) => [...prev, ...newTalks]);
-      setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
-      setHasMore(snapshot.docs.length === DOCS_PER_PAGE);
-    } catch (error) {
-      console.error('Error fetching more data:', error);
-    } finally {
-      setIsLoadingMore(false);
-    }
-  }, [hasMore, isLoadingMore, lastDoc, DOCS_PER_PAGE]);
-
-  /* 初期データ取得 */
-  useEffect(() => {
-    setLoading(true);
-
-    // クエリの設定
-    const q = query(
+const fetchOpenTalks = async ({
+  pageParam,
+}: {
+  pageParam?: any;
+}): Promise<{ docs: OpenTalk[]; lastDoc: any; hasMore: boolean }> => {
+  let q;
+  if (pageParam) {
+    q = query(
+      collection(firestore, 'openTalks'),
+      orderBy('createdAt', 'desc'),
+      startAfter(pageParam),
+      limit(DOCS_PER_PAGE)
+    );
+  } else {
+    q = query(
       collection(firestore, 'openTalks'),
       orderBy('createdAt', 'desc'),
       limit(DOCS_PER_PAGE)
     );
+  }
+  const snapshot = await getDocs(q);
+  const docs = snapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  })) as OpenTalk[];
+  const lastDoc = snapshot.docs[snapshot.docs.length - 1] || null;
+  return { docs, lastDoc, hasMore: snapshot.docs.length === DOCS_PER_PAGE };
+};
 
-    // リアルタイムリスナーの設定
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      try {
-        const talks = snapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        })) as OpenTalk[];
+const DevFirestoreSnapshot: React.FC = () => {
+  const { currentUserProfile } = useAuth();
+  const [message, setMessage] = useState('');
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const observerTarget = useRef<HTMLDivElement>(null);
+  const storage = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL;
 
-        setOpenTalks(talks);
-        setLastDoc(snapshot.docs[snapshot.docs.length - 1] || null);
-        setHasMore(snapshot.docs.length === DOCS_PER_PAGE);
-        setLoading(false);
-      } catch (error) {
-        console.error('Error in realtime listener:', error);
-        setLoading(false);
-      }
-    });
+  // useInfiniteQuery
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['openTalks'],
+    queryFn: fetchOpenTalks,
+    initialPageParam: undefined,
+    getNextPageParam: (lastPage) =>
+      lastPage.hasMore ? lastPage.lastDoc : undefined,
+    refetchOnWindowFocus: false,
+  });
 
-    return () => unsubscribe();
-  }, []);
-
-  /* Intersection Observer */
+  // Intersection ObserverでfetchNextPage
   useEffect(() => {
-    const currentObserverTarget = observerTarget.current;
-
+    if (!observerTarget.current) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0].isIntersecting && hasMore && !isLoadingMore) {
-          fetchMoreData();
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
         }
       },
       { threshold: 0.5 }
     );
+    observer.observe(observerTarget.current);
+    return () => observer.disconnect();
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-    if (currentObserverTarget) {
-      observer.observe(currentObserverTarget);
-    }
-
-    return () => {
-      if (currentObserverTarget) {
-        observer.unobserve(currentObserverTarget);
-      }
-    };
-  }, [hasMore, isLoadingMore, fetchMoreData]);
-
-  useEffect(() => {
-    return () => {
-      // コンポーネントのアンマウント時にプレビューURLを解放
-      previewUrls.forEach((url) => URL.revokeObjectURL(url));
-    };
-  }, []);
-
-  // 画像選択ハンドラー
+  // 画像選択
   const handleImageSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
-
-    // ファイルサイズと形式のバリデーション
-    const validFiles = files.filter((file) => {
-      const isValidSize = file.size <= 5 * 1024 * 1024; // 5MB
-      const isValidType = ['image/jpeg', 'image/png', 'image/gif'].includes(
-        file.type
-      );
-      return isValidSize && isValidType;
-    });
-
-    // プレビューURL生成
-    const urls = validFiles.map((file) => URL.createObjectURL(file));
+    const urls = files.map((file) => URL.createObjectURL(file));
     setPreviewUrls((prev) => [...prev, ...urls]);
-    setSelectedImages((prev) => [...prev, ...validFiles]);
+    setSelectedImages((prev) => [...prev, ...files]);
   };
 
-  // 画像選択ボタンクリックハンドラー
+  // 画像選択ボタン
   const handleImageButtonClick = () => {
     fileInputRef.current?.click();
   };
@@ -198,27 +134,21 @@ const DevFirestoreSnapshot = () => {
     setSelectedImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  /**
-   * 入力ルーティンはこれな！handleSubmitを参考に！
-   * @param message
-   */
+  // 投稿
   async function handleSubmit(message: string) {
     try {
-      // 画像データの準備（パスをエンコード）
-      const imageData =
-        selectedImages.length > 0
-          ? selectedImages.map((file) => {
-              // Firestoreに保存するパスはエンコード
-              const encodedPath = `open_talks%2F${currentUserProfile.user_profile.uid}%2F${Date.now()}_${file.name}`;
-              return {
-                path: encodedPath,
-                size: file.size,
-                name: file.name,
-              };
-            })
-          : [];
+      if (!message.trim() && selectedImages.length === 0) return;
 
-      const messageData = {
+      // 画像データの準備
+      const now = Date.now();
+      const imageData = selectedImages.map((file) => ({
+        path: `open_talks%2F${currentUserProfile.user_profile.uid}%2F${now}_${file.name}`,
+        size: file.size,
+        name: file.name,
+      }));
+
+      // Firestoreにドキュメントを追加
+      const docRef = await addDoc(collection(firestore, 'openTalks'), {
         uid: currentUserProfile.user_profile.uid,
         bcuid: currentUserProfile.user_profile.bcuid,
         nickname: currentUserProfile.user_profile.nickname,
@@ -227,18 +157,12 @@ const DevFirestoreSnapshot = () => {
         deleted: false,
         createdAt: serverTimestamp(),
         images: imageData,
-      };
+      });
 
-      // Firestoreにドキュメントを追加
-      const docRef = await addDoc(
-        collection(firestore, 'openTalks'),
-        messageData
-      );
-
-      // 画像アップロード時にもエンコードされたパスを使用
+      // 画像のアップロード
       if (selectedImages.length > 0) {
-        const uploadPromises = selectedImages.map(
-          (file, index) => uploadImage(file, imageData[index].path) // エンコード済みパスを使用
+        const uploadPromises = selectedImages.map((file, index) =>
+          uploadImage(file, imageData[index].path)
         );
         await Promise.all(uploadPromises);
       }
@@ -248,43 +172,49 @@ const DevFirestoreSnapshot = () => {
       setSelectedImages([]);
       setPreviewUrls([]);
 
-      console.log(
-        '[DevFirestoreSnapshot] Message and images added successfully'
-      );
+      // 投稿後にリロード
+      refetch();
     } catch (error) {
       console.error('[DevFirestoreSnapshot] Error:', error);
     }
   }
 
-  /**
-   * 画像をStorageにアップロード
-   */
+  // 画像アップロード
   const uploadImage = async (file: File, path: string) => {
     try {
-      // パスをデコードしてからStorageに渡す
       const decodedPath = decodeURIComponent(path);
       const storageRef = ref(firebaseStorage, decodedPath);
       await uploadBytes(storageRef, file);
-      console.log('Image uploaded successfully:', decodedPath);
     } catch (error) {
       console.error('Error uploading image:', error);
       throw error;
     }
   };
 
+  // プレビューURLの解放
+  useEffect(() => {
+    return () => {
+      previewUrls.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [previewUrls]);
+
+  // 投稿一覧
+  const talks: OpenTalk[] = data?.pages.flatMap((page) => page.docs) ?? [];
+
   return (
     <div className="app-body">
       <Header />
-
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left">
             <h2 className="page-title mb20">Open Talk</h2>
-            {/* <pre>
-              {JSON.stringify(currentUserProfile.user_profile, null, 2)}
-            </pre> */}
-            {loading && <>Loading...</>}
-            <form>
+            {isLoading && <>Loading...</>}
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleSubmit(message);
+              }}
+            >
               <div className="d-flex align-items-center">
                 <Link to={`/member/${currentUserProfile.user_profile.bcuid}`}>
                   <img
@@ -300,7 +230,7 @@ const DevFirestoreSnapshot = () => {
                   />
                 </Link>
                 <input
-                  type="email"
+                  type="text"
                   className="form-control me-2"
                   id="openTalkMessage"
                   placeholder="今、何をしてますか？"
@@ -308,8 +238,29 @@ const DevFirestoreSnapshot = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                 />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  className="d-none"
+                  accept="image/*"
+                  multiple
+                  onChange={handleImageSelect}
+                />
+                <button
+                  className="btn btn-primary bcmhzt-btn mr10"
+                  type="button"
+                  onClick={handleImageButtonClick}
+                >
+                  <Images style={{ fontSize: '20px' }} />
+                </button>
+                <button
+                  className="btn btn-primary"
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  投稿
+                </button>
               </div>
-
               {/* 画像プレビューエリア */}
               {previewUrls.length > 0 && (
                 <div className="selected-images my-2">
@@ -339,150 +290,60 @@ const DevFirestoreSnapshot = () => {
                   </div>
                 </div>
               )}
-
-              <div className="d-flex align-items-center justify-content-end">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="d-none"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageSelect}
-                />
-                <button
-                  className="btn btn-primary bcmhzt-btn mr10"
-                  type="button"
-                  onClick={handleImageButtonClick}
-                >
-                  <Images style={{ fontSize: '20px' }} />
-                </button>
-                <button
-                  onClick={() => handleSubmit(message)}
-                  type="button"
-                  className="btn btn-primary bcmhzt-btn"
-                >
-                  Submit
-                </button>
-              </div>
             </form>
-
-            <div className="opentalk-messages">
-              {openTalks.map((talk) =>
-                /* 自分のメッセージ */
-                talk.bcuid === currentUserProfile.user_profile.bcuid ? (
-                  <div
-                    className="message-block-right mb20"
-                    style={{
-                      width: '80%',
-                      marginLeft: 'auto',
-                    }}
-                    key={talk.id}
-                  >
-                    {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
-                    <div className="d-flex justify-content-end align-items-end">
-                      <div>
-                        <div>
-                          {talk.text}
-                          <br />
-                          {talk.createdAt
-                            ? formatFirestoreTimestamp(talk.createdAt)
-                            : ''}
-                        </div>
-                      </div>
-                      <div>
-                        <Link to={`/member/${talk.bcuid}`}>
-                          <img
-                            src={
-                              buildStorageUrl(
-                                storage ?? '',
-                                talk.profile_images ?? '',
-                                '_thumbnail'
-                              ) || '/assets/images/dummy/dummy_avatar.png'
-                            }
-                            className="avatar-36"
-                            alt="foobar"
-                          />
-                        </Link>
-                      </div>
-                    </div>
+            {/* 投稿一覧 */}
+            <div className="talk-list mt-4">
+              {talks.map((talk) => (
+                <div key={talk.id} className="talk-item mb-3">
+                  <div className="d-flex align-items-center mb-1">
+                    <img
+                      src={
+                        buildStorageUrl(
+                          storage ?? '',
+                          talk.profile_images ?? '',
+                          '_thumbnail'
+                        ) || '/assets/images/dummy/dummy_avatar.png'
+                      }
+                      className="avatar-36 me-2"
+                      alt="avatar"
+                    />
                     <div>
-                      {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
-                      {talk.images &&
-                        talk.images.map((image, index) => (
-                          <div key={index}>
-                            {/* <span>{image.path}</span> */}
-                            <img
-                              src={buildStorageUrl(
-                                storage ?? '',
-                                image.path,
-                                '_medium'
-                              )}
-                              alt="foobar"
-                            />
-                          </div>
-                        ))}
-                    </div>
-                  </div>
-                ) : (
-                  /* 他の人のメッセージ */
-                  <div
-                    className="message-block-left mb20"
-                    style={{ width: '90%' }}
-                    key={talk.id}
-                  >
-                    <div className="d-flex align-items-start">
-                      <div>
-                        <Link to={`/member/${talk.bcuid}`}>
-                          <img
-                            src={
-                              buildStorageUrl(
-                                storage ?? '',
-                                talk.profile_images ?? '',
-                                '_thumbnail'
-                              ) || '/assets/images/dummy/dummy_avatar.png'
-                            }
-                            className="avatar-36"
-                            alt="foobar"
-                          />
-                        </Link>
-                      </div>
-                      <div>
-                        {talk.nickname}@{talk.bcuid}
-                        <br />
-                        {talk.text}
-                        <br />
+                      <span className="fw-bold">{talk.nickname}</span>
+                      <span className="text-muted ms-2">{talk.bcuid}</span>
+                      <br />
+                      <small className="text-muted">
                         {talk.createdAt
                           ? formatFirestoreTimestamp(talk.createdAt)
-                          : ''}
-                      </div>
-                    </div>
-                    <div>
-                      {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
-                      {talk.images &&
-                        talk.images.map((image, index) => (
-                          <div key={index}>
-                            {/* <span>{image.path}</span> */}
-                            <img
-                              src={buildStorageUrl(
-                                storage ?? '',
-                                image.path,
-                                '_medium'
-                              )}
-                              alt="foobar"
-                            />
-                          </div>
-                        ))}
+                          : '送信中...'}
+                      </small>
                     </div>
                   </div>
-                )
-              )}
-
-              {/* Intersection Observer target */}
-              <div
-                ref={observerTarget}
-                style={{ height: '20px', margin: '20px 0' }}
-              >
-                {isLoadingMore && (
+                  <div className="mb-2">{talk.text}</div>
+                  {/* 画像表示 */}
+                  {talk.images &&
+                    talk.images.map((image, index) => (
+                      <div key={index} className="image-container mb-2">
+                        <img
+                          src={buildStorageUrl(
+                            storage ?? '',
+                            image.path,
+                            '_medium'
+                          )}
+                          alt={`投稿画像 ${index + 1}`}
+                          style={{
+                            maxWidth: '100%',
+                            borderRadius: '4px',
+                            display: 'block',
+                          }}
+                          loading="lazy"
+                        />
+                      </div>
+                    ))}
+                </div>
+              ))}
+              {/* 無限スクロール用ターゲット */}
+              <div ref={observerTarget} style={{ height: '20px' }}>
+                {isFetchingNextPage && (
                   <div className="text-center">
                     <div
                       className="spinner-border spinner-border-sm"
@@ -493,25 +354,11 @@ const DevFirestoreSnapshot = () => {
                   </div>
                 )}
               </div>
-
-              {!hasMore && (
+              {!hasNextPage && talks.length > 0 && (
                 <div className="text-center text-muted my-3">
                   これ以上のメッセージはありません
                 </div>
               )}
-            </div>
-
-            {/* <pre>{JSON.stringify(openTalks, null, 2)}</pre> */}
-          </div>
-          <div className="d-none d-md-block col-md-6 bc-right">
-            <div
-              style={{
-                background: '#f1f1f1',
-                height: '100%',
-                padding: '20px',
-              }}
-            >
-              広告エリア / サブエリア
             </div>
           </div>
         </div>
