@@ -198,7 +198,7 @@ const Header = () => {
             <ul>
               <li>
                 <ChatText className="icon-lg" />
-                <Link to="/develop/firestore_snapshot">オープントーク</Link>
+                <Link to="/open_talks">オープントーク</Link>
               </li>
               <li>
                 <WindowDock className="icon-lg" />

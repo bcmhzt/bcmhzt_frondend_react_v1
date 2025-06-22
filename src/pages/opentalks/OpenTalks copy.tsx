@@ -24,7 +24,7 @@ import {
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { buildStorageUrl } from '../../utility/GetUseImage';
-// import { formatFirestoreTimestamp } from '../../utility/GetCommonFunctions';
+import { formatFirestoreTimestamp } from '../../utility/GetCommonFunctions';
 import { Images } from 'react-bootstrap-icons';
 import { storage as firebaseStorage } from '../../firebaseConfig';
 import { ref, uploadBytes } from 'firebase/storage';
@@ -245,25 +245,25 @@ const DevFirestoreSnapshot = () => {
       }
 
       // Firestoreにドキュメントを追加
-      // const docRef = await addDoc(collection(firestore, 'openTalks'), {
-      //   uid: currentUserProfile.user_profile.uid,
-      //   bcuid: currentUserProfile.user_profile.bcuid,
-      //   nickname: currentUserProfile.user_profile.nickname,
-      //   profile_images: currentUserProfile.user_profile.profile_images,
-      //   text: message,
-      //   deleted: false,
-      //   createdAt: serverTimestamp(),
-      //   images: imageData,
-      // });
+      const docRef = await addDoc(collection(firestore, 'openTalks'), {
+        uid: currentUserProfile.user_profile.uid,
+        bcuid: currentUserProfile.user_profile.bcuid,
+        nickname: currentUserProfile.user_profile.nickname,
+        profile_images: currentUserProfile.user_profile.profile_images,
+        text: message,
+        deleted: false,
+        createdAt: serverTimestamp(),
+        images: imageData,
+      });
 
       // メモリ内で一時的に保持する楽観的UIデータ
-      // const optimisticData = {
-      //   ...docRef,
-      //   images: imageData.map((img, index) => ({
-      //     ...img,
-      //     optimisticUrl: previewUrls[index], // 一時的なBlobURL
-      //   })),
-      // };
+      const optimisticData = {
+        ...docRef,
+        images: imageData.map((img, index) => ({
+          ...img,
+          optimisticUrl: previewUrls[index], // 一時的なBlobURL
+        })),
+      };
 
       // 楽観的UIのための一時的なstate更新
       // setOpenTalks((prev) => [optimisticData, ...prev]);
@@ -312,179 +312,186 @@ const DevFirestoreSnapshot = () => {
             {/* <pre>
               {JSON.stringify(currentUserProfile.user_profile, null, 2)}
             </pre> */}
-            {loading && <>Loading...</>}
-            <form>
-              <div className="d-flex align-items-center">
-                <Link to={`/member/${currentUserProfile.user_profile.bcuid}`}>
-                  <img
-                    src={
-                      buildStorageUrl(
-                        storage ?? '',
-                        currentUserProfile.user_profile.profile_images ?? '',
-                        '_thumbnail'
-                      ) || '/assets/images/dummy/dummy_avatar.png'
-                    }
-                    className="avatar-36"
-                    alt="foobar"
+            <div className="opentalks">
+              {loading && <>Loading...</>}
+              <form>
+                <div className="d-flex align-items-center">
+                  <Link to={`/member/${currentUserProfile.user_profile.bcuid}`}>
+                    <img
+                      src={
+                        buildStorageUrl(
+                          storage ?? '',
+                          currentUserProfile.user_profile.profile_images ?? '',
+                          '_thumbnail'
+                        ) || '/assets/images/dummy/dummy_avatar.png'
+                      }
+                      className="avatar-36"
+                      alt="foobar"
+                    />
+                  </Link>
+                  <input
+                    type="email"
+                    className="form-control"
+                    id="openTalkMessage"
+                    placeholder="今、何をしてますか？"
+                    aria-label="Open Talk Message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
                   />
-                </Link>
-                <input
-                  type="email"
-                  className="form-control me-2"
-                  id="openTalkMessage"
-                  placeholder="今、何をしてますか？"
-                  aria-label="Open Talk Message"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-              </div>
-
-              {/* 画像プレビューエリア */}
-              {previewUrls.length > 0 && (
-                <div className="selected-images my-2">
-                  <div className="d-flex flex-wrap gap-2">
-                    {previewUrls.map((url, index) => (
-                      <div key={index} className="position-relative">
-                        <img
-                          src={url}
-                          alt={`選択された画像 ${index + 1}`}
-                          style={{
-                            width: '100px',
-                            height: '100px',
-                            objectFit: 'cover',
-                            borderRadius: '4px',
-                          }}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger position-absolute top-0 end-0"
-                          onClick={() => handleRemoveImage(index)}
-                          style={{ padding: '2px 6px' }}
-                        >
-                          ×
-                        </button>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              )}
 
-              <div className="d-flex align-items-center justify-content-end">
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  className="d-none"
-                  accept="image/*"
-                  multiple
-                  onChange={handleImageSelect}
-                />
-                <button
-                  className="btn btn-primary bcmhzt-btn mr10"
-                  type="button"
-                  onClick={handleImageButtonClick}
-                >
-                  <Images style={{ fontSize: '20px' }} />
-                </button>
-                <button
-                  onClick={() => handleSubmit(message)}
-                  type="button"
-                  className="btn btn-primary bcmhzt-btn"
-                >
-                  Submit
-                </button>
-              </div>
-            </form>
+                {/* 画像プレビューエリア */}
+                {previewUrls.length > 0 && (
+                  <div className="selected-images my-2">
+                    <div className="d-flex flex-wrap gap-2">
+                      {previewUrls.map((url, index) => (
+                        <div key={index} className="position-relative">
+                          <img
+                            src={url}
+                            alt={`選択された画像 ${index + 1}`}
+                            style={{
+                              width: '100px',
+                              height: '100px',
+                              objectFit: 'cover',
+                              borderRadius: '4px',
+                            }}
+                          />
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                            onClick={() => handleRemoveImage(index)}
+                            style={{ padding: '2px 6px' }}
+                          >
+                            ×
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
 
-            <div className="opentalk-messages">
-              {/* <pre>{JSON.stringify(openTalks, null, 2)}</pre> */}
-              {openTalks.length > 0 && (
-                <>
-                  {openTalks.map((talk) =>
-                    talk.bcuid === currentUserProfile.user_profile.bcuid ? (
-                      <div key={talk.id}>
-                        <OpenTalksChatCard talk={talk} key={talk.id} />
-                        <div>
-                          talk
-                          <pre>{JSON.stringify(talk, null, 2)}</pre>
+                <div className="d-flex align-items-center justify-content-end">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="d-none"
+                    accept="image/*"
+                    multiple
+                    onChange={handleImageSelect}
+                  />
+                  <button
+                    className="btn btn-primary bcmhzt-btn mr10"
+                    type="button"
+                    onClick={handleImageButtonClick}
+                  >
+                    <Images style={{ fontSize: '20px' }} />
+                  </button>
+                  <button
+                    onClick={() => handleSubmit(message)}
+                    type="button"
+                    className="btn btn-primary bcmhzt-btn"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </form>
+
+              <div className="opentalk-messages">
+                {/* <pre>{JSON.stringify(openTalks, null, 2)}</pre> */}
+                {openTalks.length > 0 && (
+                  <>
+                    {openTalks.map((talk) =>
+                      talk.bcuid === currentUserProfile.user_profile.bcuid ? (
+                        <div key={talk.id}>
+                          <OpenTalksChatCard talk={talk} key={talk.id} />
+                          {/* <div> */}
+                          {/* talk */}
+                          {/* <pre>{JSON.stringify(talk, null, 2)}</pre> */}
                           {/* <div>{talk.text}</div> */}
-                          self
-                          <pre>
+                          {/* self */}
+                          {/* <pre>
                             {JSON.stringify(
                               currentUserProfile?.user_profile?.uid,
                               null,
                               2
                             )}
-                          </pre>
-                          {talk.images && talk.images.length > 0 && (
-                            <div className="image-gallery">
-                              {talk.images.map((image, index) => {
-                                const imgKey = `${talk.id}_${index}`;
-                                const status = imageStatus[imgKey] || 'loading';
+                          </pre> */}
+                          {/* {talk.images && talk.images.length > 0 && (
+                          <div className="image-gallery">
+                            {talk.images.map((image, index) => {
+                              const imgKey = `${talk.id}_${index}`;
+                              const status = imageStatus[imgKey] || 'loading';
 
-                                return (
-                                  <div
-                                    key={index}
-                                    className="image-container mb-2"
-                                  >
-                                    <img
-                                      src={imageSrcs[imgKey]}
-                                      alt={`投稿画像 ${index + 1}`}
-                                      onLoad={() => {
+                              return (
+                                <div
+                                  key={index}
+                                  className="image-container mb-2"
+                                >
+                                  <img
+                                    src={imageSrcs[imgKey]}
+                                    alt={`投稿画像 ${index + 1}`}
+                                    onLoad={() => {
+                                      setImageStatus((prev) => ({
+                                        ...prev,
+                                        [imgKey]: 'success',
+                                      }));
+                                      // 正常取得できたら通常URLに戻す
+                                      setImageSrcs((prev) => ({
+                                        ...prev,
+                                        [imgKey]: buildStorageUrl(
+                                          storage ?? '',
+                                          image.path,
+                                          '_medium'
+                                        ),
+                                      }));
+                                    }}
+                                    onError={() => {
+                                      setImageStatus((prev) => ({
+                                        ...prev,
+                                        [imgKey]: 'error',
+                                      }));
+                                      setTimeout(() => {
                                         setImageStatus((prev) => ({
                                           ...prev,
-                                          [imgKey]: 'success',
+                                          [imgKey]: 'loading',
                                         }));
-                                        // 正常取得できたら通常URLに戻す
                                         setImageSrcs((prev) => ({
                                           ...prev,
-                                          [imgKey]: buildStorageUrl(
-                                            storage ?? '',
-                                            image.path,
-                                            '_medium'
-                                          ),
+                                          [imgKey]: `${buildStorageUrl(storage ?? '', image.path, '_medium')}&t=${Date.now()}`,
                                         }));
-                                      }}
-                                      onError={() => {
-                                        setImageStatus((prev) => ({
-                                          ...prev,
-                                          [imgKey]: 'error',
-                                        }));
-                                        setTimeout(() => {
-                                          setImageStatus((prev) => ({
-                                            ...prev,
-                                            [imgKey]: 'loading',
-                                          }));
-                                          setImageSrcs((prev) => ({
-                                            ...prev,
-                                            [imgKey]: `${buildStorageUrl(storage ?? '', image.path, '_medium')}&t=${Date.now()}`,
-                                          }));
-                                        }, 3000);
-                                      }}
-                                    />
-                                    <div>
-                                      {status === 'loading' && 'ロード中...'}
-                                      {status === 'success' && '画像取得成功'}
-                                      {status === 'error' && '404/取得失敗'}
-                                    </div>
+                                      }, 3000);
+                                    }}
+                                  />
+                                  <div>
+                                    {status === 'loading' && 'ロード中...'}
+                                    {status === 'success' && '画像取得成功'}
+                                    {status === 'error' && '404/取得失敗'}
                                   </div>
-                                );
-                              })}
-                            </div>
-                          )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )} */}
+                          {/* </div> */}
                         </div>
-                      </div>
-                    ) : (
-                      <>hoge</>
-                    )
-                  )}
-                </>
-              )}
+                      ) : (
+                        <>
+                          {talk.id}
+                          <br />
+                          {talk.text}
+                          お相手さん<br></br>
+                        </>
+                      )
+                    )}
+                  </>
+                )}
 
-              {!hasMore && (
-                <div className="alert alert-secondary" role="alert">
-                  これ以上メッセージはありません。
-                </div>
-              )}
+                {!hasMore && (
+                  <div className="alert alert-secondary" role="alert">
+                    これ以上メッセージはありません。
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">

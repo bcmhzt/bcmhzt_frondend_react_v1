@@ -1,212 +1,107 @@
-import axios from 'axios';
-import { useRef, useEffect, useState } from 'react';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { buildStorageUrl } from '../../utility/GetUseImage';
-import ChatModal from './ChatModal';
+import { useInfiniteQuery } from '@tanstack/react-query';
+// import { getImageWithSuffix } from '../../utility/GetUseImage';
+import MessageRoom from './MessageRoom';
+import { syncChatRooms, fetchChatRooms } from '../../services/firestoreChat';
+import { fetchMatchedList } from '../../services/chatApi';
+import type { MatchedUser, OpenChatRoom } from '../../types/chat';
 
-/* matchしたユーザー */
-interface MatchedMember {
-  matched_uid: string;
-  id: number;
-  uid: string;
-  bcuid: string;
-  nickname: string;
-  profile_images: string;
-  gender: string;
-  age: number;
-  location: string;
-}
+const MessageList: React.FC = () => {
+  const { currentUser, token } = useAuth();
+  const [matchedList, setMatchedList] = useState<MatchedUser[]>([]);
+  const [openChatRooms, setOpenChatRooms] = useState<OpenChatRoom[]>([]);
 
-/* pagenation */
-interface PaginationLink {
-  url: string | null;
-  label: string;
-  active: boolean;
-}
-
-interface MatchedListResponse {
-  success: boolean;
-  status: number;
-  message: string;
-  data: {
-    current_page: number;
-    data: MatchedMember[];
-    first_page_url: string;
-    from: number;
-    last_page: number;
-    last_page_url: string;
-    links: PaginationLink[];
-    next_page_url: string | null;
-    path: string;
-    per_page: number;
-    prev_page_url: string | null;
-    to: number;
-    total: number;
-  };
-  errors: null | any;
-}
-
-const MessageList2 = () => {
-  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
-  const { token } = useAuth();
-  const observerTarget = useRef<HTMLDivElement>(null); // 修正: observerRef → observerTarget
-  const storage = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL;
-  const [selectedMember, setSelectedMember] = useState<MatchedMember | null>(
-    null
-  );
-
-  const fetchMatchedList = async (
-    page: number = 1
-  ): Promise<MatchedListResponse> => {
-    try {
-      const response = await axios.post<MatchedListResponse>(
-        `${apiEndpoint}/v1/get/matched_member?page=${page}`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      return response.data;
-    } catch (error) {
-      console.error('[MessageList2] fetchMatchedList error:', error);
-      throw error;
-    }
-  };
-
-  const {
-    data,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
+  // マッチユーザー一覧の取得
+  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
     queryKey: ['matchedMembers', token],
-    queryFn: ({ pageParam = 1 }) => fetchMatchedList(pageParam as number),
+    queryFn: ({ pageParam = 1 }) => fetchMatchedList(token!, pageParam),
     initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.data.data.length) return undefined;
-      return lastPage.data.current_page < lastPage.data.last_page
-        ? lastPage.data.current_page + 1
-        : undefined;
-    },
     enabled: !!token,
+    getNextPageParam: (lastPage) => {
+      if (lastPage.data.next_page_url) {
+        const match = lastPage.data.next_page_url.match(/page=(\d+)/);
+        return match ? Number(match[1]) : undefined;
+      }
+      return undefined;
+    },
   });
 
-  // Intersection Observer の設定
+  // マッチリストの更新とチャットルームの同期
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 0.5 }
+    if (!data || !currentUser?.uid) return;
+
+    const flatList = data.pages.flatMap((page) => page.data.data);
+    setMatchedList(flatList);
+
+    // ユーザー情報のマップを作成
+    const matchedMap = new Map(
+      flatList.map((user) => [user.matched_uid, user])
     );
 
-    if (observerTarget.current) {
-      observer.observe(observerTarget.current);
-    }
+    // チャットルームの同期
+    const syncRooms = async () => {
+      try {
+        await syncChatRooms({
+          currentUid: currentUser.uid,
+          matchedList: flatList,
+        });
 
-    return () => {
-      if (observerTarget.current) {
-        observer.unobserve(observerTarget.current);
+        // チャットルーム一覧の取得
+        const rooms = await fetchChatRooms(currentUser.uid, matchedMap);
+        setOpenChatRooms(rooms);
+      } catch (error) {
+        console.error('[syncRooms] error:', error);
       }
     };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // マッチしたメンバーの一覧を結合
-  const matchedMembers = data?.pages.flatMap((page) => page.data.data) ?? [];
+    syncRooms();
+  }, [currentUser?.uid, data]);
 
-  const handleChatClick = (member: MatchedMember) => {
-    setSelectedMember(member);
-  };
+  if (isLoading) {
+    return (
+      <div className="loading-spinner-container">
+        <div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div>
+      </div>
+    );
+  }
 
-  const handleCloseChat = () => {
-    setSelectedMember(null);
+  const handleRoomClick = (roomId: string) => {
+    // モーダルは自動で開くのでここでは必要に応じて追加の処理を実装
+    console.log('Room clicked:', roomId);
   };
 
   return (
-    <>
-      <div className="message-list">
-        {isLoading ? (
-          <div className="text-center my-3">
-            <div className="spinner-border" role="status">
-              <span className="visually-hidden">Loading...</span>
-            </div>
+    <div className="message-list">
+      {/* <pre>{JSON.stringify(matchedList, null, 2)}</pre> */}
+      <pre>{JSON.stringify(matchedList.length, null, 2)}</pre>
+      <ul className="chat-rooms">
+        {openChatRooms.map((room) => (
+          <li key={room.id} className="chat-room-item mb-3">
+            <MessageRoom room={room} onRoomClick={handleRoomClick} />
+          </li>
+        ))}
+        {openChatRooms.length === 0 && (
+          <div className="alert alert-secondary">
+            まだメッセージはありません
           </div>
-        ) : isError ? (
-          <div className="text-center text-danger">
-            エラーが発生しました: {error.message}
-          </div>
-        ) : (
-          <>
-            <ul className="chat-rooms">
-              {matchedMembers.map((member) => (
-                <li
-                  key={member.id}
-                  className="chat-room-item"
-                  onClick={() => handleChatClick(member)}
-                  style={{ cursor: 'pointer' }}
-                >
-                  <div className="d-flex align-items-center p-3">
-                    <div className="avatar me-3">
-                      <img
-                        src={buildStorageUrl(
-                          storage ?? '',
-                          member.profile_images,
-                          '_thumbnail'
-                        )}
-                        alt={member.nickname}
-                        className="avatar-36"
-                      />
-                    </div>
-                    <div className="flex-grow-1">
-                      <div className="mb-0">{member.nickname}</div>
-                      <small className="text-muted">
-                        {member.age}歳・{member.location}
-                      </small>
-                    </div>
-                    <div>message</div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-
-            {/* Intersection Observer のターゲット要素 */}
-            <div ref={observerTarget} style={{ height: '20px' }}>
-              {isFetchingNextPage && (
-                <div className="text-center">
-                  <div
-                    className="spinner-border spinner-border-sm"
-                    role="status"
-                  >
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {!hasNextPage && matchedMembers.length > 0 && (
-              <div className="text-center text-muted my-3">
-                これ以上のメッセージはありません
-              </div>
-            )}
-          </>
         )}
-      </div>
+      </ul>
 
-      <ChatModal
-        member={selectedMember}
-        onClose={handleCloseChat}
-        storage={storage}
-      />
-    </>
+      {hasNextPage && (
+        <div className="text-center mt-4">
+          <button
+            className="btn btn-outline-primary"
+            onClick={() => fetchNextPage()}
+          >
+            さらに読み込む
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 
-export default MessageList2;
+export default MessageList;

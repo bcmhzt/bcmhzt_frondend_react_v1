@@ -10,6 +10,7 @@ import ForgotMyPassword from './pages/auth/ForgotMyPassword';
 import PasswordReset from './pages/auth/PasswordReset';
 /** privateRoutes */
 import Dashboard from "./pages/Dashboard";
+import OpenTalks from "./pages/opentalks/OpenTalks";
 import Members from "./pages/members/Members";
 import MemberDetail from "./pages/members/MemberDetail";
 import MemberPosts from "./pages/members/MemberPosts";
@@ -69,6 +70,7 @@ const routes: RoutesObject = {
   privateRoutes: [
     { path: "/develop/authenticate", component: DevAuthenticate },// 認証ページテスト(開発)
     { path: "/dashboard", component: Dashboard },// ダッシュボード
+    { path: "/open_talks", component: OpenTalks },// チャットの開発
     { path: "/members", component: Members },// メンバー一覧
     { path: "/member/:bcuid", component: MemberDetail },// メンバー詳細
     { path: "/member/post/:bcuid", component: MemberPosts },// メンバー投稿一覧

@@ -19,16 +19,15 @@ import {
   startAfter,
   QueryDocumentSnapshot,
   DocumentData,
-  // updateDoc,
+  updateDoc,
 } from 'firebase/firestore';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { buildStorageUrl } from '../../utility/GetUseImage';
-// import { formatFirestoreTimestamp } from '../../utility/GetCommonFunctions';
+import { formatFirestoreTimestamp } from '../../utility/GetCommonFunctions';
 import { Images } from 'react-bootstrap-icons';
 import { storage as firebaseStorage } from '../../firebaseConfig';
 import { ref, uploadBytes } from 'firebase/storage';
-import OpenTalksChatCard from '../../components/open_talks/OpenTalksChatCard';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -75,28 +74,10 @@ const DevFirestoreSnapshot = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [previewUrls, setPreviewUrls] = useState<string[]>([]);
-  const [imageStatus, setImageStatus] = useState<{
-    [key: string]: 'loading' | 'success' | 'error';
+  const [optimisticUiUrls, setOptimisticUiUrls] = useState<{
+    [talkId: string]: string[];
   }>({});
-  const [imageSrcs, setImageSrcs] = useState<{ [key: string]: string }>({});
-
   // const storage = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL; // URL用
-
-  // 画像URLの初期セット
-  useEffect(() => {
-    // openTalksが更新されたら画像URLをセット
-    const newSrcs: { [key: string]: string } = {};
-    openTalks.forEach((talk) => {
-      talk.images?.forEach((image, idx) => {
-        const imgKey = `${talk.id}_${idx}`;
-        newSrcs[imgKey] =
-          // @ts-ignore
-          image.optimisticUrl ||
-          buildStorageUrl(storage ?? '', image.path, '_medium');
-      });
-    });
-    setImageSrcs((prev) => ({ ...prev, ...newSrcs }));
-  }, [openTalks, storage]);
 
   /* 追加データ取得 */
   const fetchMoreData = useCallback(async () => {
@@ -230,40 +211,36 @@ const DevFirestoreSnapshot = () => {
     try {
       if (!message.trim() && selectedImages.length === 0) return;
 
-      // 1. 画像アップロード
-      let imageData: { path: string; size: number; name: string }[] = [];
-      if (selectedImages.length > 0) {
-        imageData = await Promise.all(
-          selectedImages.map(async (file) => {
-            const path = `open_talks%2F${currentUserProfile.user_profile.uid}%2F${Date.now()}_${file.name}`;
-            const decodedPath = decodeURIComponent(path);
-            const storageRef = ref(firebaseStorage, decodedPath);
-            await uploadBytes(storageRef, file);
-            return { path, size: file.size, name: file.name };
-          })
-        );
-      }
+      // 投稿ごとに一意のIDを生成
+      const optimisticId = `optimistic-${Date.now()}`;
+
+      // 画像データの準備（tempUrlなし）
+      const imageData = selectedImages.map((file) => ({
+        path: `open_talks%2F${currentUserProfile.user_profile.uid}%2F${Date.now()}_${file.name}`,
+        size: file.size,
+        name: file.name,
+      }));
 
       // Firestoreにドキュメントを追加
-      // const docRef = await addDoc(collection(firestore, 'openTalks'), {
-      //   uid: currentUserProfile.user_profile.uid,
-      //   bcuid: currentUserProfile.user_profile.bcuid,
-      //   nickname: currentUserProfile.user_profile.nickname,
-      //   profile_images: currentUserProfile.user_profile.profile_images,
-      //   text: message,
-      //   deleted: false,
-      //   createdAt: serverTimestamp(),
-      //   images: imageData,
-      // });
+      const docRef = await addDoc(collection(firestore, 'openTalks'), {
+        uid: currentUserProfile.user_profile.uid,
+        bcuid: currentUserProfile.user_profile.bcuid,
+        nickname: currentUserProfile.user_profile.nickname,
+        profile_images: currentUserProfile.user_profile.profile_images,
+        text: message,
+        deleted: false,
+        createdAt: serverTimestamp(),
+        images: imageData,
+      });
 
       // メモリ内で一時的に保持する楽観的UIデータ
-      // const optimisticData = {
-      //   ...docRef,
-      //   images: imageData.map((img, index) => ({
-      //     ...img,
-      //     optimisticUrl: previewUrls[index], // 一時的なBlobURL
-      //   })),
-      // };
+      const optimisticData = {
+        ...docRef,
+        images: imageData.map((img, index) => ({
+          ...img,
+          optimisticUrl: previewUrls[index], // 一時的なBlobURL
+        })),
+      };
 
       // 楽観的UIのための一時的なstate更新
       // setOpenTalks((prev) => [optimisticData, ...prev]);
@@ -275,6 +252,12 @@ const DevFirestoreSnapshot = () => {
         );
         await Promise.all(uploadPromises);
       }
+
+      // 楽観的UI用にblob URLを登録
+      setOptimisticUiUrls((prev) => ({
+        ...prev,
+        [optimisticId]: [...previewUrls],
+      }));
 
       // 状態をリセット
       setMessage('');
@@ -396,96 +379,151 @@ const DevFirestoreSnapshot = () => {
             </form>
 
             <div className="opentalk-messages">
-              {/* <pre>{JSON.stringify(openTalks, null, 2)}</pre> */}
-              {openTalks.length > 0 && (
-                <>
-                  {openTalks.map((talk) =>
-                    talk.bcuid === currentUserProfile.user_profile.bcuid ? (
-                      <div key={talk.id}>
-                        <OpenTalksChatCard talk={talk} key={talk.id} />
+              {openTalks.map((talk) =>
+                /* 自分のメッセージ */
+                talk.bcuid === currentUserProfile.user_profile.bcuid ? (
+                  <div
+                    className="message-block-right mb20"
+                    style={{
+                      width: '80%',
+                      marginLeft: 'auto',
+                    }}
+                    key={talk.id}
+                  >
+                    {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
+                    <div className="d-flex justify-content-end align-items-end">
+                      <div>
                         <div>
-                          talk
-                          <pre>{JSON.stringify(talk, null, 2)}</pre>
-                          {/* <div>{talk.text}</div> */}
-                          self
-                          <pre>
-                            {JSON.stringify(
-                              currentUserProfile?.user_profile?.uid,
-                              null,
-                              2
-                            )}
-                          </pre>
-                          {talk.images && talk.images.length > 0 && (
-                            <div className="image-gallery">
-                              {talk.images.map((image, index) => {
-                                const imgKey = `${talk.id}_${index}`;
-                                const status = imageStatus[imgKey] || 'loading';
-
-                                return (
-                                  <div
-                                    key={index}
-                                    className="image-container mb-2"
-                                  >
-                                    <img
-                                      src={imageSrcs[imgKey]}
-                                      alt={`投稿画像 ${index + 1}`}
-                                      onLoad={() => {
-                                        setImageStatus((prev) => ({
-                                          ...prev,
-                                          [imgKey]: 'success',
-                                        }));
-                                        // 正常取得できたら通常URLに戻す
-                                        setImageSrcs((prev) => ({
-                                          ...prev,
-                                          [imgKey]: buildStorageUrl(
-                                            storage ?? '',
-                                            image.path,
-                                            '_medium'
-                                          ),
-                                        }));
-                                      }}
-                                      onError={() => {
-                                        setImageStatus((prev) => ({
-                                          ...prev,
-                                          [imgKey]: 'error',
-                                        }));
-                                        setTimeout(() => {
-                                          setImageStatus((prev) => ({
-                                            ...prev,
-                                            [imgKey]: 'loading',
-                                          }));
-                                          setImageSrcs((prev) => ({
-                                            ...prev,
-                                            [imgKey]: `${buildStorageUrl(storage ?? '', image.path, '_medium')}&t=${Date.now()}`,
-                                          }));
-                                        }, 3000);
-                                      }}
-                                    />
-                                    <div>
-                                      {status === 'loading' && 'ロード中...'}
-                                      {status === 'success' && '画像取得成功'}
-                                      {status === 'error' && '404/取得失敗'}
-                                    </div>
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          )}
+                          {talk.text}
+                          <br />
+                          {talk.createdAt
+                            ? formatFirestoreTimestamp(talk.createdAt)
+                            : ''}
                         </div>
                       </div>
-                    ) : (
-                      <>hoge</>
-                    )
-                  )}
-                </>
+                      <div>
+                        <Link to={`/member/${talk.bcuid}`}>
+                          <img
+                            src={
+                              buildStorageUrl(
+                                storage ?? '',
+                                talk.profile_images ?? '',
+                                '_thumbnail'
+                              ) || '/assets/images/dummy/dummy_avatar.png'
+                            }
+                            className="avatar-36"
+                            alt="foobar"
+                          />
+                        </Link>
+                      </div>
+                    </div>
+                    <div>
+                      {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
+                      {talk.images &&
+                        talk.images.map((image, index) => (
+                          <div key={index} className="image-container mb-2">
+                            <img
+                              src={
+                                // @ts-ignore - optimisticUrlは型定義には含まれないプロパティ
+                                image.optimisticUrl ||
+                                buildStorageUrl(
+                                  storage ?? '',
+                                  image.path,
+                                  '_medium'
+                                )
+                              }
+                              alt={`投稿画像 ${index + 1}`}
+                              style={{
+                                maxWidth: '100%',
+                                borderRadius: '4px',
+                                display: 'block',
+                              }}
+                              loading="lazy"
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ) : (
+                  /* 他の人のメッセージ */
+                  <div
+                    className="message-block-left mb20"
+                    style={{ width: '90%' }}
+                    key={talk.id}
+                  >
+                    <div className="d-flex align-items-start">
+                      <div>
+                        <Link to={`/member/${talk.bcuid}`}>
+                          <img
+                            src={
+                              buildStorageUrl(
+                                storage ?? '',
+                                talk.profile_images ?? '',
+                                '_thumbnail'
+                              ) || '/assets/images/dummy/dummy_avatar.png'
+                            }
+                            className="avatar-36"
+                            alt="foobar"
+                          />
+                        </Link>
+                      </div>
+                      <div>
+                        {talk.nickname}@{talk.bcuid}
+                        <br />
+                        {talk.text}
+                        <br />
+                        {talk.createdAt
+                          ? formatFirestoreTimestamp(talk.createdAt)
+                          : ''}
+                      </div>
+                    </div>
+                    <div>
+                      {/* <pre>{JSON.stringify(talk.images, null, 2)}</pre> */}
+                      {talk.images &&
+                        talk.images.map((image, index) => (
+                          <div key={index}>
+                            {/* <span>{image.path}</span> */}
+                            <img
+                              src={buildStorageUrl(
+                                storage ?? '',
+                                image.path,
+                                '_medium'
+                              )}
+                              alt="foobar"
+                              style={{ maxWidth: '100%' }}
+                            />
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                )
               )}
 
+              {/* Intersection Observer target */}
+              <div
+                ref={observerTarget}
+                style={{ height: '20px', margin: '20px 0' }}
+              >
+                {isLoadingMore && (
+                  <div className="text-center">
+                    <div
+                      className="spinner-border spinner-border-sm"
+                      role="status"
+                    >
+                      <span className="visually-hidden">Loading...</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               {!hasMore && (
-                <div className="alert alert-secondary" role="alert">
-                  これ以上メッセージはありません。
+                <div className="text-center text-muted my-3">
+                  これ以上のメッセージはありません
                 </div>
               )}
             </div>
+
+            {/* <pre>{JSON.stringify(openTalks, null, 2)}</pre> */}
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">
             <div
