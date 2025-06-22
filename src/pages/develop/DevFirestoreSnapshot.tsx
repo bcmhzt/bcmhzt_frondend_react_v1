@@ -6,8 +6,8 @@ import { firestore } from '../../firebaseConfig';
 import {
   collection,
   /* input */
-  addDoc,
-  serverTimestamp,
+  // addDoc,
+  // serverTimestamp,
   /* select */
   getDocs,
   onSnapshot,
