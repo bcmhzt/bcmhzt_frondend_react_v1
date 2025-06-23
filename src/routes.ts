@@ -16,7 +16,7 @@ import MemberDetail from "./pages/members/MemberDetail";
 import MemberPosts from "./pages/members/MemberPosts";
 import Posts from "./pages/posts/Posts";
 import PostsLike from "./pages/posts/PostsLike";
-import PostsReplyList from "./pages/posts/PostsReplyList";
+import PostsReply from "./pages/posts/PostsReply";
 import PostsBookmarks from "./pages/posts/PostsBookmarks";
 import PostsMedia from "./pages/posts/PostsMedia";
 import PostDetail from "./pages/posts/PostDetail"
@@ -76,7 +76,7 @@ const routes: RoutesObject = {
     { path: "/member/post/:bcuid", component: MemberPosts },// メンバー投稿一覧
     { path: "/posts", component: Posts },// 投稿一覧
     { path: "/posts_like", component: PostsLike },// いいね一覧
-    { path: "/posts_reply", component: PostsReplyList },// 返信一覧
+    { path: "/posts_reply", component: PostsReply },// 返信一覧
     { path: "/posts_bookmark", component: PostsBookmarks },// ブックマーク一覧
     { path: "/posts_media", component: PostsMedia },// メディア一覧
     { path: "/post/:post_id", component: PostDetail },// 投稿詳細

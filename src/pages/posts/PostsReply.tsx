@@ -3,8 +3,20 @@ import React from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PostIndexHeader from './PostIndexHeader';
+import PostsReplyList from '../../components/posts/PostsReplyList';
+import { useAuth } from '../../contexts/AuthContext';
+import { buildStorageUrl } from '../../utility/GetUseImage';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
-const PostsReplyList = () => {
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log('[src/pages/posts/PostsReply.tsx] debug:', debug);
+}
+
+const PostsReply = () => {
+  const { currentUserProfile, token } = useAuth();
+  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT as string;
+
   return (
     <>
       <div className="app-body">
@@ -13,7 +25,7 @@ const PostsReplyList = () => {
           <div className="row">
             <div className="col-12 col-md-6 bc-left">
               <PostIndexHeader page={window.location.pathname} />
-              投稿の返信リスト PostsReplyList
+              <PostsReplyList />
             </div>
             <div className="d-none d-md-block col-md-6 bc-right">
               <div
@@ -33,4 +45,4 @@ const PostsReplyList = () => {
     </>
   );
 };
-export default PostsReplyList;
+export default PostsReply;
