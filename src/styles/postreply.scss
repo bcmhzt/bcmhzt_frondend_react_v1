@@ -20,6 +20,10 @@
         align-items: flex-start;
         text-align: left;
         width: 100%;
+        word-wrap: break-word;
+          overflow: hidden;
+          white-space: pre-wrap;
+          word-break: break-all;
         .reply-text {
           text-align: left;
           word-wrap: break-word;

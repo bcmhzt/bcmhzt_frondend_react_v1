@@ -4,9 +4,9 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PostIndexHeader from './PostIndexHeader';
 import PostsReplyList from '../../components/posts/PostsReplyList';
-import { useAuth } from '../../contexts/AuthContext';
-import { buildStorageUrl } from '../../utility/GetUseImage';
-import { useInfiniteQuery } from '@tanstack/react-query';
+// import { useAuth } from '../../contexts/AuthContext';
+// import { buildStorageUrl } from '../../utility/GetUseImage';
+// import { useInfiniteQuery } from '@tanstack/react-query';
 
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
@@ -14,8 +14,8 @@ if (debug === 'true') {
 }
 
 const PostsReply = () => {
-  const { currentUserProfile, token } = useAuth();
-  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT as string;
+  // const { currentUserProfile, token } = useAuth();
+  // const apiEndpoint = process.env.REACT_APP_API_ENDPOINT as string;
 
   return (
     <>

@@ -152,8 +152,13 @@ const BookmarkList: React.FC = () => {
 
   // bookmarkListを平坦化
   const bookmarks: BookmarkData[] =
-    data?.pages.flatMap((p) => p.data.bookmarkList.data ?? []) ?? [];
-  const totalCount = data?.pages[0]?.data.bookmarkList.total ?? 0;
+    data?.pages?.flatMap((p) => p?.data?.bookmarkList?.data ?? []) ?? [];
+
+  const totalCount = data?.pages?.[0]?.data?.bookmarkList?.total ?? 0;
+
+  if (isLoading || !data?.pages) {
+    return <div className="text-center my-3">読み込み中...</div>;
+  }
 
   return (
     <>
