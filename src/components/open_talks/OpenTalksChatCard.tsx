@@ -202,8 +202,13 @@ const OpenTalksChatCard: React.FC<OpenTalksChatCardProps> = ({ talk }) => {
     );
   }
 
+  /**
+   * other block
+   * @param talk
+   * @returns
+   */
   function otherBlock(talk: OpenTalk) {
-    // const date = talk.createdAt ? talk.createdAt.toDate() : null;
+    const date = talk.createdAt ? talk.createdAt.toDate() : null;
     return (
       <div
         className="other-block"
@@ -293,6 +298,12 @@ const OpenTalksChatCard: React.FC<OpenTalksChatCardProps> = ({ talk }) => {
             );
           })}
         </div>
+        {/* 投稿日時 */}
+        {date && (
+          <div className="timestamp text-start">
+            {date.toLocaleDateString()} {date.toLocaleTimeString()}
+          </div>
+        )}
       </div>
     );
   }

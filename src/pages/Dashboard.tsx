@@ -8,6 +8,7 @@ import Instructor from '../components/Instructor';
 // import MemberList from '../components/v1/member/Memberlist';
 // import MatchedMemberLimit from '../components/v1/dashboard/MatchedMemberLimit';
 // import ArchtectTemplate from '../components/dashboards/ArchtectTemplate';
+import TopLinkMenu from '../components/dashboards/TopLinkMenu';
 import LikedMeCardLimit from '../components/dashboards/LikedMeCardLimit';
 import MatchedMemberLimit from '../components/dashboards/MatchedMemberLimit';
 import ILikedCardLimit from '../components/dashboards/ILikedCardLimit';
@@ -44,7 +45,9 @@ const Dashboard = () => {
             <Instructor />
 
             <h2 className="page-title mb20">Dashboard</h2>
+
             {/* <ArchtectTemplate /> */}
+            <TopLinkMenu />
             <LikedMeCardLimit />
             <MatchedMemberLimit />
             <ILikedCardLimit />

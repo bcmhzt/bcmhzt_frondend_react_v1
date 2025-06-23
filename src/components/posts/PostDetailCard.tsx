@@ -14,7 +14,7 @@ import SkeletonImage from './SkeletonImage';
 import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
 import PostLike from './PostLike';
 import PostBookmark from './PostBookmark';
-import { ThreeDotsVertical, ChatRightDotsFill } from 'react-bootstrap-icons';
+import { ChatRightDotsFill } from 'react-bootstrap-icons';
 import PostReplyList from './PostReplyList';
 import PostTools from '../../components/posts/PostTools';
 
@@ -243,7 +243,7 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({ id }) => {
           <div className="post-tooles-button">
             {/* <ThreeDotsVertical style={{ fontSize: '20px' }} />
              */}
-            <PostTools postId={post.post_id} />
+            <PostTools postId={post.post_id} postUid={post.uid} />
           </div>
         </div>
       </div>

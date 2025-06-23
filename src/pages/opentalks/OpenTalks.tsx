@@ -29,6 +29,7 @@ import { Images } from 'react-bootstrap-icons';
 import { storage as firebaseStorage } from '../../firebaseConfig';
 import { ref, uploadBytes } from 'firebase/storage';
 import OpenTalksChatCard from '../../components/open_talks/OpenTalksChatCard';
+import { Spinner } from 'react-bootstrap';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -232,6 +233,7 @@ const DevFirestoreSnapshot = () => {
       if (!message.trim() && selectedImages.length === 0) return;
 
       // 1. 画像アップロード
+      setLoading(true);
       let imageData: { path: string; size: number; name: string }[] = [];
       if (selectedImages.length > 0) {
         imageData = await Promise.all(
@@ -283,8 +285,10 @@ const DevFirestoreSnapshot = () => {
       setMessage('');
       setSelectedImages([]);
       setPreviewUrls([]);
+      setLoading(false);
     } catch (error) {
       console.error('[DevFirestoreSnapshot] Error:', error);
+      setLoading(false);
     }
   }
 
@@ -394,7 +398,13 @@ const DevFirestoreSnapshot = () => {
                     type="button"
                     className="btn btn-primary bcmhzt-btn"
                   >
-                    Submit
+                    {loading ? (
+                      <>
+                        <Spinner animation="border" size="sm" />
+                      </>
+                    ) : (
+                      <>Submit</>
+                    )}
                   </button>
                 </div>
               </form>

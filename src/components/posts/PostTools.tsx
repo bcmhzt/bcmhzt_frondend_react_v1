@@ -5,7 +5,7 @@ import {
   FlagFill,
   Link,
   PersonFill,
-  Ban,
+  // Ban,
   Trash,
   CardText,
 } from 'react-bootstrap-icons';
