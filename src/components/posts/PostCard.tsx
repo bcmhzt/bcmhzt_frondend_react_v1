@@ -216,7 +216,7 @@ const PostCard: React.FC<PostCardProps> = ({
           <PostBookmark key={post.post_id} item={post} />
         </div>
         <div className="post-tools-button">
-          <PostTools postId={post.post_id} />
+          <PostTools postId={post.post_id} postUid={post.uid} />
         </div>
       </div>
     </div>

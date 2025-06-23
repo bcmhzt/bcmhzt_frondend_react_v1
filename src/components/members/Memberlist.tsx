@@ -662,6 +662,7 @@ const MemberList: React.FC = () => {
           ))}
         </ul>
         {/* 次ページ取得中のインジケーター */}
+        {/* <pre>{JSON.stringify(isFetchingNextPage, null, 2)}</pre> */}
         {isFetchingNextPage && (
           <div className="text-center my-3">Loading more…</div>
         )}

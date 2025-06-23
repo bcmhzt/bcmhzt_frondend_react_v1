@@ -16,6 +16,7 @@ import PostLike from './PostLike';
 import PostBookmark from './PostBookmark';
 import { ThreeDotsVertical, ChatRightDotsFill } from 'react-bootstrap-icons';
 import PostReplyList from './PostReplyList';
+import PostTools from '../../components/posts/PostTools';
 
 interface PostDetailCardProps {
   id: string | undefined;
@@ -240,7 +241,9 @@ const PostDetailCard: React.FC<PostDetailCardProps> = ({ id }) => {
             <PostBookmark key={post.post_id} item={post} />
           </div>
           <div className="post-tooles-button">
-            <ThreeDotsVertical style={{ fontSize: '20px' }} />
+            {/* <ThreeDotsVertical style={{ fontSize: '20px' }} />
+             */}
+            <PostTools postId={post.post_id} />
           </div>
         </div>
       </div>
