@@ -1,5 +1,4 @@
-/** f8656bc2 */
-import React from 'react';
+import React, { useState } from 'react';
 import {
   ThreeDotsVertical,
   FlagFill,
@@ -9,61 +8,70 @@ import {
   Trash,
 } from 'react-bootstrap-icons';
 
-interface PostToolsProps {}
+interface PostToolsProps {
+  postId: number;
+}
 
-const PostTools: React.FC<PostToolsProps> = () => {
+const PostTools: React.FC<PostToolsProps> = ({ postId }) => {
+  const [show, setShow] = useState(false);
+  const modalId = `postToolsModal-${postId}`;
+
   return (
     <>
       <ThreeDotsVertical
         style={{ fontSize: '20px', cursor: 'pointer' }}
-        data-bs-toggle="modal"
-        data-bs-target="#postToolsModal"
+        onClick={() => setShow(true)}
       />
 
-      <div
-        className="modal fade"
-        id="postToolsModal"
-        aria-labelledby="postToolsModalLabel"
-        aria-hidden="true"
-      >
-        <div className="modal-dialog modal-sm">
-          <div className="modal-content">
-            <div className="modal-header">
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
-            </div>
-            <div className="modal-body">
-              <FlagFill />
-              通報する
-              <br />
-              <Link />
-              この投稿のURLを取得する
-              <br />
-              <PersonFill />
-              投稿者をコピーする
-              <br />
-              <Ban />
-              ブロックする
-              <br />
-              <Trash />
-              この投稿を削除する
-            </div>
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn-close"
-                data-bs-dismiss="modal"
-                aria-label="Close"
-              ></button>
+      {show && (
+        <div
+          className="modal fade show"
+          id={modalId}
+          style={{ display: 'block', backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
+          aria-labelledby={`${modalId}Label`}
+          aria-modal="true"
+          role="dialog"
+        >
+          <div className="modal-dialog modal-sm">
+            <div className="modal-content">
+              <div className="modal-header">
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShow(false)}
+                  aria-label="Close"
+                ></button>
+              </div>
+              <div className="modal-body">
+                <FlagFill />
+                通報する
+                <br />
+                <Link />
+                この投稿のURLを取得する
+                <br />
+                <PersonFill />
+                投稿者をコピーする
+                <br />
+                <Ban />
+                ブロックする
+                <br />
+                <Trash />
+                この投稿を削除する
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShow(false)}
+                  aria-label="Close"
+                ></button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
     </>
   );
 };
+
 export default PostTools;

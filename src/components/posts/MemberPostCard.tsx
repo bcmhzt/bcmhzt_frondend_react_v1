@@ -173,7 +173,7 @@ const MemberPostCard: React.FC<MemberPostCardProps> = ({
         </div>
         <div className="post-tooles-button">
           {/* <ThreeDotsVertical style={{ fontSize: '20px' }} /> */}
-          <PostTools />
+          <PostTools postId={post.post_id} />
         </div>
       </div>
     </div>
