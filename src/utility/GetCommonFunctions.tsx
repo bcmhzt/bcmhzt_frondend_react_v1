@@ -135,6 +135,8 @@ export function convertUtcToTimeZone(
   utcDate: string, //"2025-06-05 20:26:53"
   timeZone: string // JST
 ): string {
+  /** FirefoxはJSTを受け付けないので、Asia/Tokyoに変換する。（JSTでもAsia/Tokyoでも両方使えるようにする） */
+  if (timeZone === 'JST') timeZone = 'Asia/Tokyo';
   // 文字列を "YYYY-MM-DD HH:mm:ss" から "YYYY-MM-DDTHH:mm:ssZ" に変換してUTCとして解釈
   const utcDateString = utcDate.replace(' ', 'T') + 'Z';
   const date = new Date(utcDateString);

@@ -1,5 +1,7 @@
+/** d722bfa8 */
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import NoticeList from '../../components/notice/NoticeList';
 const Notice = () => {
   return (
     <div className="app-body">
@@ -7,8 +9,7 @@ const Notice = () => {
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left">
-            <h2 className="page-title mb20">Notice</h2>
-            <p className="">Notice</p>
+            <NoticeList />
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">
             <div

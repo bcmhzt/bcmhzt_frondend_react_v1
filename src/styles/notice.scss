@@ -1,0 +1,21 @@
+
+.notice {
+  ul.notice-list {
+   list-style: none;
+   margin-left: -30px;
+    list-style: none;
+    .notice-logs-item {
+      // background: #ffd700;
+      .avatar {}
+      .notice-message {
+        margin-top: 5px;
+      }
+      .date {
+        color: #c1c1c1;
+        font-size: 12px;
+        margin-left: 10px;
+      }
+    }
+
+  }
+}
