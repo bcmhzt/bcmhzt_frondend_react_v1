@@ -6,8 +6,27 @@ import {
   HouseDoor,
   CardText,
 } from 'react-bootstrap-icons';
+import { useBadge } from '../contexts/BadgeContext';
+
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log('[src/components/Footer.tsx:xx] debug:', debug);
+}
 
 const Footer = () => {
+  const { badgeCounts } = useBadge();
+  if (debug === 'true') {
+    console.log('[src/components/Footer.tsx:20] debug:', [badgeCounts]);
+  }
+  const renderBadge = (count: number) => {
+    if (count <= 0) return null;
+    return (
+      <span className="badge bg-primary">
+        {count > 99 ? '+99' : `+${count}`}
+      </span>
+    );
+  };
   return (
     <div className="footer">
       <div className="footer-pc">
@@ -30,26 +49,28 @@ const Footer = () => {
           <Link to="/members">
             <People className="footer-icon" />
           </Link>
+          {renderBadge(badgeCounts.members)}
           <span className="withname">Members</span>
         </div>
         <div className="item">
           <Link to="/posts">
             <CardText className="footer-icon" />
           </Link>
+          {renderBadge(badgeCounts.posts)}
           <span className="withname">Post</span>
         </div>
         <div className="item">
           <Link to="/notice">
             <Bell className="footer-icon" />
           </Link>
-          <span className="badge bg-primary">+99</span>
+          {renderBadge(badgeCounts.notice)}
           <span className="withname">notice</span>
         </div>
         <div className="item">
           <Link to="/messages">
             <Envelope className="footer-icon" />
           </Link>
-          <span className="badge bg-primary">+99</span>
+          {/* <span className="badge bg-primary">+99</span> */}
           <span className="withname">Message</span>
         </div>
       </div>

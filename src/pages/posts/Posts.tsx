@@ -1,11 +1,18 @@
-/**  */
-import React from 'react';
+/** 9827f3b4 */
+import React, { useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import PostList from '../../components/posts/PostList';
 import PostIndexHeader from './PostIndexHeader';
+import { useBadge } from '../../contexts/BadgeContext';
 
 const Posts = () => {
+  const { clearBadge } = useBadge();
+  useEffect(() => {
+    // ページ初回マウント時に members のバッジをクリア
+    clearBadge('posts');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="app-body">
       <Header />

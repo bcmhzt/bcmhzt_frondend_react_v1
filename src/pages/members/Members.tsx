@@ -1,5 +1,5 @@
 /** 201c651f */
-import React from 'react';
+import React, { useEffect } from 'react';
 /* header */
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -9,6 +9,7 @@ import Footer from '../../components/Footer';
 // import FooterTool from '../../components/FooterTool';
 import MemberList from '../..//components/members/Memberlist';
 // import Imagelist from '../../components/v1/member/Imagelist';
+import { useBadge } from '../../contexts/BadgeContext';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -28,6 +29,12 @@ if (debug === 'true') {
 
 /* ユーザーリスト */
 const Members = () => {
+  const { clearBadge } = useBadge();
+  useEffect(() => {
+    // ページ初回マウント時に members のバッジをクリア
+    clearBadge('members');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   return (
     <div className="app-body">
       <Header />
