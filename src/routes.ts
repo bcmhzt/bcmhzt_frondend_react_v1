@@ -11,6 +11,7 @@ import PasswordReset from './pages/auth/PasswordReset';
 /** privateRoutes */
 import Dashboard from "./pages/Dashboard";
 import OpenTalks from "./pages/opentalks/OpenTalks";
+import EasySexualProfileRegist from "./pages/easysexualprofileregist/EasySexualProfileRegist";
 import Members from "./pages/members/Members";
 import MemberDetail from "./pages/members/MemberDetail";
 import MemberPosts from "./pages/members/MemberPosts";
@@ -71,6 +72,7 @@ const routes: RoutesObject = {
     { path: "/develop/authenticate", component: DevAuthenticate },// 認証ページテスト(開発)
     { path: "/dashboard", component: Dashboard },// ダッシュボード
     { path: "/open_talks", component: OpenTalks },// チャットの開発
+    { path: "/easy_sexual_profile_regist", component: EasySexualProfileRegist},// お手軽プロフィール＆性癖登録
     { path: "/members", component: Members },// メンバー一覧
     { path: "/member/:bcuid", component: MemberDetail },// メンバー詳細
     { path: "/member/post/:bcuid", component: MemberPosts },// メンバー投稿一覧

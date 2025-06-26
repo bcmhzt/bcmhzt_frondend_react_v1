@@ -1,107 +1,133 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
+import React, { useRef, useCallback } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-// import { getImageWithSuffix } from '../../utility/GetUseImage';
-import MessageRoom from './MessageRoom';
-import { syncChatRooms, fetchChatRooms } from '../../services/firestoreChat';
-import { fetchMatchedList } from '../../services/chatApi';
-import type { MatchedUser, OpenChatRoom } from '../../types/chat';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import { useAuth } from '../../contexts/AuthContext';
+import { buildStorageUrl } from '../../utility/GetUseImage';
+import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
+import type { MatchUser, MatchListResponse } from '../../types/match';
 
-const MessageList: React.FC = () => {
-  const { currentUser, token } = useAuth();
-  const [matchedList, setMatchedList] = useState<MatchedUser[]>([]);
-  const [openChatRooms, setOpenChatRooms] = useState<OpenChatRoom[]>([]);
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
 
-  // マッチユーザー一覧の取得
-  const { data, fetchNextPage, hasNextPage, isLoading } = useInfiniteQuery({
-    queryKey: ['matchedMembers', token],
-    queryFn: ({ pageParam = 1 }) => fetchMatchedList(token!, pageParam),
+const fetchMatchedUsers = async ({
+  pageParam,
+  token,
+}: {
+  pageParam?: unknown;
+  token: string;
+}) => {
+  const page = typeof pageParam === 'number' ? pageParam : 1;
+  const res = await axios.post(
+    `${apiEndpoint}/v1/get/matched?page=${page}`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+  return res.data as MatchListResponse;
+};
+
+const MessageList2: React.FC = () => {
+  const { token } = useAuth();
+
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+  } = useInfiniteQuery<MatchListResponse, Error>({
+    queryKey: ['matchedUsers', token],
+    queryFn: ({ pageParam }) =>
+      token
+        ? fetchMatchedUsers({ pageParam, token })
+        : Promise.reject(new Error('Token is null')),
     initialPageParam: 1,
-    enabled: !!token,
     getNextPageParam: (lastPage) => {
-      if (lastPage.data.next_page_url) {
-        const match = lastPage.data.next_page_url.match(/page=(\d+)/);
-        return match ? Number(match[1]) : undefined;
-      }
-      return undefined;
+      const { current_page, last_page } = lastPage.data;
+      return current_page < last_page ? current_page + 1 : undefined;
     },
+    enabled: !!token,
   });
 
-  // マッチリストの更新とチャットルームの同期
-  useEffect(() => {
-    if (!data || !currentUser?.uid) return;
+  const matchedUsers: MatchUser[] =
+    data?.pages.flatMap((p) => p.data.data) ?? [];
 
-    const flatList = data.pages.flatMap((page) => page.data.data);
-    setMatchedList(flatList);
+  const observerRef = useRef<IntersectionObserver | null>(null);
 
-    // ユーザー情報のマップを作成
-    const matchedMap = new Map(
-      flatList.map((user) => [user.matched_uid, user])
-    );
+  const lastItemRef = useCallback(
+    (node: HTMLLIElement | null) => {
+      if (!node) return;
+      observerRef.current?.disconnect();
+      observerRef.current = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      });
+      observerRef.current.observe(node);
+    },
+    [hasNextPage, isFetchingNextPage, fetchNextPage]
+  );
 
-    // チャットルームの同期
-    const syncRooms = async () => {
-      try {
-        await syncChatRooms({
-          currentUid: currentUser.uid,
-          matchedList: flatList,
-        });
-
-        // チャットルーム一覧の取得
-        const rooms = await fetchChatRooms(currentUser.uid, matchedMap);
-        setOpenChatRooms(rooms);
-      } catch (error) {
-        console.error('[syncRooms] error:', error);
-      }
-    };
-
-    syncRooms();
-  }, [currentUser?.uid, data]);
-
-  if (isLoading) {
-    return (
-      <div className="loading-spinner-container">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      </div>
-    );
-  }
-
-  const handleRoomClick = (roomId: string) => {
-    // モーダルは自動で開くのでここでは必要に応じて追加の処理を実装
-    console.log('Room clicked:', roomId);
-  };
+  if (isLoading) return <div>読み込み中...</div>;
+  if (isError) return <div>エラー: {error.message}</div>;
 
   return (
-    <div className="message-list">
-      {/* <pre>{JSON.stringify(matchedList, null, 2)}</pre> */}
-      <pre>{JSON.stringify(matchedList.length, null, 2)}</pre>
-      <ul className="chat-rooms">
-        {openChatRooms.map((room) => (
-          <li key={room.id} className="chat-room-item mb-3">
-            <MessageRoom room={room} onRoomClick={handleRoomClick} />
-          </li>
-        ))}
-        {openChatRooms.length === 0 && (
-          <div className="alert alert-secondary">
-            まだメッセージはありません
-          </div>
-        )}
-      </ul>
+    <ul className="chat-room-list">
+      {matchedUsers.map((user, i) => {
+        const isLast = i === matchedUsers.length - 1;
+        const lastMessage = (user as any).latest_message;
 
-      {hasNextPage && (
-        <div className="text-center mt-4">
-          <button
-            className="btn btn-outline-primary"
-            onClick={() => fetchNextPage()}
+        return (
+          <li
+            key={user.uid}
+            ref={isLast ? lastItemRef : null}
+            className="chat-room-item"
           >
-            さらに読み込む
-          </button>
-        </div>
-      )}
-    </div>
+            <Link to={`/messages/${user.uid}`} className="chat-room-link">
+              <img
+                src={
+                  user.profile_images
+                    ? buildStorageUrl(
+                        process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL ?? '',
+                        user.profile_images,
+                        '_small'
+                      )
+                    : `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
+                }
+                alt="avatar"
+                className="chat-avatar"
+              />
+              <div className="chat-room-text">
+                <div className="chat-user">
+                  <span className="nickname">{user.nickname}</span>
+                  <span className="bcuid">@{user.bcuid}</span>
+                </div>
+                <div className="chat-preview">
+                  {lastMessage?.text
+                    ? lastMessage.text.slice(0, 50)
+                    : lastMessage?.image_url?.length
+                      ? '[画像]'
+                      : '(メッセージなし)'}
+                </div>
+                <div className="timestamp">
+                  {convertUtcToTimeZone(
+                    lastMessage?.created_at || '',
+                    'Asia/Tokyo'
+                  )}
+                </div>
+              </div>
+            </Link>
+          </li>
+        );
+      })}
+      {isFetchingNextPage && <li className="loading">さらに読み込み中…</li>}
+    </ul>
   );
 };
 
-export default MessageList;
+export default MessageList2;

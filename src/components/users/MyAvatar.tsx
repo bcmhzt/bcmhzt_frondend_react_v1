@@ -1,3 +1,4 @@
+/** 9f5e8c15 */
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
@@ -9,7 +10,7 @@ import { Image } from 'react-bootstrap-icons';
 
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
-  console.log('[src/components/MyAvatar.js:13] debug:', debug);
+  console.log('[src/components/users/MyAvatar.tsx:13] debug:', debug);
 }
 
 const MyAvatar = () => {
@@ -230,7 +231,6 @@ const MyAvatar = () => {
                 </span>{' '}
                 プロフィール画像を変更
               </div>
-
               <div className="modal-body avatar-update-body">
                 <div className="my-avatar">
                   <img src={preview} className="user-avatar" alt="uid" />
@@ -283,21 +283,32 @@ const MyAvatar = () => {
                   </label>
                 </div>
               </div>
-
               <div className="modal-footer">
-                <button
-                  className="btn btn-secondary bcmhzt-btn"
-                  onClick={uploadImageToFirebase}
-                  disabled={!avatar}
-                >
-                  プロフィール画像を変更する
-                </button>
+                {uploadProgress > 0 && !avatarUrl ? (
+                  <button className="btn btn-secondary bcmhzt-btn" disabled>
+                    <Spinner animation="border" size="sm" /> アップロード中...
+                  </button>
+                ) : (
+                  <button
+                    className="btn btn-secondary bcmhzt-btn"
+                    onClick={uploadImageToFirebase}
+                    disabled={!avatar}
+                  >
+                    プロフィール画像を変更する
+                  </button>
+                )}
                 <button
                   className="btn btn-secondary"
                   onClick={handleCloseModal}
                 >
                   Close
                 </button>
+              </div>
+              <div
+                className="text-end mr10 ml10 mb10"
+                style={{ fontSize: '12px', color: '#888' }}
+              >
+                ブラウザーキャッシュが強い場合があります。
               </div>
             </div>
           </div>

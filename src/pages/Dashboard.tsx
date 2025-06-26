@@ -1,13 +1,6 @@
 /** fbfb2bb3 */
 import React from 'react';
-// import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-// import PostBoard from '../components/PostBoard';
 import Instructor from '../components/Instructor';
-// import FooterTool from '../components/FooterTool';
-// import MemberList from '../components/v1/member/Memberlist';
-// import MatchedMemberLimit from '../components/v1/dashboard/MatchedMemberLimit';
-// import ArchtectTemplate from '../components/dashboards/ArchtectTemplate';
 import TopLinkMenu from '../components/dashboards/TopLinkMenu';
 import LikedMeCardLimit from '../components/dashboards/LikedMeCardLimit';
 import MatchedMemberLimit from '../components/dashboards/MatchedMemberLimit';

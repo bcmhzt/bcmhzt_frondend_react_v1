@@ -45,12 +45,6 @@ const Top = () => {
     }
   }, [location]);
 
-  // const isLogin = false;
-  // if (auth && auth.isLogin) {
-  //   window.location.replace("/dashboard");
-  //   return null;
-  // }
-
   /* 年齢認証モーダルの表示 verified */
   /* Yes */
   const handleYesClick = () => {
