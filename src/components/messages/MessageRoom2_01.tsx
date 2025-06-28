@@ -141,8 +141,9 @@ const MessageRoom2 = ({
 
   // チャットID変化時に初回30件読み込み
   useEffect(() => {
+    // fetchMessages();
     fetchInitialMessages();
-  }, []);
+  }, [chatRoomId]);
 
   useLayoutEffect(() => {
     // モーダル開いて＆初回ロード＆メッセージがある、の三条件で一度だけスクロール
@@ -425,12 +426,7 @@ const MessageRoom2 = ({
                     <div className="text-center my-2">読み込み中...</div>
                   )} */}
                 </div>
-                <div className="modal-footer modal-footer-chat">
-                  <input
-                    type="text"
-                    placeholder="メッセージを入力"
-                    style={{ flexGrow: 1, marginRight: '8px' }}
-                  />
+                <div className="modal-footer">
                   <X
                     onClick={() => setShowChatModal(false)}
                     style={{
