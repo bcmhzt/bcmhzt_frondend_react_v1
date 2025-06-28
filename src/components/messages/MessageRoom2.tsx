@@ -19,6 +19,12 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
+import {
+  getStorage,
+  ref as storageRef,
+  uploadBytes,
+  getDownloadURL,
+} from 'firebase/storage';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -58,6 +64,9 @@ const MessageRoom2 = ({
   // テキスト入力と送信中フラグ
   const [inputText, setInputText] = useState('');
   const [isSending, setIsSending] = useState(false);
+  // --- プレビュー用 state ---
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   // useEffect(() => {
   //   if (!showChatModal) return;
@@ -168,44 +177,67 @@ const MessageRoom2 = ({
 
   /** メッセージ送信 */
   const handleSend = async () => {
+    console.log(
+      '[src/components/messages/MessageRoom2.tsx:180] handleSend called'
+    );
+
     const text = inputText.trim();
-    if (!chatRoomId || !text) return;
+    if (!chatRoomId || (text === '' && selectedFiles.length === 0)) return;
     setIsSending(true);
+
     try {
-      // 1) messages サブコレクションに追加
-      await addDoc(collection(firestore, `chats/${chatRoomId}/messages`), {
-        sender_id: currentUserProfile?.user_profile?.uid,
-        text,
-        image_url: [],
-        is_deleted: false,
-        last_read_at: {},
-        created_at: serverTimestamp(),
-      });
-      // 2) ChatRoom ドキュメントの updated_at を更新
-      await updateDoc(doc(firestore, 'chats', chatRoomId), {
-        updated_at: serverTimestamp(),
-      });
-      // 3) ローカルにも即追加して下部へスクロール
-      setMessages((prev) => [
-        ...prev,
+      // 1) まずメッセージ本体を Firestore に登録（image_url は空配列で）
+      const msgRef = await addDoc(
+        collection(firestore, `chats/${chatRoomId}/messages`),
         {
           sender_id: currentUserProfile?.user_profile?.uid,
           text,
           image_url: [],
           is_deleted: false,
           last_read_at: {},
+          created_at: serverTimestamp(),
+        }
+      );
+      // 2) もし画像が選択されていれば Firebase Storage にアップロード → ダウンロード URL を取得
+      let urls: string[] = [];
+      if (selectedFiles.length > 0) {
+        const storage = getStorage();
+        urls = await Promise.all(
+          selectedFiles.map((file) => {
+            // bucket: gs://bcmhzt-b25e9.appspot.com
+            const path = `chats/${chatRoomId}/${currentUserProfile?.user_profile?.uid}/${file.name}`;
+            const imgRef = storageRef(storage, path);
+            return uploadBytes(imgRef, file).then(() => getDownloadURL(imgRef));
+          })
+        );
+        // Firestore のメッセージドキュメントに image_url を上書き
+        await updateDoc(msgRef, { image_url: urls });
+      }
+      // 3) ルームドキュメントの updated_at を更新
+      await updateDoc(doc(firestore, 'chats', chatRoomId), {
+        updated_at: serverTimestamp(),
+      });
+      // 4) ローカル state にも反映
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender_id: currentUserProfile?.user_profile?.uid,
+          text,
+          image_url: urls,
+          is_deleted: false,
+          last_read_at: {},
           created_at: { seconds: Math.floor(Date.now() / 1000) },
         },
       ]);
-      if (chatBodyRef.current) {
-        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-      }
-      setInputText('');
-      initialLoadRef.current = false;
-    } catch (err) {
-      console.error('メッセージ送信エラー', err);
+      // プレビュー・選択ファイルをクリア
+      setSelectedFiles([]);
+      setPreviewImages([]);
+    } catch (error) {
+      console.error('メッセージ送信中にエラー:', error);
+    } finally {
+      setIsSending(false);
+      setInputText(''); // 入力フィールドをクリア
     }
-    setIsSending(false);
   };
 
   useEffect(() => {
@@ -254,8 +286,6 @@ const MessageRoom2 = ({
     }
   }, [messages]);
 
-  // --- プレビュー用 state ---
-  const [previewImages, setPreviewImages] = useState<string[]>([]);
   /** 画像選択時にプレビューを生成(max 5枚) */
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []).slice(0, 5);
@@ -273,6 +303,7 @@ const MessageRoom2 = ({
       };
       reader.readAsDataURL(file);
     });
+    setSelectedFiles(files);
   };
 
   return (
@@ -421,7 +452,7 @@ const MessageRoom2 = ({
                     {[...messages].map((msg, idx) => (
                       <>
                         {/* <pre>{JSON.stringify(msg.created_at, null, 2)}</pre> */}
-                        {/* <pre>{JSON.stringify(msg.images, null, 2)}</pre> */}
+                        <pre>{JSON.stringify(msg.images, null, 2)}</pre>
                         <li
                           key={idx}
                           className={`${
@@ -440,8 +471,29 @@ const MessageRoom2 = ({
                           }}
                         >
                           <div className="message-box p-2 mb-2 border rounded">
-                            #{messages.length - idx}{' '}
-                            {msg.text || '[画像メッセージ]'}
+                            <div className="debug">
+                              #{messages.length - idx}
+                            </div>
+                            {msg.text || ''}
+                            {msg.image_url?.length > 0 && (
+                              <div className="image-message">
+                                {msg.image_url.map(
+                                  (url: string, index: number) => (
+                                    <img
+                                      key={index}
+                                      src={url}
+                                      alt={`message-image-${index}`}
+                                      style={{
+                                        maxWidth: '100%',
+                                        height: 'auto',
+                                        borderRadius: 4,
+                                        marginTop: 8,
+                                      }}
+                                    />
+                                  )
+                                )}
+                              </div>
+                            )}
                           </div>
                           <div className="datetime text-muted">
                             {new Date(
@@ -460,12 +512,6 @@ const MessageRoom2 = ({
                   <div className="chat-input d-flex flex-column">
                     <div className="chat-input-textarea">
                       {/* 画像選択プレビュー */}
-                      <input
-                        type="file"
-                        multiple
-                        accept="image/*"
-                        onChange={handleImageChange}
-                      />
                       <div className="image-preview-list d-flex mt-2">
                         {previewImages.map((src, i) => (
                           <div key={i} className="preview-thumb mr-2">
@@ -504,14 +550,30 @@ const MessageRoom2 = ({
                       ></textarea>
                     </div>
                     <div className="d-flex justify-content-end mt-2">
-                      <button className="btn btn-primary bcmhzt-btn-gray mr10">
+                      <button
+                        className="btn btn-primary bcmhzt-btn-gray mr10"
+                        onClick={() => {
+                          const fileInput = document.createElement('input');
+                          fileInput.type = 'file';
+                          fileInput.multiple = true;
+                          fileInput.accept = 'image/*';
+                          fileInput.onchange = (e) =>
+                            handleImageChange(
+                              e as unknown as React.ChangeEvent<HTMLInputElement>
+                            );
+                          fileInput.click();
+                        }}
+                      >
                         <Image style={{ cursor: 'pointer', color: '#fff' }} />
                       </button>
 
                       <button
                         className="btn btn-primary bcmhzt-btn"
                         onClick={handleSend}
-                        disabled={isSending || !inputText.trim()}
+                        disabled={
+                          isSending ||
+                          (!inputText.trim() && selectedFiles.length === 0)
+                        }
                       >
                         {isSending ? (
                           <span className="spinner-border spinner-border-sm text-white" />
