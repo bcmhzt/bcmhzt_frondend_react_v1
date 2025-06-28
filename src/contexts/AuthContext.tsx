@@ -137,7 +137,8 @@ export const AuthProvider = ({
           setToken(idToken);
 
           /**
-           * get user information from bcmhzt backend api
+           * バックエンドからユーザー情報を取得する。
+           * [*cedba0f0]Errorは通常ここでのアクセス遮断が原因
            *
            * ユーザ情報を取得する
            * firebase user
@@ -357,14 +358,43 @@ export const AuthProvider = ({
      * Firebaseと通信できず認証ができない場合。
      * Backend APIと通信ができない場合。
      */
+    if (debug === 'true') {
+      console.log('[src/contexts/AuthContext.js:xx] debug:', debug);
+    }
     return (
-      <div className="alert alert-danger">
-        Firebase認証で致命的なエラーが発生しました。
-        <br />
-        {error?.message || String(error)}
-      </div>
+      <>
+        {/* <pre>{JSON.stringify(error?.message, null, 2)}</pre> */}
+        <div className="alert alert-danger">
+          認証で致命的なエラーが発生しました。[*cedba0f0]
+          <br />
+          {error?.message || String(error)}
+        </div>
+      </>
     );
   };
+
+  // Error debug
+  if (debug === 'true') {
+    console.log('[src/contexts/AuthContext.tsx:377] AuthProvider 状態:', {
+      loading,
+      error,
+      currentUser,
+      token,
+      uid,
+      currentUserProfile,
+    });
+    if (error) {
+      console.log(
+        '[src/contexts/AuthContext.tsx:386] ErrorFallback error:',
+        error,
+        'typeof:',
+        typeof error
+      );
+      if (error instanceof Error) {
+        console.log('Error message:', error.message, 'stack:', error.stack);
+      }
+    }
+  }
 
   return (
     <AuthContext.Provider value={contextValue}>
