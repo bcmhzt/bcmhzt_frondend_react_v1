@@ -107,9 +107,27 @@
       }
     }
   }
+  .chat-input {
+    margin-top: 50px;
+    // background: #ffd700;
+    .chat-input-textarea {
+      .text-count-alert {
+        font-size: 10px;
+        color: #c1c1c1;
+      }
+      textarea {
+        border-radius: 5px;
+        border: #c1c1c1 1px solid;
+        &:focus {
+          border: #f1f1f1 5px solid;
+          outline: none;
+        }
+      }
+    }
+  }
 }
 .modal-footer-chat {
-  height: 200px;
+  // height: 200px;
 }
 
 

@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState, useLayoutEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import type { MatchUser } from '../../types/match';
-import { ThreeDotsVertical, X } from 'react-bootstrap-icons';
+import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
 import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
 import {
@@ -142,7 +142,8 @@ const MessageRoom2 = ({
   // チャットID変化時に初回30件読み込み
   useEffect(() => {
     fetchInitialMessages();
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chatRoomId]);
 
   useLayoutEffect(() => {
     // モーダル開いて＆初回ロード＆メッセージがある、の三条件で一度だけスクロール
@@ -221,6 +222,7 @@ const MessageRoom2 = ({
     return () => {
       observerRef.current?.disconnect();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showChatModal]);
 
   // メッセージが更新されたタイミングで、先ほどの scrollHeight 差分を反映
@@ -420,17 +422,53 @@ const MessageRoom2 = ({
                     ))}
                   </ul>
                   <div ref={messagesEndRef} />
+
+                  <div className="chat-input d-flex flex-column">
+                    <div className="chat-input-textarea">
+                      <div className="text-count-alert">
+                        text count:{' '}
+                        {document.querySelector('textarea')?.value.length || 0}
+                      </div>
+                      <textarea
+                        placeholder="メッセージを入力"
+                        rows={3}
+                        style={{ width: '100%' }}
+                        onChange={(e) => {
+                          const target = e.target as HTMLTextAreaElement;
+                          const textCountAlert =
+                            document.querySelector('.text-count-alert');
+                          if (textCountAlert) {
+                            textCountAlert.textContent = `text count: ${target.value.length}`;
+                          }
+                        }}
+                        onInput={(e) => {
+                          const target = e.target as HTMLTextAreaElement;
+                          target.rows = Math.min(
+                            10,
+                            Math.max(3, target.scrollHeight / 20)
+                          );
+                        }}
+                      ></textarea>
+                    </div>
+                    <div className="d-flex justify-content-end mt-2">
+                      <button className="btn btn-primary bcmhzt-btn-gray mr10">
+                        <Image style={{ cursor: 'pointer', color: '#fff' }} />
+                      </button>
+                      <button className="btn btn-primary bcmhzt-btn">
+                        <SendFill
+                          style={{ cursor: 'pointer', color: '#fff' }}
+                        />
+                      </button>
+                    </div>
+                  </div>
                   {/* <pre>{JSON.stringify(isLoading, null, 2)}</pre> */}
                   {/* {isLoading && (
                     <div className="text-center my-2">読み込み中...</div>
                   )} */}
                 </div>
                 <div className="modal-footer modal-footer-chat">
-                  <input
-                    type="text"
-                    placeholder="メッセージを入力"
-                    style={{ flexGrow: 1, marginRight: '8px' }}
-                  />
+                  {/* チャット入力 */}
+
                   <X
                     onClick={() => setShowChatModal(false)}
                     style={{
