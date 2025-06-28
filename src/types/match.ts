@@ -39,6 +39,17 @@ export interface MatchUser {
   member_like_created_at: string;
   user_profile_created_at: string;
   match_score: number;
+  latest_message?: LatestMessage; // 最新のメッセージを表示
+}
+
+/** 最新のメッセージを表示 */
+export interface LatestMessage {
+  created_at: string;
+  text?: string;
+  image_url?: string[];
+  is_deleted?: boolean;
+  last_read_at?: Record<string, string>;
+  sender_id?: string;
 }
 
 export interface MatchListResponse {

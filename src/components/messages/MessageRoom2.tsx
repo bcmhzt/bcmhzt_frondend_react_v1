@@ -1,3 +1,16 @@
+import { buildStorageUrl } from '../../utility/GetUseImage';
+import type { MatchUser } from '../../types/match';
+import {
+  ThreeDotsVertical,
+  // PersonStanding,
+  // PersonStandingDress,
+  // PersonArmsUp,
+  // PersonWalking,
+  // X,
+  // CardText,
+  // CardImage,
+  // Search,
+} from 'react-bootstrap-icons';
 // import React, { useEffect, useRef, useState } from 'react';
 // import {
 //   collection,
@@ -7,85 +20,73 @@
 //   addDoc,
 //   serverTimestamp,
 // } from 'firebase/firestore';
-// import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../contexts/AuthContext';
 // import { firestore } from '../../firebaseConfig';
+// import CryptoJS from 'crypto-js';
 
-type MessageRoom2Props = {
-  otherUser: { uid: string; name?: string }; // Define the expected structure of otherUser
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log('[src/components/messages/MessageRoom2.tsx:xx] debug:', debug);
+}
+
+interface MessageRoom2Props {
+  item: MatchUser;
+  chatRoomId: string;
+  latestMessage?: any;
   onClose: () => void;
-};
+}
 
-const MessageRoom2 = ({ otherUser, onClose }: MessageRoom2Props) => {
-  // const { currentUser } = useAuth();
-  // const [messages, setMessages] = useState([]);
-  // const [newMessage, setNewMessage] = useState('');
-  // const [loading, setLoading] = useState(false);
-  // const bottomRef = useRef(null);
-
-  // const generateChatId = (uid1, uid2) => {
-  //   const [a, b] = [uid1, uid2].sort();
-  //   return sha256(`${a}-${b}`);
-  // };
-
-  // const chatId = generateChatId(currentUser.uid, otherUser.uid);
-
-  // useEffect(() => {
-  //   const q = query(
-  //     collection(firestore, 'chats', chatId, 'messages'),
-  //     orderBy('created_at', 'asc')
-  //   );
-  //   const unsubscribe = onSnapshot(q, (snapshot) => {
-  //     const fetched = snapshot.docs.map((doc) => ({
-  //       id: doc.id,
-  //       ...doc.data(),
-  //     }));
-  //     setMessages(fetched);
-  //     setTimeout(
-  //       () => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }),
-  //       0
-  //     );
-  //   });
-  //   return () => unsubscribe();
-  // }, [chatId]);
-
-  // const handleSend = async () => {
-  //   if (!newMessage.trim()) return;
-  //   setLoading(true);
-  //   await addDoc(collection(firestore, 'chats', chatId, 'messages'), {
-  //     text: newMessage,
-  //     sender_id: currentUser.uid,
-  //     created_at: serverTimestamp(),
-  //     is_deleted: false,
-  //     image_url: [],
-  //   });
-  //   setNewMessage('');
-  //   setLoading(false);
-  // };
+const MessageRoom2 = ({
+  item,
+  chatRoomId,
+  latestMessage,
+  onClose,
+}: MessageRoom2Props) => {
+  const { currentUserProfile } = useAuth();
+  console.log(
+    '[src/components/messages/MessageRoom2.tsx:xx] currentUserProfile:',
+    currentUserProfile.user_profile.uid
+  );
+  console.log(
+    '[src/components/messages/MessageRoom2.tsx:xx] item.matched_uid:',
+    item.matched_uid
+  );
 
   return (
     <div className="message-room">
-      {/* <div className="messages">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`msg ${msg.sender_id === currentUser.uid ? 'me' : 'other'}`}
-          >
-            {msg.text && <p>{msg.text}</p>}
-          </div>
-        ))}
-        <div ref={bottomRef}></div>
+      <div className="d-flex flex-row">
+        {/* <pre>{JSON.stringify(item.profile_images, null, 2)}</pre> */}
+        <div className="avatar-area">
+          <img
+            src={
+              item.profile_images
+                ? buildStorageUrl(
+                    process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL ?? '',
+                    item.profile_images,
+                    '_small'
+                  )
+                : `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
+            }
+            alt="avatar-36"
+            className="avatar-36"
+          />
+        </div>
+        <div className="nickname-area">
+          {item?.nickname}
+          <span className="bcuid"> @ {item?.bcuid}</span>
+        </div>
+        <div className="tool-area" style={{ marginLeft: 'auto' }}>
+          <ThreeDotsVertical style={{ fontSize: '20px', color: '#333' }} />
+        </div>
       </div>
-      <div className="input-area">
-        <textarea
-          value={newMessage}
-          onChange={(e) => setNewMessage(e.target.value)}
-          maxLength={1500}
-        />
-        <button onClick={handleSend} disabled={loading}>
-          {loading ? '送信中...' : '送信'}
-        </button>
-        <button onClick={onClose}>閉じる</button>
-      </div> */}
+      <div className="chat-preview">
+        {latestMessage?.text
+          ? latestMessage.text.slice(0, 50)
+          : latestMessage?.image_url?.length
+            ? '[画像]'
+            : '(メッセージなし)'}
+      </div>
     </div>
   );
 };

@@ -1,13 +1,26 @@
-import React, { useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+// import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
-import { buildStorageUrl } from '../../utility/GetUseImage';
-import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
+// import { buildStorageUrl } from '../../utility/GetUseImage';
+// import { convertUtcToTimeZone } from '../../utility/GetCommonFunctions';
 import type { MatchUser, MatchListResponse } from '../../types/match';
-
-const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+import { generateChatRoomId } from '../../utility/Chat';
+import {
+  doc,
+  getDoc,
+  setDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+  serverTimestamp,
+  // Timestamp,
+} from 'firebase/firestore';
+import { firestore } from '../../firebaseConfig';
+import MessageRoom2 from './MessageRoom2';
 
 const fetchMatchedUsers = async ({
   pageParam,
@@ -18,7 +31,7 @@ const fetchMatchedUsers = async ({
 }) => {
   const page = typeof pageParam === 'number' ? pageParam : 1;
   const res = await axios.post(
-    `${apiEndpoint}/v1/get/matched?page=${page}`,
+    `${process.env.REACT_APP_API_ENDPOINT}/v1/get/matched?page=${page}`,
     {},
     {
       headers: {
@@ -29,8 +42,16 @@ const fetchMatchedUsers = async ({
   return res.data as MatchListResponse;
 };
 
+interface ChatRoomDisplayData {
+  user: MatchUser;
+  chatRoomId: string;
+  latestMessage: any;
+  updatedAt: number;
+}
+
 const MessageList2: React.FC = () => {
-  const { token } = useAuth();
+  const { token, currentUserProfile } = useAuth();
+  const [chatDataList, setChatDataList] = useState<ChatRoomDisplayData[]>([]);
 
   const {
     data,
@@ -42,10 +63,10 @@ const MessageList2: React.FC = () => {
     error,
   } = useInfiniteQuery<MatchListResponse, Error>({
     queryKey: ['matchedUsers', token],
-    queryFn: ({ pageParam }) =>
-      token
-        ? fetchMatchedUsers({ pageParam, token })
-        : Promise.reject(new Error('Token is null')),
+    queryFn: ({ pageParam }) => {
+      if (!token) return Promise.reject(new Error('Token is missing'));
+      return fetchMatchedUsers({ pageParam, token });
+    },
     initialPageParam: 1,
     getNextPageParam: (lastPage) => {
       const { current_page, last_page } = lastPage.data;
@@ -54,8 +75,60 @@ const MessageList2: React.FC = () => {
     enabled: !!token,
   });
 
-  const matchedUsers: MatchUser[] =
-    data?.pages.flatMap((p) => p.data.data) ?? [];
+  useEffect(() => {
+    const fetchChats = async () => {
+      if (!currentUserProfile?.user_profile?.uid || !data) return;
+
+      const uid = currentUserProfile.user_profile.uid;
+      const nickname = currentUserProfile.user_profile.nickname;
+      const allUsers: MatchUser[] = data.pages.flatMap((p) => p.data.data);
+      const results: ChatRoomDisplayData[] = [];
+
+      for (const user of allUsers) {
+        if (!user.uid) continue;
+
+        const chatRoomId = await generateChatRoomId([uid, user.uid]);
+        const chatDocRef = doc(firestore, 'chats', chatRoomId);
+        let chatSnap = await getDoc(chatDocRef);
+
+        if (!chatSnap.exists()) {
+          await setDoc(chatDocRef, {
+            members: [uid, user.uid].sort(),
+            type: 'private',
+            is_closed: false,
+            typing: null,
+            display_names: {
+              [uid]: user.nickname,
+              [user.uid]: nickname,
+            },
+            created_at: serverTimestamp(),
+            updated_at: serverTimestamp(),
+          });
+          chatSnap = await getDoc(chatDocRef); // 再取得
+        }
+
+        const msgQuery = query(
+          collection(chatDocRef, 'messages'),
+          orderBy('created_at', 'desc'),
+          limit(1)
+        );
+        const msgSnap = await getDocs(msgQuery);
+        const latestMessage = msgSnap.docs[0]?.data() ?? null;
+
+        results.push({
+          user,
+          chatRoomId,
+          latestMessage,
+          updatedAt: chatSnap.data()?.updated_at?.toMillis?.() || 0,
+        });
+      }
+
+      results.sort((a, b) => b.updatedAt - a.updatedAt);
+      setChatDataList(results);
+    };
+
+    fetchChats();
+  }, [data, currentUserProfile]);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -73,14 +146,18 @@ const MessageList2: React.FC = () => {
     [hasNextPage, isFetchingNextPage, fetchNextPage]
   );
 
+  if (!token || !currentUserProfile?.user_profile?.uid) {
+    return <div>ユーザー情報を取得中...</div>;
+  }
+
   if (isLoading) return <div>読み込み中...</div>;
   if (isError) return <div>エラー: {error.message}</div>;
 
   return (
     <ul className="chat-room-list">
-      {matchedUsers.map((user, i) => {
-        const isLast = i === matchedUsers.length - 1;
-        const lastMessage = (user as any).latest_message;
+      {chatDataList.map((data, i) => {
+        const { user, chatRoomId, latestMessage } = data;
+        const isLast = i === chatDataList.length - 1;
 
         return (
           <li
@@ -88,40 +165,18 @@ const MessageList2: React.FC = () => {
             ref={isLast ? lastItemRef : null}
             className="chat-room-item"
           >
-            <Link to={`/messages/${user.uid}`} className="chat-room-link">
-              <img
-                src={
-                  user.profile_images
-                    ? buildStorageUrl(
-                        process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL ?? '',
-                        user.profile_images,
-                        '_small'
-                      )
-                    : `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
-                }
-                alt="avatar"
-                className="chat-avatar"
-              />
-              <div className="chat-room-text">
-                <div className="chat-user">
-                  <span className="nickname">{user.nickname}</span>
-                  <span className="bcuid">@{user.bcuid}</span>
-                </div>
-                <div className="chat-preview">
-                  {lastMessage?.text
-                    ? lastMessage.text.slice(0, 50)
-                    : lastMessage?.image_url?.length
-                      ? '[画像]'
-                      : '(メッセージなし)'}
-                </div>
-                <div className="timestamp">
-                  {convertUtcToTimeZone(
-                    lastMessage?.created_at || '',
-                    'Asia/Tokyo'
-                  )}
-                </div>
-              </div>
-            </Link>
+            {/* <pre>{JSON.stringify(chatDataList, null, 2)}</pre> */}
+
+            <MessageRoom2
+              item={user}
+              chatRoomId={chatRoomId}
+              latestMessage={latestMessage}
+              onClose={() => {
+                setChatDataList((prev) =>
+                  prev.filter((chat) => chat.chatRoomId !== chatRoomId)
+                );
+              }}
+            />
           </li>
         );
       })}

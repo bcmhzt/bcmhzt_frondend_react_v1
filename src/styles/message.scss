@@ -1,10 +1,47 @@
-.message-list {
-  ul.chat-rooms {
-    li.chat-room-item {
+.message-room {
+  padding: 10px;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  transition: background-color 0.2s;
+  cursor: pointer;
+  margin-bottom: 15px;
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+}
+
+.messages {
+  // background: #ffd700;
+  .chat-room-list {
+    margin-left: -30px;
+    .chat-room-item {
       list-style: none;
+      padding: 0;
+      margin: 0;
+      .avatar-area {
+
+      }
+      .nickname-area {
+        padding: 10px 2px;
+        .bcuid {
+          font-size:12px;
+          color: #888;
+        }
+      }
     }
   }
 }
+
+
+
+
+// .message-list {
+//   ul.chat-rooms {
+//     li.chat-room-item {
+//       list-style: none;
+//     }
+//   }
+// }
 
 .modal {
   display: block;
@@ -48,17 +85,7 @@
   }
 }
 
-.message-room {
-  padding: 1rem;
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s;
-  cursor: pointer;
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
-  }
-}
 
 // .member-avator {
 //   object-fit: cover;
