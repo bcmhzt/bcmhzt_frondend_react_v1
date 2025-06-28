@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import type { MatchUser } from '../../types/match';
 import { ThreeDotsVertical, X } from 'react-bootstrap-icons';
 import { useAuth } from '../../contexts/AuthContext';
-// import {
-//   // ThreeDotsVertical,
-//   // PersonStanding,
-//   // PersonStandingDress,
-//   // PersonArmsUp,
-//   // PersonWalking,
-//   // X,
-//   // CardText,
-//   // CardImage,
-//   // Search,
-// } from 'react-bootstrap-icons';
+import { firestore } from '../../firebaseConfig';
+import {
+  collection,
+  query,
+  orderBy,
+  startAfter,
+  limit,
+  getDocs,
+  DocumentData,
+  QueryDocumentSnapshot,
+} from 'firebase/firestore';
 
 interface MessageRoom2Props {
   item: MatchUser;
@@ -32,6 +32,82 @@ const MessageRoom2 = ({
   const { currentUserProfile } = useAuth();
   const [showModal, setShowModal] = useState(false);
   const [showChatModal, setShowChatModal] = useState(false);
+
+  const [messages, setMessages] = useState<DocumentData[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const topObserverRef = useRef<HTMLDivElement | null>(null);
+  const fetchedMessageIdsRef = useRef<Set<string>>(new Set());
+  const initialLoadRef = useRef(true);
+  const topMostDocRef = useRef<QueryDocumentSnapshot | null>(null);
+  const chatBodyRef = useRef<HTMLDivElement | null>(null);
+  const observerRef = useRef<IntersectionObserver | null>(null);
+
+  const fetchMessages = async () => {
+    if (!chatRoomId || isLoading) return;
+    setIsLoading(true);
+    const baseQuery = query(
+      collection(firestore, `chats/${chatRoomId}/messages`),
+      orderBy('created_at', 'desc'),
+      ...(topMostDocRef.current ? [startAfter(topMostDocRef.current)] : []),
+      limit(30)
+    );
+
+    const snapshot = await getDocs(baseQuery);
+    const newDocs = snapshot.docs.filter(
+      (doc) => !fetchedMessageIdsRef.current.has(doc.id)
+    );
+
+    newDocs.forEach((doc) => fetchedMessageIdsRef.current.add(doc.id));
+
+    const newMessages = newDocs.map((doc) => doc.data());
+    setMessages((prev) => [...newMessages.reverse(), ...prev]);
+    if (snapshot.docs.length > 0) {
+      topMostDocRef.current = snapshot.docs[snapshot.docs.length - 1];
+    }
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, [chatRoomId]);
+
+  useEffect(() => {
+    if (initialLoadRef.current && messagesEndRef.current && showChatModal) {
+      setTimeout(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: 'auto' });
+      }, 100);
+      initialLoadRef.current = false;
+    }
+  }, [messages, showChatModal]);
+
+  useEffect(() => {
+    if (!chatBodyRef.current || !topObserverRef.current) return;
+
+    if (observerRef.current) {
+      observerRef.current.disconnect();
+    }
+
+    observerRef.current = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !isLoading) {
+          fetchMessages();
+        }
+      },
+      {
+        root: chatBodyRef.current,
+        threshold: 0.1,
+      }
+    );
+
+    observerRef.current.observe(topObserverRef.current);
+
+    return () => {
+      if (observerRef.current && topObserverRef.current) {
+        observerRef.current.unobserve(topObserverRef.current);
+      }
+    };
+  }, [messages, isLoading]);
 
   return (
     <>
@@ -113,7 +189,7 @@ const MessageRoom2 = ({
                   />
                 </div>
                 <div className="modal-body">
-                  {/* <p>chatRoomId: {chatRoomId}</p> */}
+                  <p>chatRoomId: {chatRoomId}</p>
                   <ul>
                     <li>ナイススケベの解除</li>
                     <li>ブロックする</li>
@@ -151,7 +227,7 @@ const MessageRoom2 = ({
               height: '100%',
               zIndex: 1050,
             }}
-            onClick={() => setShowModal(false)}
+            onClick={() => setShowChatModal(false)}
           >
             <div
               className="modal-dialog"
@@ -170,9 +246,38 @@ const MessageRoom2 = ({
                     }}
                   />
                 </div>
-                <div className="modal-body chat-room-messages">
-                  <p>chatRoomId: {chatRoomId}</p>
-                  <p>hoge</p>
+                <div
+                  className="modal-body chat-room-messages"
+                  ref={chatBodyRef}
+                >
+                  <div ref={topObserverRef} style={{ height: '1px' }} />
+                  <pre>{JSON.stringify(topObserverRef, null, 2)}</pre>
+                  {/* <p>chatRoomId: {chatRoomId}</p>
+                  <pre>
+                    {JSON.stringify(currentUserProfile?.user_profile, null, 2)}
+                  </pre> */}
+
+                  <ul className="list-unstyled">
+                    {[...messages].reverse().map((msg, idx) => (
+                      <li
+                        key={idx}
+                        className={
+                          msg.uid === currentUserProfile.uid
+                            ? 'text-right'
+                            : 'text-left'
+                        }
+                      >
+                        <div className="message-box p-2 mb-2 border rounded">
+                          #{idx + 1}
+                          {msg.text || '[画像メッセージ]'}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                  <div ref={messagesEndRef} />
+                  {isLoading && (
+                    <div className="text-center my-2">読み込み中...</div>
+                  )}
                 </div>
                 <div className="modal-footer">
                   <X
