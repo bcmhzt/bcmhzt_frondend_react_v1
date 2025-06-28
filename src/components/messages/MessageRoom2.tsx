@@ -12,6 +12,10 @@ import {
   startAfter,
   limit,
   getDocs,
+  addDoc,
+  doc,
+  updateDoc,
+  serverTimestamp,
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
@@ -51,6 +55,9 @@ const MessageRoom2 = ({
   const [messagesToolModal, setMessagesToolModal] = useState(false);
   // infinite-scroll 前の scrollHeight を覚えておく
   const prevScrollHeightRef = useRef<number>(0);
+  // テキスト入力と送信中フラグ
+  const [inputText, setInputText] = useState('');
+  const [isSending, setIsSending] = useState(false);
 
   // useEffect(() => {
   //   if (!showChatModal) return;
@@ -159,41 +166,47 @@ const MessageRoom2 = ({
     }
   }, [showChatModal, messages]);
 
-  // 無限スクロール: 上端に到達すると古いメッセージを追加取得
-  // useEffect(() => {
-  //   if (!showChatModal) return;
-  //   const container = chatBodyRef.current;
-  //   const sentinel = topObserverRef.current;
-  //   if (!container || !sentinel) return;
-
-  //   // 既存のオブザーバーがあれば解除
-  //   observerRef.current?.disconnect();
-  //   observerRef.current = new IntersectionObserver(
-  //     async (entries) => {
-  //       if (
-  //         entries[0].isIntersecting &&
-  //         topMostDocRef.current && // 前回の最古ドキュメントがある
-  //         !isLoading
-  //       ) {
-  //         // 追加読み込み前の高さを保持
-  //         const prevHeight = container.scrollHeight;
-  //         await fetchMessages();
-  //         // 読み込み後、スクロール位置を維持
-  //         container.scrollTop = container.scrollHeight - prevHeight;
-  //       }
-  //     },
-  //     {
-  //       root: container,
-  //       rootMargin: '0px',
-  //       threshold: 0, // sentinel が一部でも見えたら発火
-  //     }
-  //   );
-  //   observerRef.current.observe(sentinel);
-
-  //   return () => {
-  //     observerRef.current?.disconnect();
-  //   };
-  // }, [showChatModal, isLoading]);
+  /** メッセージ送信 */
+  const handleSend = async () => {
+    const text = inputText.trim();
+    if (!chatRoomId || !text) return;
+    setIsSending(true);
+    try {
+      // 1) messages サブコレクションに追加
+      await addDoc(collection(firestore, `chats/${chatRoomId}/messages`), {
+        sender_id: currentUserProfile?.user_profile?.uid,
+        text,
+        image_url: [],
+        is_deleted: false,
+        last_read_at: {},
+        created_at: serverTimestamp(),
+      });
+      // 2) ChatRoom ドキュメントの updated_at を更新
+      await updateDoc(doc(firestore, 'chats', chatRoomId), {
+        updated_at: serverTimestamp(),
+      });
+      // 3) ローカルにも即追加して下部へスクロール
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender_id: currentUserProfile?.user_profile?.uid,
+          text,
+          image_url: [],
+          is_deleted: false,
+          last_read_at: {},
+          created_at: { seconds: Math.floor(Date.now() / 1000) },
+        },
+      ]);
+      if (chatBodyRef.current) {
+        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
+      }
+      setInputText('');
+      initialLoadRef.current = false;
+    } catch (err) {
+      console.error('メッセージ送信エラー', err);
+    }
+    setIsSending(false);
+  };
 
   useEffect(() => {
     if (!showChatModal) return;
@@ -478,14 +491,9 @@ const MessageRoom2 = ({
                         placeholder="メッセージを入力"
                         rows={3}
                         style={{ width: '100%' }}
-                        onChange={(e) => {
-                          const target = e.target as HTMLTextAreaElement;
-                          const textCountAlert =
-                            document.querySelector('.text-count-alert');
-                          if (textCountAlert) {
-                            textCountAlert.textContent = `text count: ${target.value.length}`;
-                          }
-                        }}
+                        maxLength={1500}
+                        value={inputText}
+                        onChange={(e) => setInputText(e.target.value)}
                         onInput={(e) => {
                           const target = e.target as HTMLTextAreaElement;
                           target.rows = Math.min(
@@ -499,10 +507,19 @@ const MessageRoom2 = ({
                       <button className="btn btn-primary bcmhzt-btn-gray mr10">
                         <Image style={{ cursor: 'pointer', color: '#fff' }} />
                       </button>
-                      <button className="btn btn-primary bcmhzt-btn">
-                        <SendFill
-                          style={{ cursor: 'pointer', color: '#fff' }}
-                        />
+
+                      <button
+                        className="btn btn-primary bcmhzt-btn"
+                        onClick={handleSend}
+                        disabled={isSending || !inputText.trim()}
+                      >
+                        {isSending ? (
+                          <span className="spinner-border spinner-border-sm text-white" />
+                        ) : (
+                          <SendFill
+                            style={{ cursor: 'pointer', color: '#fff' }}
+                          />
+                        )}
                       </button>
                     </div>
                   </div>
