@@ -241,6 +241,27 @@ const MessageRoom2 = ({
     }
   }, [messages]);
 
+  // --- プレビュー用 state ---
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  /** 画像選択時にプレビューを生成(max 5枚) */
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files ?? []).slice(0, 5);
+    const urls: string[] = [];
+    files.forEach((file) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          urls.push(reader.result);
+          // 全部読み終わったら state にセット
+          if (urls.length === files.length) {
+            setPreviewImages(urls);
+          }
+        }
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   return (
     <>
       {/* <pre>{JSON.stringify(item, null, 2)}</pre> */}
@@ -425,6 +446,30 @@ const MessageRoom2 = ({
 
                   <div className="chat-input d-flex flex-column">
                     <div className="chat-input-textarea">
+                      {/* 画像選択プレビュー */}
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        onChange={handleImageChange}
+                      />
+                      <div className="image-preview-list d-flex mt-2">
+                        {previewImages.map((src, i) => (
+                          <div key={i} className="preview-thumb mr-2">
+                            <img
+                              src={src}
+                              alt={`preview-${i}`}
+                              style={{
+                                width: 60,
+                                height: 60,
+                                objectFit: 'cover',
+                                borderRadius: 4,
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+
                       <div className="text-count-alert">
                         text count:{' '}
                         {document.querySelector('textarea')?.value.length || 0}
