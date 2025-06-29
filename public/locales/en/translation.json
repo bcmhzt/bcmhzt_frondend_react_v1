@@ -112,5 +112,13 @@
       "myaccount_data_download": "Data download",
       "myaccount_data_download_message": "Download your own submission data."
     }
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "timezone": "Time Zone",
+    "notification_liked": "Notification for Likes",
+    "notification_matched": "Notification for Matches",
+    "publish": "Publish on Site"
   }
 }

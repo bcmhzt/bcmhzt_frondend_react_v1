@@ -1,0 +1,142 @@
+.posts {
+  .post-thread {
+    margin-top: 15px;
+    border-bottom: #888 1px dashed;
+    .post-thread-header {
+      
+      .avatar-section {
+        // background: #ffd700;
+      }
+      .nickname-section {
+        margin-left: 5px;
+        word-wrap: break-word;
+        word-break: break-all;
+        .nickname {
+          font-size: 17px;
+          color: #333;
+          .bcuid {
+            font-size: 10px;
+            color: #888;
+          }
+        }
+        .gender {
+          font-size: 12px;
+          color: #888;
+        }
+      }
+    }
+    .post-thread-body {
+      p {
+        word-wrap: break-word;
+        word-break: break-all;
+      }
+      .date-link {
+        font-size: 12px;
+        color: #888;
+        text-align: right;
+      }
+    }
+    .post-thread-footer {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 5px 20px 20px 20px;
+
+      // background: #ffd700;
+    }
+  }
+}
+
+.post-index-header {
+  // background: #00d7ff;
+  .pih {
+    border-left: #888 1px solid;
+    border-top: #888 1px solid;
+    border-bottom: #888 1px solid;
+    width: 100%;
+    padding: 2px;
+    text-align: center;
+    background: #f1f1f1;
+    font-size: 10px;;
+    a {
+      color: #888;
+    }
+  }
+  .pih:first-child {
+    border-radius: 5px 0px 0px 5px;
+  }
+  .pih:last-child {
+    border-right: #888 1px solid;
+    border-radius: 0px 5px 5px 0px;
+  }
+  .active {
+    background: #fff;
+    color: #333;
+  }
+  .pih-bookmark{}
+  .pih-like {}
+  .pih-reply {}
+  .pih-media {}
+}
+
+.post-create-form {
+  position: fixed;
+  right: 30px;
+  bottom: 100px;
+}
+.post-create-form-add-btn {
+
+}
+
+
+.post-replies {
+  .reply-form {
+    textarea::placeholder {
+      color: #c1c1c1 !important;
+      font-size: 12px;
+    }
+    // textarea.reply-form-textarea::placeholder {
+    //   color: #888 !important;
+    //   font-style: italic !important;
+    // }
+  }
+
+  .replies-list-header {
+    .replies-list-title {
+      font-size: 16px;
+      color: #333;
+    }
+  }
+  .post-reply-item {
+    // background: #ffd700;
+    border-top: #c1c1c1 1px dashed;
+    .header {
+      margin: 0;
+      padding: 0;
+    }
+    .body {
+      padding: 10px;
+      p {
+        word-wrap: break-word;
+        word-break: break-all;
+      }
+    }
+  }
+}
+
+
+/** メディア */
+.member-images {
+  .member-image {
+    // background : #ffd700;
+    img.image-item {
+      width: 64px;
+      height: 64px;
+      border-radius: 2px;
+      object-fit: cover;
+      aspect-ratio: 1 / 1;
+      margin: 0;
+      padding:0;
+    }
+  }
+}

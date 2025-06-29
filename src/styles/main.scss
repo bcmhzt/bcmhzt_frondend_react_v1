@@ -3,6 +3,19 @@
 @import './header.scss';
 @import './footer.scss';
 @import './register.scss';
+@import './devauthenticate.scss';
+@import './top.scss';
+@import './members.scss';
+@import './dashboard.scss';
+@import './referralEntries.scss';
+@import './myProfile.scss';
+@import './settings.scss';
+@import './posts.scss';
+@import './postbookmark.scss';
+@import './postreply.scss';
+@import './message.scss';
+@import './opentalks.scss';
+@import './notice.scss';
 
 
 // @media (max-width: 575px) { margin-top: 30px; }
@@ -22,9 +35,17 @@ body {
     background-color: #fff;
     margin-top: 10px;
     margin-bottom: $footer-height+10;
+    h2.page-title {
+      font-size: 12px;
+      border: #666 1px solid;
+      padding: 2px 7px;
+      display: inline-block;
+      border-radius: 3px;
+      background: #f1f1f1;
+    }
   }
   .bc-right {
-    background-color: #f1f1f1;
+    // background-color: #f1f1f1;
     margin-top: 10px;
     margin-bottom: $footer-height+10;
   }
@@ -38,6 +59,87 @@ body {
     width: 100%;
     height: $footer-height;
     background: #333;
+  }
+  .section-title-h2 {
+    .conut {
+      font-size: 12px;
+      color: #888;
+      border:#888 1px solid;
+      border-radius: 2px;
+      padding: 0px 5px;
+      margin-left: 5px;
+    }
+  }
+
+  /* member cardの主要デザイン */
+  .members-list {
+    list-style: none;
+    margin-left: -32px;
+    .more-read {
+      text-align: right;
+      a {
+        color: #4682b4;
+        &:hover {
+          color: #4682b4;
+          text-decoration: underline;
+        }
+      }
+    }
+    .member {
+      margin-bottom: 20px;;
+      .member-flex {
+        .member-avator-area {
+          position: relative;
+          img.member-avator {
+            width:64px;
+            height:64px;
+            border-radius: 50%;
+            border: 1px solid #c1c1c1;
+            aspect-ratio: 1 / 1;
+            object-fit: cover;
+          }
+          .new-mark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background-color: #ff4500;
+            color: #ffd700;
+            padding: 2px;
+            font-size: 16px;
+            border-radius: 50%;
+          }
+        }
+        .nickname-area {
+          width: 100%;
+          // background: #ffd700;
+          margin-left:10px;
+          .nick-name {
+            font-size: 20px;
+            color: #333;
+            .bcuid {
+              font-size: 14px;
+              color: #888;
+            }
+          }
+          .member-property {
+            background: #f1f1f1;
+            .gender-icon {
+              width: 16px;
+              height: 16px;
+              margin-right: 5px;
+            }
+          }
+          .created_at {
+            text-align: right;;
+          }
+          .created_at {
+            font-size: 10px;
+            color: #888;
+          }
+        }
+      }
+
+    }
   }
   
 }

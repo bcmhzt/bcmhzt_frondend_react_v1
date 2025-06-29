@@ -53,6 +53,10 @@
       border: 1px solid #888;
     }
     .nickname {
+      @media (max-width: 768px) {
+        display: none;
+      }
+
       margin-right: 10px;
       .name {
         font-size: 17px;
@@ -68,23 +72,31 @@
       a { @include black-link; } 
     }
   }
-
 }
 
 .sidebar {
   // background: #ffd700;
-  background: #fff;
+  background: #222;
+  opacity: 0.8;
+  color: #fff;
   position: fixed; // ← fixedに変更
   top: 55px;
   height: 100%;
   transition: right 0.1s;
   box-shadow: -2px 0 8px rgba(0,0,0,0.1);
   z-index: 500;
+  overflow-y: auto;
   @media (max-width: 575px) { right: -80%; width: 80%; }
   @media (min-width: 576px) and (max-width: 768px) { right: -50%; width: 50%; }
   @media (min-width: 769px) { right: -350px; width: 350px; }
   &.open {
     right: 0;
+  }
+  .close-btn {
+    color: #fff !important;
+    .close-xlg {
+      color: #fff !important;
+    }
   }
   .sidebar-menu {
     margin-top: 30px;
@@ -92,11 +104,36 @@
       list-style: none;
       li {
         font-size: 20px;
-        margin-bottom: 12px;
+        margin-bottom: 20px;
         a {
-          @include black-link;
+          @include white-link;
+        }
+        .icon-lg {
+          color: #dcdcdc !important;
         }
       }
+    }
+  }
+}
+
+.disorder-message {
+  background: #880000;
+  color: #fff;
+  padding: 7px;
+  .text-muted {
+    color: #fff !important;
+    p {
+      margin: 0;
+      padding: 0;
+      a {
+        color: #fff !important;
+        text-decoration: underline;
+        &:hover {
+          text-decoration: none;
+          color: #888;
+        }
+      }
+
     }
   }
 }

@@ -1,0 +1,68 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../../../contexts/AuthContext';
+import axios from 'axios';
+
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') console.log('[BWeight.tsx] debug:', debug);
+
+const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+
+const BWeight = () => {
+  const { currentUserProfile, token } = useAuth();
+  const [value, setValue] = useState(
+    currentUserProfile.user_detail.bweight || ''
+  );
+  const [status, setStatus] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (status) {
+      const timer = setTimeout(() => setStatus(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [status]);
+
+  const handleBlur = async () => {
+    if (!value) return;
+    setLoading(true);
+    try {
+      const res = await axios.post(
+        `${apiEndpoint}/update/user/detail/bweight/${currentUserProfile.user_profile.uid}`,
+        { value, token },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (debug === 'true') console.log('response:', res.data);
+      if (res.data.status) setStatus(true);
+    } catch (err) {
+      console.error('API error [BWeight]:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="profile-update bweight">
+      <h3>体重</h3>
+      <div className="status">
+        {status ? (
+          <span className="save-done">保存完了</span>
+        ) : loading ? (
+          <span className="loading">保存中...</span>
+        ) : (
+          <span className="saved">保存済</span>
+        )}
+      </div>
+      <input
+        type="text"
+        className="form-control"
+        style={{ width: '100px', display: 'inline-block' }}
+        placeholder="体重 (kg)"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        onBlur={handleBlur}
+      />
+    </div>
+  );
+};
+
+export default BWeight;

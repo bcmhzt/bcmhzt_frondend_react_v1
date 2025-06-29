@@ -2,15 +2,34 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/main.scss';
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement
-);
+// React Query
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+
+// Loading & Auth
+import { LoadingProvider } from './contexts/LoadingContext';
+import { AuthProvider } from './contexts/AuthContext';
+
+const queryClient = new QueryClient();
+
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container!);
+
 root.render(
   <React.StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
+        <LoadingProvider>
+          <App />
+        </LoadingProvider>
+      </AuthProvider>
+      {(process.env.REACT_APP_ENV === 'local' ||
+        process.env.REACT_APP_ENV === 'dev') && (
+        <ReactQueryDevtools initialIsOpen={false} />
+      )}
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

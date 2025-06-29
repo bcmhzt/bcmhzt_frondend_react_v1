@@ -1,0 +1,44 @@
+.bookmarks {
+  
+  ul.bookmark-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    li.bookmark-item {
+      // background: #ffd700;
+      a {
+        color: #4682b4;
+        text-decoration: none;
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+      .avatar {}
+      .bookmark-summary {
+        display: flex;
+        justify-content: flex-start;
+        align-items: flex-start;
+        text-align: left;
+        width: 100%;
+        .bookmark-text {
+          text-align: left;
+          word-wrap: break-word;
+          overflow: hidden;
+          white-space: pre-wrap;
+          word-break: break-all;
+          width: 100%;
+          .bookmark-list-image {
+            vertical-align: middle;
+            width: 36px;
+            height: 36px;
+            object-fit: cover;
+            aspect-ratio: 1 / 1;
+            margin-right: 9px;
+            float: left;
+          }
+        }
+      }
+
+    }
+  }
+}
