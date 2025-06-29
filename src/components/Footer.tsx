@@ -23,7 +23,7 @@ const Footer = () => {
     if (count <= 0) return null;
     return (
       <span className="badge bg-primary">
-        {count > 99 ? '+99' : `+${count}`}
+        {count > 99 ? '+99' : `${count}`}
       </span>
     );
   };
