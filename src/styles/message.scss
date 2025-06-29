@@ -61,18 +61,8 @@
   overflow-y: auto;     /* 縦スクロール */
   /* padding や背景色などは既存スタイルを踏襲 */
   .message-list {
-    // background: #ffd700;
     list-style: none;
-    margin-left: -23px;;
-    // .message-text {
-    //   word-break: break-all;
-    //   padding: 10px;
-    //   .message-box {}
-    //   .datetime {
-    //     font-size: 10px;
-    //     color: #888;
-    //   }
-    // }
+    margin-left: -23px;
     .text-left {
       word-break: break-all;
       width: 90%;
@@ -81,6 +71,10 @@
       .message-box {
         border-radius: 0px 10px 10px 10px !important;
         border: #c1c1c1 1px solid !important;
+      }
+      .deletesd-message {
+        font-size: 10px !important;
+        color: #c1c1c1 !important;
       }
       .datetime {
         margin-top: -10px;
@@ -96,8 +90,12 @@
       
       .message-box {
         background: #c1c1c1;
-        border-radius: 10px 0px 10px 10px !important;
         border: #c1c1c1 1px solid !important;
+      }
+      .deletesd-message {
+        font-size: 10px !important;
+        color: #c1c1c1 !important;
+        text-align: right;
       }
       .datetime {
         margin-top: -10px;

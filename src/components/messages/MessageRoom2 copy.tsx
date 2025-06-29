@@ -25,7 +25,6 @@ import {
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage';
-import { onSnapshot, limitToLast } from 'firebase/firestore';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -71,9 +70,9 @@ const MessageRoom2 = ({
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const [activeMessageId, setActiveMessageId] = useState<string | null>(null);
-  // {
-  //   /* メッセージ一覧 */
-  // }
+  {
+    /* メッセージ一覧 */
+  }
   // useEffect(() => {
   //   if (!showChatModal) return;
   //   console.log('showChatModal が true になりました');
@@ -87,33 +86,32 @@ const MessageRoom2 = ({
 
   // --- 追加 ---
   // 初回：最新30件だけを取得 → 古→新 の順にセット
-  // const fetchInitialMessages = async () => {
-  //   if (!chatRoomId) return;
-  //   // 前回取得済みIDセットをクリア
-  //   fetchedMessageIdsRef.current.clear();
-  //   setIsLoading(true);
+  const fetchInitialMessages = async () => {
+    if (!chatRoomId) return;
+    // 前回取得済みIDセットをクリア
+    fetchedMessageIdsRef.current.clear();
+    setIsLoading(true);
 
-  //   // Firestore から降順(limit 30)で取得
-  //   const snap = await getDocs(
-  //     query(
-  //       collection(firestore, `chats/${chatRoomId}/messages`),
-  //       orderBy('created_at', 'desc'),
-  //       limit(30)
-  //     )
-  //   );
+    // Firestore から降順(limit 30)で取得
+    const snap = await getDocs(
+      query(
+        collection(firestore, `chats/${chatRoomId}/messages`),
+        orderBy('created_at', 'desc'),
+        limit(30)
+      )
+    );
 
-  //   // ドキュメントID付きで取得し、reverse() して古→新順に
-  //   const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() })).reverse();
+    // ドキュメントID付きで取得し、reverse() して古→新順に
+    const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() })).reverse();
 
-  //   setMessages(docs);
-  //   // 次ページ読み込みの startAfter 用に最も古いドキュメントを保持
-  //   topMostDocRef.current = snap.docs[snap.docs.length - 1] || null;
-  //   setIsLoading(false);
+    setMessages(docs);
+    // 次ページ読み込みの startAfter 用に最も古いドキュメントを保持
+    topMostDocRef.current = snap.docs[snap.docs.length - 1] || null;
+    setIsLoading(false);
 
-  //   // 取得したIDをキャッシュ
-  //   snap.docs.forEach((d) => fetchedMessageIdsRef.current.add(d.id));
-  // };
-
+    // 取得したIDをキャッシュ
+    snap.docs.forEach((d) => fetchedMessageIdsRef.current.add(d.id));
+  };
   // 過去メッセージ取得
   const fetchMessages = async () => {
     if (!chatRoomId || isLoading) return;
@@ -146,26 +144,9 @@ const MessageRoom2 = ({
   };
 
   useEffect(() => {
-    if (!chatRoomId) return;
-    const msgsRef = collection(firestore, `chats/${chatRoomId}/messages`);
-    // 昇順で最新30件だけ取得
-    const q = query(msgsRef, orderBy('created_at', 'asc'), limitToLast(30));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const live = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-      setMessages(live as DocumentData[]);
-      // 初回だけスクロール
-      if (chatBodyRef.current && initialLoadRef.current) {
-        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-        initialLoadRef.current = false;
-      }
-    });
-    return () => unsubscribe();
+    fetchInitialMessages();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatRoomId]);
-
-  // useEffect(() => {
-  //   fetchInitialMessages();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [chatRoomId]);
 
   useLayoutEffect(() => {
     if (
@@ -237,17 +218,17 @@ const MessageRoom2 = ({
         updated_at: serverTimestamp(),
       });
       // 4) ローカル state
-      // setMessages((prev) => [
-      //   ...prev,
-      //   {
-      //     sender_id: currentUserProfile?.user_profile?.uid,
-      //     text,
-      //     images: imageObjects,
-      //     is_deleted: false,
-      //     last_read_at: {},
-      //     created_at: { seconds: Math.floor(Date.now() / 1000) },
-      //   },
-      // ]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          sender_id: currentUserProfile?.user_profile?.uid,
+          text,
+          images: imageObjects,
+          is_deleted: false,
+          last_read_at: {},
+          created_at: { seconds: Math.floor(Date.now() / 1000) },
+        },
+      ]);
       setSelectedFiles([]);
       setPreviewImages([]);
     } catch (error) {
@@ -502,52 +483,37 @@ const MessageRoom2 = ({
                         }
                       }}
                     >
-                      {/* <pre>{JSON.stringify(msg, null, 2)}</pre> */}
+                      <pre>{JSON.stringify(msg, null, 2)}</pre>
 
-                      {!msg.is_deleted ? (
-                        <>
-                          <div className="message-box p-2 mb-2 border rounded">
-                            {msg.text}
-                            {msg.images?.length > 0 && (
-                              <div className="image-message">
-                                {msg.images.map((m: any, i: number) => (
-                                  <img
-                                    key={i}
-                                    src={m.original}
-                                    alt={`message-img-${i}`}
-                                    style={{
-                                      maxWidth: '100%',
-                                      borderRadius: 4,
-                                      marginTop: 8,
-                                    }}
-                                  />
-                                ))}
-                              </div>
-                            )}
+                      <div className="message-box p-2 mb-2 border rounded">
+                        {/* JSON デバッグ */}
+                        {/* <pre>{JSON.stringify(msg.images, null, 2)}</pre> */}
+                        {msg.text}
+                        {msg.images?.length > 0 && (
+                          <div className="image-message">
+                            {msg.images.map((m: any, i: number) => (
+                              <img
+                                key={i}
+                                src={m.original}
+                                alt={`message-img-${i}`}
+                                style={{
+                                  maxWidth: '100%',
+                                  borderRadius: 4,
+                                  marginTop: 8,
+                                }}
+                              />
+                            ))}
                           </div>
-                          <div className="datetime text-muted">
-                            {new Date(
-                              msg.created_at?.seconds * 1000
-                            ).toLocaleString('ja-JP', {
-                              timeZone: 'Asia/Tokyo',
-                            })}{' '}
-                            既読 | 未読
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          <div className="deletesd-message">
-                            このメッセージは削除されました。
-                          </div>
-                          <div className="datetime text-muted">
-                            {new Date(
-                              msg.created_at?.seconds * 1000
-                            ).toLocaleString('ja-JP', {
-                              timeZone: 'Asia/Tokyo',
-                            })}
-                          </div>
-                        </>
-                      )}
+                        )}
+                      </div>
+                      <div className="datetime text-muted">
+                        {new Date(
+                          msg.created_at?.seconds * 1000
+                        ).toLocaleString('ja-JP', {
+                          timeZone: 'Asia/Tokyo',
+                        })}{' '}
+                        既読 | 未読
+                      </div>
                     </li>
                   ))}
                 </ul>
