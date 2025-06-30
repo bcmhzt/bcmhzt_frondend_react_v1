@@ -3,6 +3,8 @@
 ## Auto deply system
 ## dev ブランチから行う
 
+## % bash _deploy.sh
+
 # 現在のブランチを確認
 CURRENT_BRANCH=$(git branch --show-current)
 if [[ "$CURRENT_BRANCH" != "dev" ]]; then
