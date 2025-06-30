@@ -51,7 +51,6 @@ const EasySexualProfileRegist: React.FC = () => {
       //01
       keepBalloon01 ||
       showBlock01 ||
-      showReplyBlock01 ||
       keepReplyBalloon01 ||
       showReplyBlock01 ||
       //02
@@ -88,7 +87,6 @@ const EasySexualProfileRegist: React.FC = () => {
     //01
     keepBalloon01,
     showBlock01,
-    showReplyBlock01,
     keepReplyBalloon01,
     showReplyBlock01,
     //02
@@ -96,17 +94,14 @@ const EasySexualProfileRegist: React.FC = () => {
     showBlock02,
     showReplyBlock02,
     keepReplyBalloon02,
-    showReplyBlock02,
     //03
     keepBalloon03,
     showBlock03,
-    showReplyBlock03,
     keepReplyBalloon03,
     showReplyBlock03,
     //04
     keepBalloon04,
     showBlock04,
-    showReplyBlock04,
     keepReplyBalloon04,
     showReplyBlock04,
   ]);

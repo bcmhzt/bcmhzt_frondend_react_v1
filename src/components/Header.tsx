@@ -5,14 +5,14 @@ import bcmhztLogo from '../assets/images/icon/bcmhzt-logo.png';
 import dummyAvatar from '../assets/images/dummy/dummy-avatar.png';
 import {
   HouseDoor,
-  List,
+  // List,
   ListUl,
   Power,
   XLg,
   Gear,
   WindowDock,
   Book,
-  Easel,
+  // Easel,
   Mailbox,
   CodeSlash,
   Braces,

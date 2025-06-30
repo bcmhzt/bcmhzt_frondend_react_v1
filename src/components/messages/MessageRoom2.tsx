@@ -25,7 +25,7 @@ import {
   uploadBytes,
   getDownloadURL,
 } from 'firebase/storage';
-import { onSnapshot, limitToLast } from 'firebase/firestore';
+import { onSnapshot } from 'firebase/firestore';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -175,6 +175,7 @@ const MessageRoom2 = ({
       }
     });
     return () => unsubscribe();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatRoomId /* messages を外すことで常に最新の最後尾を参照 */]);
 
   // useEffect(() => {
