@@ -1,6 +1,14 @@
 #!/bin/bash
 
 ## Auto deply system
+## dev ブランチから行う
+
+# 現在のブランチを確認
+CURRENT_BRANCH=$(git branch --show-current)
+if [[ "$CURRENT_BRANCH" != "dev" ]]; then
+  echo "Warning: You are not on the 'dev' branch. Please switch to the 'dev' branch to proceed."
+  exit 1
+fi
 
 # コミットメッセージを入力
 read -p "Enter commit message: " COMMIT_MSG
