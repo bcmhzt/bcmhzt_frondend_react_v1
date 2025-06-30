@@ -6,7 +6,9 @@
 # 現在のブランチを確認
 CURRENT_BRANCH=$(git branch --show-current)
 if [[ "$CURRENT_BRANCH" != "dev" ]]; then
-  echo "Warning: You are not on the 'dev' branch. Please switch to the 'dev' branch to proceed."
+  echo "=======================================================================================";
+  echo "Warning: You are not on the 'dev' branch. Please switch to the 'dev' branch to proceed.";
+  echo "=======================================================================================";
   exit 1
 fi
 
@@ -33,15 +35,15 @@ if [[ "$PROCEED" != "Y" && "$PROCEED" != "y" ]]; then
 fi
 
 git status;
-# ステージングエリアに変更を追加
+# 開発エリアに変更を追加
 git add -A;
 git commit -m "$COMMIT_MSG";
 git push origin dev;
-
+# テストエリアに変更を追加
 git checkout test;
 git merge dev;
 git push origin test;
-
+# 本番エリアに変更を追加
 git checkout main;
 git merge test;
 git push origin main;
