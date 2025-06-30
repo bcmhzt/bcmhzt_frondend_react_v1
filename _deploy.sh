@@ -45,3 +45,6 @@ git push origin test;
 git checkout main;
 git merge test;
 git push origin main;
+
+git checkout dev;
+echo "Deployment completed successfully.";
