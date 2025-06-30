@@ -17,6 +17,10 @@ import {
   CodeSlash,
   Braces,
   ChatText,
+  People,
+  CardText,
+  Bell,
+  Envelope,
 } from 'react-bootstrap-icons';
 import LanguageSelector from '../utility/LanguageSelector';
 import { useAuth } from '../contexts/AuthContext';
@@ -197,6 +201,26 @@ const Header = () => {
           <div className="sidebar-menu">
             <ul>
               <li>
+                <HouseDoor className="icon-lg" />
+                <Link to="/dashboard">ダッシュボード</Link>
+              </li>
+              <li>
+                <People className="icon-lg" />
+                <Link to="/members">メンバー</Link>
+              </li>
+              <li>
+                <CardText className="icon-lg" />
+                <Link to="/posts">投稿</Link>
+              </li>
+              <li>
+                <Bell className="icon-lg" />
+                <Link to="/notice">通知</Link>
+              </li>
+              <li>
+                <Envelope className="icon-lg" />
+                <Link to="/messages">メッセージ</Link>
+              </li>
+              <li>
                 <ChatText className="icon-lg" />
                 <Link to="/open_talks">オープントーク</Link>
               </li>
@@ -204,21 +228,17 @@ const Header = () => {
                 <WindowDock className="icon-lg" />
                 <Link to="/myprofile">プロフィールの設定</Link>
               </li>
-              <li>
-                <HouseDoor className="icon-lg" />
-                <Link to="/dashboard">ダッシュボード</Link>
-              </li>
-              <li>
-                <List className="icon-lg" />
-                <Link to="/members">メンバー検索</Link>
-              </li>
-              <li>
-                <Easel className="icon-lg" />
-                <Link to="/about">このサイトについて</Link>
-              </li>
+
               <li>
                 <Book className="icon-lg" />
-                <Link to="/usage">ご利用方法</Link>
+                <a
+                  href="https://portal.bcmhzt.net/usage/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="ms-2"
+                >
+                  ご利用方法
+                </a>
               </li>
               <li>
                 <Gear className="icon-lg" />
@@ -226,7 +246,7 @@ const Header = () => {
               </li>
               <li>
                 <ListUl className="icon-lg" />
-                <Link to="/myindex">目次・サイトマップ</Link>
+                <Link to="/index">目次・サイトマップ</Link>
               </li>
               <li>
                 <Mailbox className="icon-lg" />

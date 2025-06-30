@@ -31,6 +31,7 @@ import LikedMeCard from "./pages/likematch/LikedMeCard";
 import MatchedCard from "./pages/likematch/MatchedCard";
 import ILikedCard from "./pages/likematch/ILikedCard";
 import Settings from "./pages/user/Settings";
+import Index from "./pages/Index";
 // import MetaAccount from "./pages/User/MetaAccount";
 //src/pages/user/MyProfile.tsx
 
@@ -92,6 +93,7 @@ const routes: RoutesObject = {
     { path: "/i_liked", component: ILikedCard },// 自分がいいねした人（全量）
     /** user */
     { path: "/settings", component: Settings },
+    { path: "/index", component: Index },
     // { path: "/metaaccount", component: MetaAccount }
   ],
   errorRoutes: [],

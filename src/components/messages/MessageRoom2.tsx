@@ -87,32 +87,32 @@ const MessageRoom2 = ({
 
   // --- 追加 ---
   // 初回：最新30件だけを取得 → 古→新 の順にセット
-  // const fetchInitialMessages = async () => {
-  //   if (!chatRoomId) return;
-  //   // 前回取得済みIDセットをクリア
-  //   fetchedMessageIdsRef.current.clear();
-  //   setIsLoading(true);
+  const fetchInitialMessages = async () => {
+    if (!chatRoomId) return;
+    // 前回取得済みIDセットをクリア
+    fetchedMessageIdsRef.current.clear();
+    setIsLoading(true);
 
-  //   // Firestore から降順(limit 30)で取得
-  //   const snap = await getDocs(
-  //     query(
-  //       collection(firestore, `chats/${chatRoomId}/messages`),
-  //       orderBy('created_at', 'desc'),
-  //       limit(30)
-  //     )
-  //   );
+    // Firestore から降順(limit 30)で取得
+    const snap = await getDocs(
+      query(
+        collection(firestore, `chats/${chatRoomId}/messages`),
+        orderBy('created_at', 'desc'),
+        limit(30)
+      )
+    );
 
-  //   // ドキュメントID付きで取得し、reverse() して古→新順に
-  //   const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() })).reverse();
+    // ドキュメントID付きで取得し、reverse() して古→新順に
+    const docs = snap.docs.map((d) => ({ id: d.id, ...d.data() })).reverse();
 
-  //   setMessages(docs);
-  //   // 次ページ読み込みの startAfter 用に最も古いドキュメントを保持
-  //   topMostDocRef.current = snap.docs[snap.docs.length - 1] || null;
-  //   setIsLoading(false);
+    setMessages(docs);
+    // 次ページ読み込みの startAfter 用に最も古いドキュメントを保持
+    topMostDocRef.current = snap.docs[snap.docs.length - 1] || null;
+    setIsLoading(false);
 
-  //   // 取得したIDをキャッシュ
-  //   snap.docs.forEach((d) => fetchedMessageIdsRef.current.add(d.id));
-  // };
+    // 取得したIDをキャッシュ
+    snap.docs.forEach((d) => fetchedMessageIdsRef.current.add(d.id));
+  };
 
   // 過去メッセージ取得
   const fetchMessages = async () => {
@@ -147,20 +147,35 @@ const MessageRoom2 = ({
 
   useEffect(() => {
     if (!chatRoomId) return;
+
+    // 1) 初期ロード
+    fetchInitialMessages();
+
+    // 2) 新着メッセージだけリアルタイム購読
     const msgsRef = collection(firestore, `chats/${chatRoomId}/messages`);
-    // 昇順で最新30件だけ取得
-    const q = query(msgsRef, orderBy('created_at', 'asc'), limitToLast(30));
+    // 昇順で、初期ロードで得た最終時刻以降に入るものだけ取得
+    const q = query(
+      msgsRef,
+      orderBy('created_at', 'asc'),
+      startAfter(
+        // 初期ロードで最後のメッセージの created_at を使う
+        messages.length
+          ? (messages[messages.length - 1].created_at as any)
+          : new Date(0)
+      )
+    );
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const live = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
-      setMessages(live as DocumentData[]);
-      // 初回だけスクロール
-      if (chatBodyRef.current && initialLoadRef.current) {
-        chatBodyRef.current.scrollTop = chatBodyRef.current.scrollHeight;
-        initialLoadRef.current = false;
+      const newOnes = snapshot.docs.map((d) => ({ id: d.id, ...d.data() }));
+      if (newOnes.length) {
+        setMessages((prev) => [...prev, ...newOnes]);
+        // 新着が来たら自動でスクロール
+        setTimeout(() => {
+          chatBodyRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 0);
       }
     });
     return () => unsubscribe();
-  }, [chatRoomId]);
+  }, [chatRoomId /* messages を外すことで常に最新の最後尾を参照 */]);
 
   // useEffect(() => {
   //   fetchInitialMessages();
@@ -609,7 +624,11 @@ const MessageRoom2 = ({
                     <textarea
                       placeholder="メッセージを入力"
                       rows={3}
-                      style={{ width: '100%' }}
+                      style={{
+                        width: '100%',
+                        fontSize: '16px',
+                        padding: '10px',
+                      }}
                       maxLength={1500}
                       value={inputText}
                       onChange={(e) => setInputText(e.target.value)}

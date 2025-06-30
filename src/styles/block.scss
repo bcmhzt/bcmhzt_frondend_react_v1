@@ -1,0 +1,98 @@
+.block, .reply-block {
+  font-size: 16px;
+  .advisor {
+    font-size: 14px;
+    color: #333;
+  }
+  .balloon {
+    background: #f5f5f5;
+    padding: 10px 20px;
+    border-radius: 0px 10px 10px 10px;
+    width: 80%;
+  }
+  .select-area {
+    // background: #ffd700;
+    // display: flex;
+    // flex-direction: column;
+    // align-items: flex-end;
+    width: 100%;
+  }
+  .section {
+    color: #444;
+    font-size: 20px;
+    width:30%;
+    border: 1px solid #888;
+    padding: 10px;
+    border-radius: 5px;
+    &:hover {
+      background-color: #f0f0f0;
+      cursor: pointer;
+    }
+  }
+}
+
+/* ふわっとフェードイン ＋ 上からちょっと降りてくる */
+.block01 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block02 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block03 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block04 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block05 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block06 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block07 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block08 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block09 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+.block10 {
+  animation: fadeInDown 0.5s ease-out both;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+.dummy-balloon {
+  // background: #c1c1c1;
+  padding: 5px 10px;
+  border-radius: 0px 10px 10px 10px;
+}
+.typing-dots span {
+  animation: blink 1.4s infinite;
+  font-weight: bold;
+  font-size: 40px;
+}
+.typing-dots span:nth-child(2) {
+  animation-delay: 0.2s;
+}
+.typing-dots span:nth-child(3) {
+  animation-delay: 0.4s;
+}
+@keyframes blink {
+  0%, 20% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}

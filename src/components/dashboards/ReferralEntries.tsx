@@ -170,15 +170,15 @@ const ReferralEntries = () => {
       formData.append('hash', hash);
 
       // FormDataの内容をログ出力
-      if (debug === 'true') {
-        for (let pair of formData.entries()) {
-          console.log(
-            '[src/components/dashboards/ReferralEntries.tsx:182] FormData:',
-            pair[0],
-            pair[1]
-          );
-        }
-      }
+      // if (debug === 'true') {
+      //   for (let pair of formData.entries()) {
+      //     console.log(
+      //       '[src/components/dashboards/ReferralEntries.tsx:182] FormData:',
+      //       pair[0],
+      //       pair[1]
+      //     );
+      //   }
+      // }
 
       const response = await axios.post(
         `${apiEndpoint}/v1/referral_entries/sendmail`,
