@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react'; // Ensure React is imported for JSX
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 
@@ -10,6 +10,35 @@ if (debug === 'true') {
     debug
   );
 }
+
+/**
+ * あなたはドミナントですか？サブミッシブですか？
+あなたはノーマルですか？それともアブノーマルですか？
+  ノーマル、ドミナント、サブミッシブ、複数プレイ、NTR、スイッチャー、スパンキング、緊縛、フェティッシュ、コスプレ
+どんな相手を探していますか？
+　オンライン上での話し相手
+　友達
+　恋人
+　セックスフレンド
+　一晩限りの相手
+性欲は強いですか？弱いですか？
+　強い/普通/弱い/わからない
+セックスに重きを置きますか？
+　重要／どちらでもよい／なくてもよい／必要ない
+連絡の希望頻度は？
+　毎日/週に数回程度/１ヶ月に数回程度
+NG
+  撮影
+  録音
+  痛みを伴うプレイ
+  暴力的行為
+  流血を伴うプレイ
+  傷跡を残す行為
+  スカトロ
+  嘔吐プレイ
+  薬物使用
+  非同意のその他のプレイ
+ */
 
 /** 簡易アンケート形式 */
 const EasySexualProfileRegist: React.FC = () => {
@@ -46,6 +75,27 @@ const EasySexualProfileRegist: React.FC = () => {
   const [keepReplyBalloon04, setKeepReplyBalloon04] = useState(false);
   const [showReplyBlock04, setShowReplyBlock04] = useState(false);
 
+  // block05 interval
+  const [keepBalloon05, setKeepBalloon05] = useState(false);
+  const [showBlock05, setShowBlock05] = useState(false);
+  const [keepBalloon05_1, setKeepBalloon05_1] = useState(false);
+  const [showBlock05_1, setShowBlock05_1] = useState(false);
+  // const [keepReplyBalloon05, setKeepReplyBalloon05] = useState(false);
+
+  // block06: normal or abnormal
+  const [keepBalloon06, setKeepBalloon06] = useState(false);
+  const [showBlock06, setShowBlock06] = useState(false);
+  const [selectedValue06, setSelectedValue06] = useState<string | ''>('');
+  const [keepReplyBalloon06, setKeepReplyBalloon06] = useState(false);
+  const [showReplyBlock06, setShowReplyBlock06] = useState(false);
+
+  // block07: 何かを聞く
+  const [keepBalloon07, setKeepBalloon07] = useState(false);
+  const [showBlock07, setShowBlock07] = useState(false);
+  const [selectedValue07, setSelectedValue07] = useState<string | ''>('');
+  const [keepReplyBalloon07, setKeepReplyBalloon07] = useState(false);
+  const [showReplyBlock07, setShowReplyBlock07] = useState(false);
+
   useLayoutEffect(() => {
     if (
       //01
@@ -71,7 +121,22 @@ const EasySexualProfileRegist: React.FC = () => {
       showReplyBlock04 ||
       keepReplyBalloon04 ||
       showReplyBlock04 ||
-      (showReplyBlock04 && modalBodyRef.current)
+      //05
+      keepBalloon05 ||
+      showBlock05 ||
+      keepBalloon05_1 ||
+      showBlock05_1 ||
+      //06
+      keepBalloon06 ||
+      showBlock06 ||
+      keepReplyBalloon06 ||
+      showReplyBlock06 ||
+      //07
+      keepBalloon07 ||
+      showBlock07 ||
+      showReplyBlock07 ||
+      keepReplyBalloon07 ||
+      (showReplyBlock07 && modalBodyRef.current)
     ) {
       const el = modalBodyRef.current;
       // el.scrollTop = el.scrollHeight; // 一気に最下部へ
@@ -92,8 +157,8 @@ const EasySexualProfileRegist: React.FC = () => {
     //02
     keepBalloon02,
     showBlock02,
-    showReplyBlock02,
     keepReplyBalloon02,
+    showReplyBlock02,
     //03
     keepBalloon03,
     showBlock03,
@@ -104,6 +169,21 @@ const EasySexualProfileRegist: React.FC = () => {
     showBlock04,
     keepReplyBalloon04,
     showReplyBlock04,
+    //05
+    keepBalloon05,
+    showBlock05,
+    keepBalloon05_1,
+    showBlock05_1,
+    //06
+    keepBalloon06,
+    showBlock06,
+    showReplyBlock06,
+    keepReplyBalloon06,
+    //07
+    keepBalloon07,
+    showBlock07,
+    keepReplyBalloon07,
+    showReplyBlock07,
   ]);
 
   function openBlock01() {
@@ -160,55 +240,118 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
-  function updateBlock03(value: string) {
+  function updateBlock03(value03: string) {
     console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:88] updateBlock03 called with value: ${value}`
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:88] updateBlock03 called with value: ${value03}`
     );
-    setKeepReplyBalloon03(true);
+    setKeepReplyBalloon03(true); // 返信のバルーンを表示
+    setShowReplyBlock03(false); // 返信のメッセージは非表示
     //住んでいる場所をAPI経由で保存
-    //返信のバルーンを表示
     setTimeout(() => {
+      setSelectedValue03(String(value03));
       setKeepReplyBalloon03(false);
-      setSelectedValue03(String(value));
       setShowReplyBlock03(true);
 
-      // モーダル本文だけスクロール
+      //04へ
+      setKeepBalloon04(true);
       setTimeout(() => {
-        const el = modalBodyRef.current;
-        if (el) {
-          el.scrollTop = el.scrollHeight;
-        }
-      }, 0);
-    }, waitetime);
-
-    //04へ
-    setKeepBalloon04(true);
-    setTimeout(() => {
-      setKeepBalloon04(false);
-      setShowBlock04(true);
+        setKeepBalloon04(false);
+        setShowBlock04(true);
+      }, waitetime);
     }, waitetime);
   }
 
-  function updateBlock04(value: string) {
+  function updateBlock04(value04: string) {
     console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:104] updateBlock04 called with value: ${value}`
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:204] updateBlock04 called with value: ${value04}`
     );
     setKeepReplyBalloon04(true);
     //ドミナント・サブミッシブをAPI経由で保存
     //返信のバルーンを表示
     setTimeout(() => {
       setKeepReplyBalloon04(false);
-      setSelectedValue04(String(value));
+      setSelectedValue04(String(value04));
       setShowReplyBlock04(true);
-    }, waitetime);
 
-    // モーダル本文だけスクロール
+      //05へ
+      console.log(
+        `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:216] updateBlock04 called with value:`
+      );
+
+      setTimeout(() => {
+        setKeepBalloon05(true); // Trigger the balloon display
+        setShowBlock05(false); // Ensure the block is initially hidden
+        // setTimeout(() => {
+        console.log(
+          `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:216] updateBlock04 called with value: setKeepBalloon05`
+        );
+        setKeepBalloon05(false); // Hide the balloon
+        setShowBlock05(true); // Display the block
+        setTimeout(() => {
+          setKeepBalloon05_1(true); // Display the block
+          setShowBlock05_1(false); // Ensure the block is initially hidden
+          setTimeout(() => {
+            setKeepBalloon05_1(false); // Display the block
+            setShowBlock05_1(true); // Ensure the block is initially hidden
+            setTimeout(() => {
+              setKeepBalloon06(true); // Trigger the balloon display
+              setShowBlock06(false); // Ensure the block is initially hidden
+              setTimeout(() => {
+                setKeepBalloon06(false); // Hide the balloon
+                setShowBlock06(true); // Display the block
+              }, waitetime);
+              //=================
+              // ここから06の質問へ
+              //=================
+            }, waitetime);
+          }, waitetime);
+        }, waitetime);
+        // }, waitetime);
+      }, 500);
+    }, waitetime);
+  }
+
+  function updateBlock06(value06: string) {
+    console.log(
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:216] updateBlock06 called with value: ${value06}`
+    );
+    setKeepReplyBalloon06(true);
+    setShowReplyBlock06(false);
+    //性癖傾向志向をAPI経由で保存
     setTimeout(() => {
-      const el = modalBodyRef.current;
-      if (el) {
-        el.scrollTop = el.scrollHeight;
-      }
-    }, 0);
+      setSelectedValue06(String(value06));
+      setKeepReplyBalloon06(false);
+      setShowReplyBlock06(true);
+
+      //07へ
+      setKeepBalloon07(true);
+      setShowBlock07(false);
+      setTimeout(() => {
+        setKeepBalloon07(false);
+        setShowBlock07(true);
+      }, waitetime);
+    }, waitetime);
+  }
+
+  function updateBlock07(value07: string) {
+    console.log(
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:216] updateBlock07 called with value: ${value07}`
+    );
+    setKeepReplyBalloon07(true);
+    setShowReplyBlock07(false);
+    //どんな相手を探していますか？をAPI経由で保存
+    setTimeout(() => {
+      setSelectedValue07(String(value07));
+      setKeepReplyBalloon07(false);
+      setShowReplyBlock07(true);
+      //08へ
+      // setKeepBalloon08(true);
+      // setShowBlock08(false);
+      //   setTimeout(() => {
+      //     setKeepBalloon08(false);
+      //     setShowBlock08(true);
+      // }, waitetime);
+    }, waitetime);
   }
 
   // ダミーのタイピングドット
@@ -233,7 +376,7 @@ const EasySexualProfileRegist: React.FC = () => {
           alt="Avatar"
           className="avatar-64"
         />{' '}
-        <span className="advisor">性癖アドバイザー 担当 佐藤</span>
+        <span className="advisor">性癖シニア・アドバイザー 担当 佐藤</span>
       </div>
     );
   };
@@ -281,6 +424,33 @@ const EasySexualProfileRegist: React.FC = () => {
       <div className="reply-block mt20">
         <Advisor />
         <div className="balloon">{value04}ですね。</div>
+      </div>
+    );
+  };
+
+  // ReplyBlock06
+  const ReplyBlock06: React.FC<{ value06: string }> = ({ value06 }) => {
+    if (value06 === '1') {
+      value06 = 'ノーマル';
+    } else if (value06 === '2') {
+      value06 = 'アブノーマル';
+    } else if (value06 === '3') {
+      value06 = 'どちらでもない';
+    }
+    return (
+      <div className="reply-block mt20">
+        <Advisor />
+        <div className="balloon">{value06}ですね。</div>
+      </div>
+    );
+  };
+
+  // ReplyBlock07
+  const ReplyBlock07: React.FC<{ value07: string }> = ({ value07 }) => {
+    return (
+      <div className="reply-block mt20">
+        <Advisor />
+        <div className="balloon">{value07}ですね。</div>
       </div>
     );
   };
@@ -351,7 +521,7 @@ const EasySexualProfileRegist: React.FC = () => {
                           </button>
                         </div>
 
-                        {/* 年齢は？ ==================================*/}
+                        {/* 年齢は？ 01 ==================================*/}
                         <div className="age">
                           {/* 最初に待機する */}
                           {keepBalloon01 && !showBlock01 && (
@@ -372,6 +542,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                   style={{ width: '80%' }}
                                   className="form-select"
                                   aria-label="Default select example"
+                                  defaultValue=""
                                   onChange={(e) => {
                                     console.log(
                                       `Selected age: ${e.target.value}`
@@ -379,7 +550,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     updateBlock01(e.target.value);
                                   }}
                                 >
-                                  <option value="" disabled selected>
+                                  <option value="" disabled>
                                     年齢を選択してください
                                   </option>
                                   <option value="20">20代</option>
@@ -404,7 +575,7 @@ const EasySexualProfileRegist: React.FC = () => {
                           )}
                         </div>
 
-                        {/* 性別は？ ==================================*/}
+                        {/* 性別は？ 02 ==================================*/}
                         <div className="gender">
                           {/* 最初に待機する */}
                           {keepBalloon02 && !showBlock02 && (
@@ -500,7 +671,7 @@ const EasySexualProfileRegist: React.FC = () => {
                           )}
                         </div>
 
-                        {/* 住んでいる場所は？ ==================================*/}
+                        {/* 住んでいる場所は？ 03 ==================================*/}
                         <div className="location">
                           {keepBalloon03 && !showBlock03 && (
                             <>
@@ -549,7 +720,7 @@ const EasySexualProfileRegist: React.FC = () => {
                           )}
                         </div>
 
-                        {/* ドミナント・サブミッシブは？ ==================================*/}
+                        {/* ドミナント・サブミッシブは？ 04==================================*/}
                         <div className="domi-sub">
                           {keepBalloon04 && !showBlock04 && (
                             <div className="block">
@@ -596,6 +767,191 @@ const EasySexualProfileRegist: React.FC = () => {
                             <ReplyBlock04 value04={String(selectedValue04)} />
                           )}
                         </div>
+
+                        {/* interval 05==================================*/}
+                        <div className="interval">
+                          {keepBalloon05 && !showBlock05 && (
+                            <div className="block">
+                              <Advisor />
+                              <TypingDots />
+                            </div>
+                          )}
+                          {!keepBalloon05 && showBlock05 && (
+                            <div className="block block05 mt20">
+                              <Advisor />
+                              <div className="balloon">
+                                あと、数問の質問で終わります。
+                                <br />
+                                最後までがんばりましょう。
+                              </div>
+                            </div>
+                          )}
+                          {keepBalloon05_1 && !showBlock05_1 && (
+                            <div className="block block05 mt20">
+                              <Advisor />
+                              <TypingDots />
+                            </div>
+                          )}
+                          {!keepBalloon05_1 && showBlock05_1 && (
+                            <div className="block block05 mt20">
+                              <Advisor />
+                              <div className="balloon">
+                                すべて、簡単な質問です。
+                                <br />
+                                ややセンスティブな話題にうつりましょう
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* normal-abnormal 06==================================*/}
+                        <div className="normal-abnormal">
+                          {keepBalloon06 && !showBlock06 && (
+                            <div className="block">
+                              <Advisor />
+                              <TypingDots />
+                            </div>
+                          )}
+                          {!keepBalloon06 && showBlock06 && (
+                            <div className="block block06 mt20">
+                              <Advisor />
+                              <div className="balloon">
+                                あなたはノーマルですか？それともアブノーマルですか？
+                              </div>
+                              <div className="select-area mt20">
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="sexual_orientation"
+                                    id="sexual_orientation_1"
+                                    value="1"
+                                    onChange={(e) => {
+                                      console.log(
+                                        `Selected sexual orientation: ${e.target.value}`
+                                      );
+                                      updateBlock06(e.target.value);
+                                    }}
+                                  />
+                                  <label
+                                    className="form-check-label"
+                                    htmlFor="sexual_orientation_1"
+                                  >
+                                    ノーマル（プレーン、バニラ）
+                                  </label>
+                                </div>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="sexual_orientation"
+                                    id="sexual_orientation_2"
+                                    value="2"
+                                    onChange={(e) => {
+                                      console.log(
+                                        `Selected sexual orientation: ${e.target.value}`
+                                      );
+                                      updateBlock06(e.target.value);
+                                    }}
+                                  />
+                                  <label
+                                    className="form-check-label"
+                                    htmlFor="sexual_orientation_2"
+                                  >
+                                    アブノーマル（特殊・マニアック）
+                                  </label>
+                                </div>
+                                <div className="form-check">
+                                  <input
+                                    className="form-check-input"
+                                    type="radio"
+                                    name="sexual_orientation"
+                                    id="sexual_orientation_3"
+                                    value="3"
+                                    onChange={(e) => {
+                                      console.log(
+                                        `Selected sexual orientation: ${e.target.value}`
+                                      );
+                                      updateBlock06(e.target.value);
+                                    }}
+                                  />
+                                  <label
+                                    className="form-check-label"
+                                    htmlFor="sexual_orientation_3"
+                                  >
+                                    どちらでもない
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                          {keepReplyBalloon06 && !showReplyBlock06 && (
+                            <div className="block">
+                              <Advisor />
+                              <TypingDots />
+                            </div>
+                          )}
+                          {!keepReplyBalloon06 && showReplyBlock06 && (
+                            <div className="block">
+                              <ReplyBlock06 value06={String(selectedValue06)} />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* sex-drive 07==================================*/}
+                        {keepBalloon07 && !showBlock07 && (
+                          <div className="block">
+                            <Advisor />
+                            <TypingDots />
+                          </div>
+                        )}
+                        {!keepBalloon07 && showBlock07 && (
+                          <div className="block block06 mt20">
+                            <Advisor />
+                            <div className="balloon">
+                              どんな相手を探していますか？
+                            </div>
+                            <div className="select-area mt20">
+                              <select
+                                style={{ width: '80%' }}
+                                className="form-select"
+                                aria-label="Default select example"
+                                onChange={(e) => {
+                                  console.log(
+                                    `Selected age: ${e.target.value}`
+                                  );
+                                  updateBlock07(e.target.value);
+                                }}
+                              >
+                                <option value="" disabled selected>
+                                  お相手を選択してください
+                                </option>
+                                <option value="オンライン上での話し相手">
+                                  オンライン上での話し相手
+                                </option>
+                                <option value="友達">友達</option>
+                                <option value="恋人">恋人</option>
+                                <option value="セックスフレンド">
+                                  セックスフレンド
+                                </option>
+                                <option value="一晩限りの相手">
+                                  一晩限りの相手
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                        )}
+                        {keepReplyBalloon07 && !showReplyBlock07 && (
+                          <div className="block">
+                            <Advisor />
+                            <TypingDots />
+                          </div>
+                        )}
+                        {!keepReplyBalloon07 && showReplyBlock07 && (
+                          <div className="block">
+                            <ReplyBlock07 value07={String(selectedValue07)} />
+                          </div>
+                        )}
 
                         <div style={{ height: '100px' }}></div>
                       </div>
