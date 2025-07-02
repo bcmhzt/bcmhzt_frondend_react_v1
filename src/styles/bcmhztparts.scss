@@ -1,0 +1,54 @@
+.bcmhztparts-radiobtn {
+  // background: #ffd700;
+
+  label.btn {
+    margin-right: 13px;
+  }
+
+  /* 初期状態（未選択） */
+  .btn-check + .btn {
+    background: #f0f0f0;
+    color: #9d9c9c;
+    border: 1px solid #ccc;
+    transition: all 0.2s;
+  }
+
+  /* 選択されたとき（チェック済） */
+  .btn-check:checked + .btn {
+    background-color: #333;
+    color: #fff;
+    border-color: #000;
+  }
+
+}
+
+.bcmhztparts-checkbox {
+  // + Bootstrap5と共に
+  // background: #ffd700;
+
+  label.btn {margin: 7px;}
+
+  /* 通常状態のラベル */
+  .btn-check + label.btn {
+    background-color: #f0f0f0;
+    color: #9d9c9c;
+    border: 1px solid #ccc;
+    transition: all 0.2s ease;
+  }
+
+  /* チェックされた状態のラベル */
+  .btn-check:checked + label.btn {
+    background-color: #333;
+    color: #fff;
+    border-color: #000;
+  }
+
+  /* ホバー時のスタイルも任意で追加可能 */
+  .btn-check + label.btn:hover {
+    background-color: #888;
+    color: #fff;
+    transform: scale(1.03); /* Slightly enlarges the button on hover */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Adds a shadow effect */
+  }
+
+}
