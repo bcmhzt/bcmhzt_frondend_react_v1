@@ -14,9 +14,24 @@
 
 ### Login
 
+これはプロジェクトディレクトリのトップで行ってよい。
+
 ```
 % firebase login
 Already logged in as bcmhzt@gmail.com
+```
+
+複数のアカウントでログインできるので、実行ユーザーを確認した方がよい。
+
+```
+% gcloud auth list
+% firebase login:list
+```
+
+他のログインユーザーがいたら、ログアウトさせておく。
+
+```
+% firebase logout --account user@example.com
 ```
 
 ### Type Script
@@ -91,7 +106,7 @@ Already logged in as bcmhzt@gmail.com
 
 ### Emurator
 
-エミュレーターの起動。ローカルで開発するときは本番環境を擬似したエミュレータが使える。
+エミュレーターの起動。ローカルで開発するときは本番環境を擬似したエミュレータが使える。（つまり本番環境のものは、ここでエミュレートできない）
 メモリは開発する関数によって適用に割り当てる。（ここでは、functions,storageのみのエミュレータを起動しているが、後から追加できる）
 
 ```
@@ -232,3 +247,26 @@ export const archtype2 = onObjectFinalized(
   あたりの認証情報を使っているらしい。
 
 .env.local (開発・本番環境ではCircleCIのymlファイルで設定&書き込みを実行)をつかって指定する。
+
+# Deploy後のログ（本番稼働の確認）
+
+デプロイ後のCloud functionの起動の確認はGCPのロギング->ログエクスプロラーで見るしかないみたいです。
+
+1. GCPのコンソールにログイン
+1. Loggingにアクセス（オブザーバビリティ ロギング）
+1. ログ　エクスプローラを開く
+
+コマンド
+
+```
+% curl https://us-central1-bcmhzt-b25e9.cloudfunctions.net/hello
+```
+
+などで、テストする。
+ちょっと時間差があるが、ほぼリアルタイムでログが見れる。
+
+```
+INFO 2025-07-04T10:59:27.066433Z [httpRequest.requestMethod: GET] [httpRequest.status: 200] [httpRequest.responseSize: 197 B] [httpRequest.latency: 3 ms] [httpRequest.userAgent: curl 8.7.1] https://us-central1-bcmhzt-b25e9.cloudfunctions.net/hello
+INFO 2025-07-04T10:59:27.078686Z ✅ [logger.info] Hello world, cloud function http triggered ! [ 'World' ]
+DEFAULT 2025-07-04T10:59:27.079245Z ☹️ [console.log] Hello world, cloud function http triggered !
+```
