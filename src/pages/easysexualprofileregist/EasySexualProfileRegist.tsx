@@ -1,6 +1,8 @@
 import React, { useState, useRef, useLayoutEffect } from 'react'; // Ensure React is imported for JSX
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import { useAuth } from '../../contexts/AuthContext';
+import axios from 'axios';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -43,12 +45,16 @@ NG
 
 /** 簡易アンケート形式 */
 const EasySexualProfileRegist: React.FC = () => {
+  const { currentUserProfile, token } = useAuth();
+  const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+
   // モーダル表示フラグ（マウント時に自動オープン）
   const [showModal, setShowModal] = useState(true);
   const waitetime = 2000; // モーダル表示後の待機時間
   const modalBodyRef = useRef<HTMLDivElement>(null);
 
   // block01: age
+  const [ageState, setAgeState] = useState(false);
   const [keepBalloon01, setKeepBalloon01] = useState(false);
   const [showBlock01, setShowBlock01] = useState(false);
   const [selectedValue01, setSelectedValue01] = useState<number | ''>(0);
@@ -56,6 +62,7 @@ const EasySexualProfileRegist: React.FC = () => {
   const [showReplyBlock01, setShowReplyBlock01] = useState(false);
 
   // block02: gender
+  const [genderState, setGenderState] = useState(false);
   const [keepBalloon02, setKeepBalloon02] = useState(false);
   const [showBlock02, setShowBlock02] = useState(false);
   const [selectedValue02, setSelectedValue02] = useState<number | ''>(0);
@@ -63,6 +70,7 @@ const EasySexualProfileRegist: React.FC = () => {
   const [showReplyBlock02, setShowReplyBlock02] = useState(false);
 
   // block03: location
+  const [locationStatus, setLocationStatus] = useState(false);
   const [keepBalloon03, setKeepBalloon03] = useState(false);
   const [showBlock03, setShowBlock03] = useState(false);
   const [selectedValue03, setSelectedValue03] = useState<string | ''>('');
@@ -70,6 +78,9 @@ const EasySexualProfileRegist: React.FC = () => {
   const [showReplyBlock03, setShowReplyBlock03] = useState(false);
 
   // block04: domi&sub
+  const [dominantId, setDominantId] = useState(0);
+  const [submissiveId, setSubmissiveId] = useState(0);
+  // const [domisubStatus, setDomisubStatus] = useState(0);
   const [keepBalloon04, setKeepBalloon04] = useState(false);
   const [showBlock04, setShowBlock04] = useState(false);
   const [selectedValue04, setSelectedValue04] = useState<string | ''>('');
@@ -242,14 +253,33 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
-  //01: あなたの年齢をおしえてください。
-  function updateBlock01(value01: string) {
+  /* 01: あなたの年齢をおしえてください。*/
+  async function updateBlock01(value01: string) {
     console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:56] updateBlock01 called with value: ${value01}`
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:255] updateBlock01 called with value: ${value01}`
     );
     setKeepReplyBalloon01(true); // 返信のバルーンを表示
     setShowReplyBlock01(false); // 返信のメッセージは非表示
     //年齢をAPI経由で保存
+    try {
+      const res = await axios.post(
+        `${apiEndpoint}/update/user/detail/age/${currentUserProfile.user_profile.uid}`,
+        { value: value01, token },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (debug === 'true')
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:268] response:',
+          res.data
+        );
+      if (res.data.status === true) setAgeState(true);
+    } catch (err) {
+      console.error(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:274] API error [Age]:',
+        err
+      );
+    }
+
     setTimeout(() => {
       setSelectedValue01(Number(value01));
       setKeepReplyBalloon01(false); // 返信のバルーンを消す
@@ -264,14 +294,44 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
-  //02: 次に、あなたの性別をおしえてください。
-  function updateBlock02(value02: string) {
+  /* 02: 次に、あなたの性別をおしえてください。*/
+  async function updateBlock02(value02: string) {
     console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:72] updateBlock02 called with value: ${value02}`
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:270] updateBlock02 called with value: ${value02}`
     );
-    setKeepReplyBalloon02(true); // 返信のバルーンを表示
-    setShowReplyBlock02(false); // 返信のメッセージは非表示
+    setKeepReplyBalloon02(true);
+    setShowReplyBlock02(false);
     //性別をAPI経由で保存
+    console.log(
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:276] updateBlock02 called with value: ${value02}`
+    );
+
+    try {
+      const response = await axios.post(
+        `${apiEndpoint}/update/user/detail/gender/${currentUserProfile.user_profile.uid}`,
+        {
+          value: value02,
+          token: token,
+        },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (debug === 'true') {
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:294] response.data:',
+          response.data
+        );
+      }
+      if (response.data.status === true) {
+        setGenderState(true);
+      }
+    } catch (error) {
+      console.log(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:304] API error changeGender:',
+        error
+      );
+      setGenderState(false);
+    }
+
     setTimeout(() => {
       setSelectedValue02(Number(value02));
       setKeepReplyBalloon02(false);
@@ -286,14 +346,28 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
-  //03: あなたのお住まいをおしえてください。
-  function updateBlock03(value03: string) {
+  /* 03: あなたのお住まいをおしえてください。*/
+  async function updateBlock03(value03: string) {
     console.log(
       `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:88] updateBlock03 called with value: ${value03}`
     );
     setKeepReplyBalloon03(true); // 返信のバルーンを表示
     setShowReplyBlock03(false); // 返信のメッセージは非表示
     //住んでいる場所をAPI経由で保存
+
+    try {
+      const res = await axios.post(
+        `${apiEndpoint}/update/user/detail/location/${currentUserProfile.user_profile.uid}`,
+        { value: value03, token },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (debug === 'true') console.log('response:', res.data);
+      if (res.data.status) setLocationStatus(true);
+    } catch (err) {
+      console.error('API error [Location]:', err);
+    } finally {
+      // setLoading(false);
+    }
     setTimeout(() => {
       setSelectedValue03(String(value03));
       setKeepReplyBalloon03(false);
@@ -308,13 +382,99 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
-  //04: あなたはドミナントですか？サブミッシブですか？
-  function updateBlock04(value04: string) {
+  /* 04: あなたはドミナントですか？サブミッシブですか？ */
+  async function updateBlock04(value04: string) {
+    /**
+     * propensities 5:dominant 6:submissive
+     * user_propensities
+     * const [dominantId, setDominantId] = useState(0);
+  const [submissiveStatus, setSubmissiveStatus] = useState(0);
+     */
     console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:204] updateBlock04 called with value: ${value04}`
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:385] updateBlock04 called with value: ${value04}`
     );
     setKeepReplyBalloon04(true);
-    //ドミナント・サブミッシブをAPI経由で保存
+    /* ドミナント・サブミッシブをAPI経由で保存 */
+    if (value04 === 'ドミナント') {
+      setDominantId(1);
+      setSubmissiveId(0);
+    } else if (value04 === 'サブミッシブ') {
+      setDominantId(0);
+      setSubmissiveId(5);
+    }
+    console.log(
+      '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:407] action:',
+      dominantId,
+      submissiveId
+    );
+    //domi
+    if (value04 === 'ドミナント') {
+      try {
+        const response = await axios.post(
+          `${apiEndpoint}/v1/update/propensity`,
+          { propensity_id: 5, status: 1 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:418] action:',
+          response.data
+        );
+      } catch (err) {
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:417] API err:',
+          err
+        );
+      }
+      try {
+        const response = await axios.post(
+          `${apiEndpoint}/v1/update/propensity`,
+          { propensity_id: 6, status: 0 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:418] action:',
+          response.data
+        );
+      } catch (err) {
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:417] API err:',
+          err
+        );
+      }
+    } else if (value04 === 'サブミッシブ') {
+      try {
+        const response = await axios.post(
+          `${apiEndpoint}/v1/update/propensity`,
+          { propensity_id: 6, status: 1 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:418] action:',
+          response.data
+        );
+      } catch (err) {
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:417] API err:',
+          err
+        );
+      }
+      try {
+        const response = await axios.post(
+          `${apiEndpoint}/v1/update/propensity`,
+          { propensity_id: 5, status: 0 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:418] action:',
+          response.data
+        );
+      } catch (err) {
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:417] API err:',
+          err
+        );
+      }
+    }
     //返信のバルーンを表示
     setTimeout(() => {
       setKeepReplyBalloon04(false);
@@ -359,7 +519,19 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
-  //06: あなたはノーマルですか？それともアブノーマルですか？
+  /**
+   * 06: あなたはノーマルですか？それともアブノーマルですか？
+   * ノーマル（82）
+   * スイッチャー (11)
+   * DBSM/緊縛系　（83/84）
+   * フェティッシュ（85）
+   * スパンキング（86）
+   * コスプレ　(23)
+   * 複数プレイ (57)
+   * NTR（87）
+   * アナルプレイ（88）
+   * その他
+   */
   function handleCheckboxChange06(value: string, checked: boolean) {
     // チェックボックスの変更ハンドラ
     setSelectedValue06((prev) => {
@@ -370,21 +542,50 @@ const EasySexualProfileRegist: React.FC = () => {
     });
   }
   function updateBlock06(values06: string[]) {
-    console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:374] updateBlock06 called with value: ${values06}`
+    const allIds = ['11', '23', '57', '82', '83', '84', '85', '86', '87', '88'];
+    const counts06: Record<string, number> = allIds.reduce(
+      (acc, id) => {
+        acc[id] = values06.includes(id) ? 1 : 0;
+        return acc;
+      },
+      {} as Record<string, number>
     );
-    // 性癖をAPIで保存
-    selectedValue06.forEach((value06) => {
+    console.log(
+      '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:553] counts06:',
+      counts06
+    );
+    // [11, 23, 57, 82, 83, 84, 85, 86, 87, 88]
+    allIds.forEach((id) => {
+      try {
+        axios.post(
+          `${apiEndpoint}/v1/update/propensity`,
+          { propensity_id: Number(id), status: counts06[id] },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error(
+          `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:379] API error [Propensity]:`,
+          err
+        );
+      }
+
       console.log(
-        `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:379] updateBlock06 called with value forEach: ${value06}`
+        `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:379] updateBlock06 called with value forEach: ${id}`
       );
     });
   }
 
-  //07: どんな相手を探していますか？
+  /**
+   * 07: どんな相手を探していますか？
+   * オンラインのみ(44)
+   * 友達(47)
+   * 恋人（91）
+   * セックスフレンド（92）
+   * 一晩限りの相手（93）
+   */
   function handleProgress07() {
     console.log(
-      '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:369] handleProgress07'
+      '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:588] handleProgress07'
     );
     setKeepBalloon07(true);
     setShowBlock07(false);
@@ -393,13 +594,46 @@ const EasySexualProfileRegist: React.FC = () => {
       setShowBlock07(true);
     }, waitetime);
   }
-  function updateBlock07(value07: string) {
+  async function updateBlock07(value07: string) {
     console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:216] updateBlock07 called with value: ${value07}`
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:599] updateBlock07 called with value: ${value07}`
     );
     setKeepReplyBalloon07(true);
     setShowReplyBlock07(false);
     //どんな相手を探していますか？をAPI経由で保存
+    const id =
+      value07 === 'オンラインのみ'
+        ? 44
+        : value07 === '友達'
+          ? 47
+          : value07 === '恋人'
+            ? 91
+            : value07 === 'セックスフレンド'
+              ? 92
+              : value07 === '一晩限りの相手'
+                ? 93
+                : 0;
+    console.log(
+      '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:617] API response:',
+      id
+    );
+    try {
+      const response = await axios.post(
+        `${apiEndpoint}/v1/update/propensity`,
+        { propensity_id: id, status: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:599] API response:',
+        response.data
+      );
+    } catch (error) {
+      console.error(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:599] API error:',
+        error
+      );
+    }
+
     setTimeout(() => {
       setSelectedValue07(String(value07));
       setKeepReplyBalloon07(false);
@@ -414,14 +648,73 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
-  //08: 性欲は強いですか？弱いですか？
-  function updateBlock08(value08: string) {
+  /* 08: 性欲は強いですか？弱いですか？ */
+  /**
+   * 性欲最強(とても強い):94
+   * 性欲強(そこそこ強い):95
+   * 性欲普通(普通ぐらいだと思う):96
+   * 性欲弱(弱い):97
+   * 性欲最弱(とても弱い):98
+   * @param value08
+   */
+  async function updateBlock08(value08: string) {
     console.log(
-      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:216] updateBlock08 called with value: ${value08}`
+      `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:662] updateBlock08 called with value: ${value08}`
     );
     setKeepReplyBalloon08(true);
     setShowReplyBlock08(false);
     //どんな相手を探していますか？をAPI経由で保存
+    // Reset ids 94 to 98 by setting their status to 0
+    const idsToReset = [94, 95, 96, 97, 98];
+    try {
+      for (const id of idsToReset) {
+        await axios.post(
+          `${apiEndpoint}/v1/update/propensity`,
+          { propensity_id: id, status: 0 },
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      }
+      console.log(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:662] Reset successful for ids:',
+        idsToReset
+      );
+    } catch (error) {
+      console.error(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:662] API error during reset:',
+        error
+      );
+    }
+
+    // [94, 95, 96, 97, 98]
+    const id =
+      value08 === 'とても強い'
+        ? 94
+        : value08 === 'そこそこ強い'
+          ? 95
+          : value08 === '普通ぐらいだと思う'
+            ? 96
+            : value08 === '弱い'
+              ? 97
+              : value08 === 'とても弱い'
+                ? 98
+                : 0;
+    try {
+      const response = await axios.post(
+        `${apiEndpoint}/v1/update/propensity`,
+        { propensity_id: id, status: 1 },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      console.log(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:599] API response:',
+        response.data
+      );
+    } catch (error) {
+      console.error(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:599] API error:',
+        error
+      );
+    }
+
     setTimeout(() => {
       setSelectedValue08([String(value08)]);
       setKeepReplyBalloon08(false);
@@ -541,23 +834,6 @@ const EasySexualProfileRegist: React.FC = () => {
       </div>
     );
   };
-
-  // ReplyBlock06
-  // const ReplyBlock06: React.FC<{ value06: string }> = ({ value06 }) => {
-  //   if (value06 === '1') {
-  //     value06 = 'ノーマル';
-  //   } else if (value06 === '2') {
-  //     value06 = 'アブノーマル';
-  //   } else if (value06 === '3') {
-  //     value06 = 'どちらでもない';
-  //   }
-  //   return (
-  //     <div className="reply-block mt30">
-  //       <Advisor />
-  //       <div className="balloon">{value06}ですね。</div>
-  //     </div>
-  //   );
-  // };
 
   // ReplyBlock07
   const ReplyBlock07: React.FC<{ value07: string }> = ({ value07 }) => {
@@ -694,6 +970,20 @@ const EasySexualProfileRegist: React.FC = () => {
                               </div>
                             </div>
                           )}
+                          {ageState && (
+                            <span
+                              className="success-save text-end"
+                              style={{
+                                width: '100px',
+                                background: '#eee',
+                                padding: '5px 10px',
+                                borderRadius: '5px',
+                                fontSize: '10px',
+                              }}
+                            >
+                              保存
+                            </span>
+                          )}
                           {/* 返信の待機... */}
                           {!showReplyBlock01 && keepReplyBalloon01 && (
                             <div className="reply-block mt30">
@@ -787,72 +1077,21 @@ const EasySexualProfileRegist: React.FC = () => {
                                   どちらでもない
                                 </label>
                               </div>
-                              {/* <div className="select-area mt20">
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="gender"
-                                    id="male"
-                                    value="1"
-                                    onChange={(e) => {
-                                      console.log(
-                                        `Selected gender: ${e.target.value}`
-                                      );
-                                      updateBlock02(e.target.value);
-                                    }}
-                                  />
-                                  <label
-                                    className="form-check-label"
-                                    htmlFor="male"
-                                  >
-                                    男性
-                                  </label>
-                                </div>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="gender"
-                                    id="female"
-                                    value="2"
-                                    onChange={(e) => {
-                                      console.log(
-                                        `Selected gender: ${e.target.value}`
-                                      );
-                                      updateBlock02(e.target.value);
-                                    }}
-                                  />
-                                  <label
-                                    className="form-check-label"
-                                    htmlFor="female"
-                                  >
-                                    女性
-                                  </label>
-                                </div>
-                                <div className="form-check">
-                                  <input
-                                    className="form-check-input"
-                                    type="radio"
-                                    name="gender"
-                                    id="other"
-                                    value="3"
-                                    onChange={(e) => {
-                                      console.log(
-                                        `Selected gender: ${e.target.value}`
-                                      );
-                                      updateBlock02(e.target.value);
-                                    }}
-                                  />
-                                  <label
-                                    className="form-check-label"
-                                    htmlFor="other"
-                                  >
-                                    どちらでもない
-                                  </label>
-                                </div>
-                              </div> */}
                             </div>
+                          )}
+                          {genderState && (
+                            <span
+                              className="success-save text-end"
+                              style={{
+                                width: '100px',
+                                background: '#eee',
+                                padding: '5px 10px',
+                                borderRadius: '5px',
+                                fontSize: '10px',
+                              }}
+                            >
+                              保存
+                            </span>
                           )}
                           {/* 返信の待機... */}
                           {keepReplyBalloon02 && !showReplyBlock02 && (
@@ -954,6 +1193,20 @@ const EasySexualProfileRegist: React.FC = () => {
                               </div>
                             </div>
                           )}
+                          {locationStatus && (
+                            <span
+                              className="success-save text-end"
+                              style={{
+                                width: '100px',
+                                background: '#eee',
+                                padding: '5px 10px',
+                                borderRadius: '5px',
+                                fontSize: '10px',
+                              }}
+                            >
+                              保存
+                            </span>
+                          )}
                           {keepReplyBalloon03 && !showReplyBlock03 && (
                             <div className="reply-block mt30">
                               <Advisor />
@@ -1028,31 +1281,6 @@ const EasySexualProfileRegist: React.FC = () => {
                                   サブミッシブ
                                 </label>
                               </div>
-
-                              {/* <div className="select-area mt20">
-                                <select
-                                  style={{ width: '80%' }}
-                                  className="form-select"
-                                  aria-label="Default select example"
-                                  onChange={(e) => {
-                                    console.log(
-                                      `Selected domi-sub: ${e.target.value}`
-                                    );
-                                    updateBlock04(e.target.value);
-                                  }}
-                                >
-                                  <option value="" disabled selected>
-                                    選択してください
-                                  </option>
-                                  <option value="ドミナント">ドミナント</option>
-                                  <option value="サブミッシブ">
-                                    サブミッシブ
-                                  </option>
-                                  <option value="サブミッシブ">
-                                    サブミッシブ
-                                  </option>
-                                </select>
-                              </div> */}
                             </div>
                           )}
                           {keepReplyBalloon04 && !showReplyBlock04 && (
@@ -1126,7 +1354,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check "
                                     id="btn-check1"
-                                    value="ノーマル"
+                                    value="82"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1147,7 +1375,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check2"
-                                    value="スイッチャー"
+                                    value="11"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1162,13 +1390,13 @@ const EasySexualProfileRegist: React.FC = () => {
                                     スイッチャー
                                   </label>
                                 </span>
-                                {/* DBSM/緊縛系 */}
+                                {/* DBSM */}
                                 <span>
                                   <input
                                     type="checkbox"
                                     className="btn-check"
-                                    id="btn-check3"
-                                    value="DBSM/緊縛系"
+                                    id="btn-check3_1"
+                                    value="83"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1178,9 +1406,30 @@ const EasySexualProfileRegist: React.FC = () => {
                                   />
                                   <label
                                     className="btn btn-sm"
-                                    htmlFor="btn-check3"
+                                    htmlFor="btn-check3_1"
                                   >
-                                    DBSM/緊縛系
+                                    DBSM
+                                  </label>
+                                </span>
+                                {/* 緊縛 */}
+                                <span>
+                                  <input
+                                    type="checkbox"
+                                    className="btn-check"
+                                    id="btn-check3_2"
+                                    value="84"
+                                    onChange={(e) =>
+                                      handleCheckboxChange06(
+                                        e.target.value,
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                  <label
+                                    className="btn btn-sm"
+                                    htmlFor="btn-check3_2"
+                                  >
+                                    緊縛
                                   </label>
                                 </span>
                                 {/* フェティッシュ */}
@@ -1189,7 +1438,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check4"
-                                    value="フェティッシュ"
+                                    value="85"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1210,7 +1459,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check5"
-                                    value="スパンキング"
+                                    value="86"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1231,7 +1480,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check6"
-                                    value="コスプレ"
+                                    value="23"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1252,7 +1501,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check7"
-                                    value="複数プレイ"
+                                    value="57"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1273,7 +1522,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check8"
-                                    value="NTR"
+                                    value="87"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1294,7 +1543,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check9"
-                                    value="アナルプレイ"
+                                    value="88"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1315,7 +1564,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     type="checkbox"
                                     className="btn-check"
                                     id="btn-check10"
-                                    value="その他"
+                                    value="none"
                                     onChange={(e) =>
                                       handleCheckboxChange06(
                                         e.target.value,
@@ -1380,8 +1629,8 @@ const EasySexualProfileRegist: React.FC = () => {
                                   <option value="" disabled selected>
                                     お相手を選択してください
                                   </option>
-                                  <option value="オンライン上での話し相手">
-                                    オンライン上での話し相手
+                                  <option value="オンラインのみ">
+                                    オンラインのみ
                                   </option>
                                   <option value="友達">友達</option>
                                   <option value="恋人">恋人</option>
