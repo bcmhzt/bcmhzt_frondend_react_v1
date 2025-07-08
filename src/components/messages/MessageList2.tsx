@@ -24,6 +24,12 @@ import {
 import { firestore } from '../../firebaseConfig';
 import MessageRoom2 from './MessageRoom2';
 
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log('[src/components/messages/MessageList2.tsx:xx] debug:', debug);
+}
+
 const fetchMatchedUsers = async ({
   pageParam,
   token,
@@ -41,6 +47,11 @@ const fetchMatchedUsers = async ({
       },
     }
   );
+  console.log('[src/components/messages/MessageList2.tsx:44] page:', page);
+  console.log(
+    '[src/components/messages/MessageList2.tsx:45] response:',
+    res.data
+  );
   return res.data as MatchListResponse;
 };
 
@@ -54,7 +65,7 @@ interface ChatRoomDisplayData {
 const MessageList2: React.FC = () => {
   const { token, currentUserProfile } = useAuth();
   const [chatDataList, setChatDataList] = useState<ChatRoomDisplayData[]>([]);
-
+  const now = new Date(); // クライアント時刻を取得
   const {
     data,
     fetchNextPage,
@@ -86,6 +97,7 @@ const MessageList2: React.FC = () => {
       const allUsers: MatchUser[] = data.pages.flatMap((p) => p.data.data);
       const results: ChatRoomDisplayData[] = [];
 
+      /** ChatRoomの作成、なければ作成・あればスキップ */
       for (const user of allUsers) {
         if (!user.uid) continue;
 
@@ -104,11 +116,13 @@ const MessageList2: React.FC = () => {
               [user.uid]: nickname,
             },
             created_at: serverTimestamp(),
-            updated_at: serverTimestamp(),
+            // updated_at: serverTimestamp(),
+            updated_at: now, // クライアント時刻を使用
           });
           chatSnap = await getDoc(chatDocRef); // 再取得
         }
 
+        /* Chat Roomリストに表示する最新メッセージを取得 */
         const msgQuery = query(
           collection(chatDocRef, 'messages'),
           orderBy('created_at', 'desc'),
@@ -117,6 +131,7 @@ const MessageList2: React.FC = () => {
         const msgSnap = await getDocs(msgQuery);
         const latestMessage = msgSnap.docs[0]?.data() ?? null;
 
+        /* Chat Roomを最新順で並べ替え */
         results.push({
           user,
           chatRoomId,
@@ -131,6 +146,22 @@ const MessageList2: React.FC = () => {
 
     fetchChats();
   }, [data, currentUserProfile]);
+
+  useEffect(() => {
+    if (!data) return;
+
+    console.log(
+      '[src/components/messages/MessageList2.tsx:152] ▼▼▼ useInfiniteQuery data ▼▼▼'
+    );
+    console.log(JSON.stringify(data, null, 2));
+    console.log(
+      '[src/components/messages/MessageList2.tsx:152] ▲▲▲ useInfiniteQuery data ▲▲▲'
+    );
+
+    data.pages.forEach((page, i) => {
+      console.log(`[Page ${i + 1}]`, page);
+    });
+  }, [data]);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
 

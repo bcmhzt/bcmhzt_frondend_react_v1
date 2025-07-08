@@ -61,6 +61,7 @@ const MessageRoom2 = ({
   const observerRef = useRef<IntersectionObserver | null>(null);
   const [messagesToolModal, setMessagesToolModal] = useState(false);
   const prevScrollHeightRef = useRef<number>(0);
+  const now = new Date(); // クライアント時刻を取得
 
   // 入力・送信状態
   const [inputText, setInputText] = useState('');
@@ -248,22 +249,12 @@ const MessageRoom2 = ({
         );
         await updateDoc(msgRef, { images: imageObjects });
       }
-      // 3) ルーム updated_at
+      /* (3) Chat Roomのupdated_atを最新に更新 */
       await updateDoc(doc(firestore, 'chats', chatRoomId), {
-        updated_at: serverTimestamp(),
+        // updated_at: serverTimestamp(),
+        updated_at: now,
       });
-      // 4) ローカル state
-      // setMessages((prev) => [
-      //   ...prev,
-      //   {
-      //     sender_id: currentUserProfile?.user_profile?.uid,
-      //     text,
-      //     images: imageObjects,
-      //     is_deleted: false,
-      //     last_read_at: {},
-      //     created_at: { seconds: Math.floor(Date.now() / 1000) },
-      //   },
-      // ]);
+
       setSelectedFiles([]);
       setPreviewImages([]);
     } catch (error) {
@@ -335,9 +326,10 @@ const MessageRoom2 = ({
           (msg as any).id === messageId ? { ...msg, is_deleted: true } : msg
         )
       );
-      // ルームの updated_at も更新
+      /* ルームの updated_at も更新 */
       await updateDoc(doc(firestore, 'chats', chatRoomId), {
-        updated_at: serverTimestamp(),
+        // updated_at: serverTimestamp(),
+        updated_at: now,
       });
     } catch (error) {
       console.error('メッセージ削除エラー:', error);

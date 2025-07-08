@@ -169,20 +169,25 @@ body {
   }
 
   .ogps {
+    
     .ogp {
       .ogp-item {
-        // background: #ffd700;
         border: #888 solid 1px;
         margin-bottom: 10px;
+        // background-color: #000;
         .image {
           img {
             width: 100px;
             height: 100px;
             object-fit: cover;
-            border-radius: 2px;
+            margin: 0;
+            padding: 0;
           }
         }
         .text {
+          word-break: break-all;
+          padding: 7px;
+          // background: #ffd700;
           .title {
             margin-top: 7px;
           }
