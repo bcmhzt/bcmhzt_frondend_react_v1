@@ -2,8 +2,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
-// import { buildStorageUrl } from '../../utility/GetUseImage';
-// import { firestore } from '../../firebaseConfig';
 import {
   collection,
   query,
@@ -15,10 +13,6 @@ import {
   DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
-// import { useInfiniteQuery } from '@tanstack/react-query';
-// import { generateChatRoomId } from '../../utility/Chat';
-// import type { MatchUser, MatchListResponse } from '../../types/match';
-// import ChatRoomCard from './ChatRoomCard';
 
 const ExistingChatListComponent: React.FC = () => {
   const { currentUserProfile } = useAuth();
@@ -40,36 +34,12 @@ const ExistingChatListComponent: React.FC = () => {
       limit(10)
     );
 
-    // if (lastVisible) {
-    //   q = query(
-    //     collection(firestore, 'chats'),
-    //     where('members', 'array-contains', uid),
-    //     orderBy('updated_at', 'desc'),
-    //     startAfter(lastVisible),
-    //     limit(10)
-    //   );
-    // }
-
     if (lastVisible) {
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:54] 🔁 追加取得 startAfter:',
-        lastVisible.id
-      );
       q = query(
         collection(firestore, 'chats'),
         where('members', 'array-contains', uid),
         orderBy('updated_at', 'desc'),
         startAfter(lastVisible),
-        limit(10)
-      );
-    } else {
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:63] 🔰 初回取得'
-      );
-      q = query(
-        collection(firestore, 'chats'),
-        where('members', 'array-contains', uid),
-        orderBy('updated_at', 'desc'),
         limit(10)
       );
     }
@@ -87,27 +57,18 @@ const ExistingChatListComponent: React.FC = () => {
   }, [fetchChatRooms]);
 
   useEffect(() => {
-    if (!loadingRef.current || !hasMore || lastVisible === null) return;
-
-    // 👇 一巡遅らせて監視開始
-    const timeoutId = setTimeout(() => {
-      const observer = new IntersectionObserver(
-        (entries) => {
-          if (entries[0].isIntersecting) {
-            fetchChatRooms();
-          }
-        },
-        { threshold: 1.0 }
-      );
-      observer.observe(loadingRef.current!);
-
-      // クリーンアップで observer を外す
-      return () => observer.disconnect();
-    }, 3000);
-
-    // クリーンアップでタイマーもクリア
-    return () => clearTimeout(timeoutId);
-  }, [loadingRef, hasMore, fetchChatRooms, lastVisible]);
+    if (!loadingRef.current || !hasMore) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          fetchChatRooms();
+        }
+      },
+      { threshold: 1.0 }
+    );
+    observer.observe(loadingRef.current);
+    return () => observer.disconnect();
+  }, [loadingRef, hasMore, fetchChatRooms]);
 
   return (
     <ul className="chat-room-list">

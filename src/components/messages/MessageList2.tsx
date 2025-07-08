@@ -65,7 +65,7 @@ interface ChatRoomDisplayData {
 const MessageList2: React.FC = () => {
   const { token, currentUserProfile } = useAuth();
   const [chatDataList, setChatDataList] = useState<ChatRoomDisplayData[]>([]);
-  const now = new Date(); // クライアント時刻を取得
+
   const {
     data,
     fetchNextPage,
@@ -89,6 +89,7 @@ const MessageList2: React.FC = () => {
   });
 
   useEffect(() => {
+    const now = new Date(); // クライアント時刻を取得
     const fetchChats = async () => {
       if (!currentUserProfile?.user_profile?.uid || !data) return;
 
