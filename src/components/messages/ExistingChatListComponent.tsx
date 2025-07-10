@@ -1,5 +1,5 @@
 /** fca76db0 */
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
@@ -11,225 +11,193 @@ import {
   limit,
   getDocs,
   startAfter,
-  DocumentData,
+  // DocumentData,
   QueryDocumentSnapshot,
 } from 'firebase/firestore';
+// import ChatRoomCard from './ChatRoomCard';
+import ChatRoomCard from './ChatRoomCard';
 
-// interface OpponentProfile {
-//   uid: string;
-//   nickname: string;
-//   profile_image: string;
-// }
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log(
+    '[src/components/messages/ExistingChatListComponent.tsx:xx] ‼️debug:',
+    debug
+  );
+}
 
 const ExistingChatListComponent: React.FC = () => {
+  const [chatRooms, setChatRooms] = useState<any[]>([]);
+  const [chatRoomsLength, setChatRoomsLength] = useState<number>(0);
   const { currentUserProfile, token } = useAuth();
-  const [chatRooms, setChatRooms] = useState<DocumentData[]>([]);
   const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot | null>(
     null
   );
+  /* ページ数をセット（ページネーション） */
+  const PAGE_SIZE = 10;
   const [hasMore, setHasMore] = useState(true);
-  const [opponentProfiles, setOpponentProfiles] = useState<Record<string, any>>(
+  const [partnerProfiles, setPartnerProfiles] = useState<Record<string, any>>(
     {}
   );
-  const loadingRef = useRef<HTMLLIElement | null>(null);
-  const loadingInProgress = useRef(false);
 
-  const fetchChatRooms = useCallback(async () => {
-    if (
-      !currentUserProfile?.user_profile?.uid ||
-      !hasMore ||
-      loadingInProgress.current
-    )
-      return;
+  /* 最初のアクセスで取得するChatRooms */
+  function fetchChatRooms() {
+    const uid = currentUserProfile.user_profile.uid;
+    const chatRef = query(
+      collection(firestore, 'chats'),
+      orderBy('updated_at', 'desc'),
+      where('members', 'array-contains', uid),
+      limit(PAGE_SIZE)
+    );
 
-    loadingInProgress.current = true;
+    getDocs(chatRef).then((snapshot) => {
+      const chatRooms = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        /* 自分ではない相手のuidを取り出す */
+        const partner_uid = data.members.find(
+          (uid: string) => uid !== currentUserProfile.user_profile.uid
+        );
+
+        // ✅ ログ出力関数の即時実行
+        fetchPartnerProfile(partner_uid);
+
+        return {
+          id: doc.id,
+          ...data,
+          partner_uid,
+        };
+      });
+
+      if (debug === 'true') {
+        console.log(
+          '[src/components/messages/ExistingChatListComponent.tsx:41] 🔍 全チャットルーム:',
+          chatRooms
+        );
+      }
+      setChatRooms(chatRooms);
+      setChatRoomsLength(chatRooms.length);
+      setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+    });
+  }
+  /* 2回目以降のアクセスで取得するChatRooms */
+  const fetchMoreChatRooms = async () => {
+    if (!lastVisible) return; // 2回目以降にのみ実行
+
     const uid = currentUserProfile.user_profile.uid;
 
-    let q;
-    if (lastVisible) {
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:50 💬] 🔁 追加取得 startAfter:',
-        lastVisible.id
-      );
-      q = query(
-        collection(firestore, 'chats'),
-        where('members', 'array-contains', uid),
-        orderBy('updated_at', 'desc'),
-        orderBy('__name__'),
-        startAfter(lastVisible),
-        limit(10)
-      );
-    } else {
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:60 💬] 🔐 初回取得'
-      );
-      q = query(
-        collection(firestore, 'chats'),
-        where('members', 'array-contains', uid),
-        orderBy('updated_at', 'desc'),
-        orderBy('__name__'),
-        limit(10)
-      );
-    }
+    const nextQuery = query(
+      collection(firestore, 'chats'),
+      where('members', 'array-contains', uid),
+      orderBy('updated_at', 'desc'),
+      startAfter(lastVisible),
+      limit(PAGE_SIZE)
+    );
 
-    const snapshot = await getDocs(q);
-    const docs = snapshot.docs;
+    const snapshot = await getDocs(nextQuery);
+    const newRooms = snapshot.docs.map((doc) => {
+      const data = doc.data();
+      /* 自分ではない相手のuidを取り出す */
+      const partner_uid = data.members.find(
+        (uid: string) => uid !== currentUserProfile.user_profile.uid
+      );
 
-    if (docs.length < 10) setHasMore(false);
-    if (docs.length > 0) setLastVisible(docs[docs.length - 1]);
+      // ✅ ログ出力関数の即時実行
+      fetchPartnerProfile(partner_uid);
 
-    setChatRooms((prev) => {
-      const existingIds = new Set(prev.map((doc) => doc.id));
-      const newDocs = docs.filter((doc) => !existingIds.has(doc.id));
-      return [...prev, ...newDocs];
+      return {
+        id: doc.id,
+        ...data,
+        partner_uid,
+      };
     });
 
-    loadingInProgress.current = false;
-  }, [currentUserProfile, lastVisible, hasMore]);
+    setChatRooms((prev) => [...prev, ...newRooms]);
+    setChatRoomsLength((prev) => prev + newRooms.length);
+    setLastVisible(snapshot.docs[snapshot.docs.length - 1]);
+    setHasMore(snapshot.docs.length === PAGE_SIZE);
+  };
 
+  /**
+   * Firestoreからチャットルームを取得
+   * collection: chats
+   * FirestoreのルールでLoginユーザーで、
+   * 且つmembersに自身のuidが含まれる場合のみ読み書き可（ルールの設定参照）
+   *
+   * - ログインユーザーを取得: currentUserProfile.user_profile.uid
+   * - チャットルームのメンバーにログインユーザーのUIDが含まれるものを取得
+   * - 更新日時で降順にソート
+   */
   useEffect(() => {
     fetchChatRooms();
-  }, [fetchChatRooms]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  useEffect(() => {
-    if (!loadingRef.current || !hasMore) return;
+  async function fetchPartnerProfile(uid: string) {
+    if (partnerProfiles[uid]) {
+      // すでに取得済みならスキップ
+      if (debug === 'true') {
+        console.log(`🟡 すでにプロフィール取得済: ${uid}`);
+      }
+      return;
+    }
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) {
-          fetchChatRooms();
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_ENDPOINT}/v1/get/member/uid/${uid}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      },
-      { threshold: 1.0 }
-    );
-
-    observer.observe(loadingRef.current);
-
-    return () => observer.disconnect();
-  }, [loadingRef, hasMore, fetchChatRooms]);
-
-  useEffect(() => {
-    const uid = currentUserProfile?.user_profile?.uid;
-    console.log(
-      '[src/components/messages/ExistingChatListComponent.tsx:122] 👤 my uid:',
-      uid
-    );
-    if (!uid) return;
-
-    const uidsToFetch = chatRooms
-      .map((doc) => {
-        const members = doc.data().members;
-        return members.find((memberUid: string) => memberUid !== uid);
-      })
-      .filter((uid): uid is string => !!uid && !opponentProfiles[uid]);
-
-    const fetchProfiles = async () => {
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:128] 👤 取得対象UID一覧:',
-        uidsToFetch
-      );
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:132] 👤 process.env.REACT_APP_API_ENDPOINT:',
-        process.env.REACT_APP_API_ENDPOINT
-      );
-      const promises = uidsToFetch.map((uid) =>
-        axios
-          .post(
-            `${process.env.REACT_APP_API_ENDPOINT}/v1/get/member/uid/${uid}`,
-            {},
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          )
-          .then((res) => {
-            console.log(
-              `[src/components/messages/ExistingChatListComponent.tsx:139 📥] ${uid} のプロフィール取得成功:`,
-              res
-            );
-            return { uid, ...res.data };
-          })
-          .catch((e) => {
-            console.error(
-              '[src/components/messages/ExistingChatListComponent.tsx:146] ❌ Error fetching profile for uid:',
-              uid,
-              e
-            );
-            return null;
-          })
       );
 
-      const results = await Promise.all(promises);
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:156] 📦 Fetching results:',
-        results
-      );
-      const newProfiles = results.reduce(
-        (acc, profile) => {
-          if (profile && profile.uid) {
-            acc[profile.uid] = profile;
-          }
-          return acc;
-        },
-        {} as Record<string, any>
-      );
+      const profile = res.data;
 
-      console.log(
-        '[src/components/messages/ExistingChatListComponent.tsx:159 📁] 追加するプロフィール一覧:',
-        newProfiles
-      );
-      setOpponentProfiles((prev) => ({ ...prev, ...newProfiles }));
-    };
+      setPartnerProfiles((prev) => ({
+        ...prev,
+        [uid]: profile,
+      }));
 
-    if (uidsToFetch.length > 0) fetchProfiles();
-  }, [chatRooms, currentUserProfile, opponentProfiles, token]);
+      if (debug === 'true') {
+        console.log(`🟢 プロフィール取得成功: ${uid}`, profile);
+      }
+    } catch (error) {
+      console.error(`❌ プロフィール取得失敗: ${uid}`, error);
+    }
+  }
 
   return (
-    <ul className="chat-room-list">
-      {chatRooms.map((doc) => {
-        const chat = doc.data();
-        const opponentUid = chat.members.find(
-          (uid: string) => uid !== currentUserProfile?.user_profile?.uid
-        );
-        const opponent = opponentUid ? opponentProfiles[opponentUid] : null;
+    <>
+      <ul className="chat-room-list">
+        {chatRooms.map((room) => {
+          const profile = partnerProfiles[room.partner_uid];
+          // const chat = room;
+          const chatRoomId = room.id;
+          // const profile = partnerProfiles[room.partner_uid];
+          return (
+            <>
+              {/* <pre>{JSON.stringify(room, null, 2)}</pre> */}
+              {/* <pre>{JSON.stringify(profile?.data?.member, null, 2)}</pre> */}
+              <li key={chatRoomId} className="chat-room-item">
+                <ChatRoomCard
+                  user={profile?.data?.member}
+                  chatRoomId={chatRoomId}
+                />
+              </li>
+            </>
+          );
+        })}
+      </ul>
+      <h2>Existing Chat Rooms</h2>
+      <p>Total Chat Rooms: {chatRoomsLength}</p>
+      <h3>ExistingChatListComponent</h3>
+      {/* <pre>{JSON.stringify(chatRooms, null, 2)}</pre>
+      <h4>Partner Profiles</h4>
+      <pre>{JSON.stringify(partnerProfiles, null, 2)}</pre> */}
 
-        return (
-          <li key={doc.id} className="chat-room-item">
-            <pre>{JSON.stringify(opponent, null, 2)}</pre>
-            <div className="message-room">
-              <div className="d-flex flex-row">
-                <div className="avatar-area">
-                  <img
-                    src={
-                      opponent?.profile_image ||
-                      '/assets/images/dummy/dummy_avatar.png'
-                    }
-                    className="avatar-36"
-                    alt="avatar"
-                  />
-                </div>
-                <div className="nickname-area">
-                  {opponent?.nickname || '読み込み中...'}
-                  <span className="bcuid"> @ {doc.id}</span>
-                </div>
-              </div>
-              <div className="chat-preview">
-                <span>
-                  updated:{' '}
-                  {chat.updated_at?.toDate?.().toLocaleString?.() ?? 'N/A'}
-                </span>
-              </div>
-            </div>
-          </li>
-        );
-      })}
-      {hasMore && (
-        <li ref={loadingRef} className="loading">
-          さらに読み込み中...
-        </li>
-      )}
-    </ul>
+      {hasMore && <button onClick={fetchMoreChatRooms}>もっと見る</button>}
+    </>
   );
 };
 

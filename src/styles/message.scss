@@ -29,8 +29,15 @@
   cursor: pointer;
 }
 
+.message-room-id {
+  background: #ffd700;
+  padding: 10px;
+  word-break: break-all;
+}
+
 
 .message-room {
+  // background: #ffd700;
   padding: 10px;
   border: 1px solid #dee2e6;
   border-radius: 0.5rem;

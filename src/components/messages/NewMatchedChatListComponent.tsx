@@ -219,6 +219,7 @@ const NewMatchedChatListComponent: React.FC = () => {
               className="chat-room-item"
               ref={isLast ? lastItemRef : null}
             >
+              {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
               <ChatRoomCard user={user} chatRoomId={chatRoomId} />
               {/* <div className="message-room">
                 <div className="d-flex flex-row">

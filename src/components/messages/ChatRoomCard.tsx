@@ -3,7 +3,7 @@ import type { MatchUser } from '../../types/match';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import { Link } from 'react-router-dom';
 import { ThreeDotsVertical, X } from 'react-bootstrap-icons';
-import ChatRoomMessage from './ChatRoomMessage';
+// import ChatRoomMessage from './ChatRoomMessage';
 
 interface ChatRoomCardProps {
   user: MatchUser;
@@ -12,7 +12,7 @@ interface ChatRoomCardProps {
 
 const ChatRoomCard: React.FC<ChatRoomCardProps> = ({ user, chatRoomId }) => {
   const [showToolModal, setShowToolModal] = useState(false);
-  const [showChatModal, setShowChatModal] = useState(false);
+  // const [showChatModal, setShowChatModal] = useState(false);
 
   return (
     <>
@@ -20,25 +20,25 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({ user, chatRoomId }) => {
       <div className="message-room">
         <div className="d-flex flex-row">
           <div className="avatar-area">
-            <Link to={`/member/${user.bcuid}`}>
+            <Link to={`/member/${user?.bcuid}`}>
               <img
                 src={
-                  user.profile_images
+                  user?.profile_images
                     ? buildStorageUrl(
                         process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL ?? '',
-                        user.profile_images,
+                        user?.profile_images,
                         '_small'
                       )
                     : `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
                 }
                 className="avatar-36"
-                alt={user.nickname || 'Unknown User'}
+                alt={user?.nickname || 'Unknown User'}
               />
             </Link>
           </div>
           <div className="nickname-area">
-            {user.nickname || 'Unknown User'}
-            <span className="bcuid"> @ {user.bcuid}</span>
+            {user?.nickname || 'Unknown User'}
+            <span className="bcuid"> @ {user?.bcuid}</span>
           </div>
           <div className="tool-area" style={{ marginLeft: 'auto' }}>
             <ThreeDotsVertical
@@ -51,9 +51,11 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({ user, chatRoomId }) => {
             />
           </div>
         </div>
-        <div className="chat-preview" onClick={() => setShowChatModal(true)}>
-          <span>no mesage yet ...</span>
-        </div>
+        <Link to={`/message/${chatRoomId}`} className="chat-link">
+          <div className="chat-preview">
+            <span>no mesage yet ...</span>
+          </div>
+        </Link>
       </div>
 
       {/* ThreeDots メニュー */}
@@ -106,7 +108,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({ user, chatRoomId }) => {
       )}
 
       {/* チャットルームモーダル */}
-      {showChatModal && (
+      {/* {showChatModal && (
         <div
           className="modal fade show d-block"
           tabIndex={-1}
@@ -167,7 +169,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({ user, chatRoomId }) => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 };
