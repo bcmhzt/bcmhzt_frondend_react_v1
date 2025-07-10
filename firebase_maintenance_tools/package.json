@@ -1,0 +1,23 @@
+{
+  "name": "firebase_maintenance_tools",
+  "version": "1.0.0",
+  "description": "## 準備",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "hello": "tsx hello_firebase_maintenance_tools.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@google-cloud/datastore": "^10.0.1",
+    "firebase-admin": "^13.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.12",
+    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3"
+  }
+}

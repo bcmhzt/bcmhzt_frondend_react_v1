@@ -1,0 +1,13 @@
+// filepath: firebase_maintenance_tools/tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es2017",
+    "module": "CommonJS",
+    "rootDir": "src",
+    "outDir": "dist",
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "strict": true
+  },
+  "include": ["src/**/*.ts", "*.json"]
+}
