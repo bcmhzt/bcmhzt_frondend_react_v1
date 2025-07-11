@@ -1,9 +1,21 @@
 # Firebase maintenace tools
 
+Firebaseの管理ツールです。Firebaseには便利なCLIがないので、それぞれコマンドを自作で開発する必要があります。
+
 ##　実行環境に移動
+このツールはReactのプロジェクトとは独立していて（gitの管理は同じ）、別のnpmで動いています。
 
 ```
 % cd firebase_maintenance_tools
+% npm install
+```
+
+キャッシュの削除方法
+
+```
+% npm cache clean --force
+% rm -rf ~/.npm
+% rm -rf node_modules
 % npm install
 ```
 
