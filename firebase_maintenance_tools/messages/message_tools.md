@@ -8,7 +8,9 @@
 (% npm run hello)
 ```
 
-| file name                | summary                                                       | command exec                                                                                         |
-| ------------------------ | ------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| fetch_match_chatRooms.ts | 本人（ログインuid）を引数にマッチリストとChatRoomIdを取得する | % npx ts-node messages/fetch_match_chatRooms.ts Ptp2VzffuSOklLbFADqeSEvgbXW2                         |
-| delete_chatRooms.ts      | ChatRoomId引数にしてDocumentを削除する                        | % npx ts-node messages/delete_chatRooms.ts Ptp2VzffuSOklLbFADqeSEvgbXW2_zrTgTgyLfnbVmy0CJyc1poyf0Wu2 |
+| file name                    | summary                                                              | command exec                                                                                         |
+| ---------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| fetch_match_chatRooms_all.ts | 引数なしですべてのChatRoomIdを取得する                               | % npx ts-node messages/fetch_match_chatRooms_all.ts                                                  |
+| fetch_match_chatRooms.ts     | 本人（ログインuid）を引数にマッチリストとChatRoomIdを取得する        | % npx ts-node messages/fetch_match_chatRooms.ts Ptp2VzffuSOklLbFADqeSEvgbXW2                         |
+| delete_chatRooms.ts          | ChatRoomId引数にしてDocumentを削除する                               | % npx ts-node messages/delete_chatRooms.ts Ptp2VzffuSOklLbFADqeSEvgbXW2_zrTgTgyLfnbVmy0CJyc1poyf0Wu2 |
+| delete_chatRoomMessage.ts    | ChatRoomId引数にしてDocument以下のサブコレクション Messageを削除する |                                                                                                      |

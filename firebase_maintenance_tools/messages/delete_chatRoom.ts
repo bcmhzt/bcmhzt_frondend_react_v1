@@ -20,42 +20,46 @@ const firestore = new Firestore({
  * Document IDとmembersをコンソールに出力
  * 
  */
-const loginUid = process.argv[2];
-console.log("Login member uid:", loginUid);
+const flag = process.argv[2]; // --delete or --show
+const chatRoomId = process.argv[3];
+console.log("Delete ChatRoomId:", chatRoomId);
+console.log("Delete Flag:", flag);
 
-async function fetchMatchedChatRooms() {
-try {
-  const snapshot = await firestore
-    .collection('chats')
-    .where('members', 'array-contains', loginUid)
-    .orderBy('updated_at', 'desc')
-    // .limit(10)
-    .get();
+async function deleteChatRooms() {
+  
 
-    if (snapshot.empty) {
-      console.log("⚠️ chats collection empty.");
-    } else {
-      console.log(`✅ chats collection retrieved successfully (${snapshot.size} items):`);
+  if (flag === '--delete' || flag === '-d') {
+    console.log("Deleting chat room with ID:", chatRoomId);
+    try {
+      const chatRoomRef = firestore.collection('chats').doc(chatRoomId);
+      const doc = await chatRoomRef.get();
 
-      snapshot.forEach(doc => {
-        const data = doc.data();
-        // updated_at を人間が読める形式に変換
-        let updatedAtStr = '';
-        if (data.updated_at && typeof data.updated_at.toDate === 'function') {
-          updatedAtStr = data.updated_at.toDate().toISOString();
-        }
-        // console.log(`Number of members in docID ${doc.id}:`, data.members.length);
-        console.log(`docID - ${doc.id}`);
-        console.log("members -", data.members);
-        // console.log(`- ${doc.id}:`, {
-        //   ...data,
-        //   updated_at: updatedAtStr || data.updated_at,
-        // });
-      });
+      if (!doc.exists) {
+        console.log(`⚠️ Chat room with ID ${chatRoomId} does not exist.`);
+      } else {
+        await chatRoomRef.delete();
+        console.log(`✅ Chat room with ID ${chatRoomId} has been deleted successfully.`);
+      }
+    } catch (error) {
+      console.error("❌ Error deleting chat room:", error);
     }
-  } catch (error) {
-    console.error("❌ Firestore access error:", error);
+  } else {
+    console.log("Fetching chat room with ID:", chatRoomId);
+    try {
+      const chatRoomRef = firestore.collection('chats').doc(chatRoomId);
+      const doc = await chatRoomRef.get();
+
+      if (!doc.exists) {
+      console.log(`⚠️ Chat room with ID ${chatRoomId} does not exist.`);
+      } else {
+      const data = doc.data();
+      console.log(`✅ Chat room with ID ${chatRoomId} found:`);
+      console.log("Data:", data);
+      }
+    } catch (error) {
+      console.error("❌ Error fetching chat room:", error);
+    }
   }
 }
 
-fetchMatchedChatRooms();
+deleteChatRooms();

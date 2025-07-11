@@ -17,6 +17,7 @@ const firestore = new Firestore({
  * 
  * 引数にログインユーザーのuid
  * chatsコレクションからchatRoomsを取得して、membersにuidが含まれるドキュメントを取得（マッチ済チャットルーム）
+ * ChatRoomの件数をコンソールに出力
  * Document IDとmembersをコンソールに出力
  * 
  */

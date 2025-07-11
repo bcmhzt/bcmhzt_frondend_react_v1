@@ -1,5 +1,5 @@
 /** fca76db0 */
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
@@ -27,6 +27,7 @@ if (debug === 'true') {
 const ExistingChatListComponent: React.FC = () => {
   const [chatRooms, setChatRooms] = useState<any[]>([]);
   const [chatRoomsLength, setChatRoomsLength] = useState<number>(0);
+  const [chatRoomsAllLength, setChatRoomsAllLength] = useState<number>(0);
   const { currentUserProfile, token } = useAuth();
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const PAGE_SIZE = 10;
@@ -96,6 +97,22 @@ const ExistingChatListComponent: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /** chatroomの総数取得 */
+  useEffect(() => {
+    const fetchChatRoomCount = async () => {
+      const uid = currentUserProfile.user_profile.uid;
+      const chatRef = query(
+        collection(firestore, 'chats'),
+        where('members', 'array-contains', uid)
+      );
+
+      const snapshot = await getDocs(chatRef);
+      setChatRoomsAllLength(snapshot.size);
+    };
+
+    fetchChatRoomCount();
+  }, []);
+
   async function fetchPartnerProfile(uid: string) {
     if (partnerProfiles[uid]) {
       if (debug === 'true') {
@@ -132,6 +149,12 @@ const ExistingChatListComponent: React.FC = () => {
 
   return (
     <>
+      <div className="chat-room-parameter d-flex justify-content-end mr10">
+        <p>
+          message Rooms: {chatRoomsLength} / {chatRoomsAllLength}
+        </p>
+      </div>
+
       <ul className="chat-room-list">
         {chatRooms.map((room) => {
           const profile = partnerProfiles[room.partner_uid];
@@ -146,11 +169,11 @@ const ExistingChatListComponent: React.FC = () => {
           );
         })}
       </ul>
-      <h2>Existing Chat Rooms</h2>
-      <p>Total Chat Rooms: {chatRoomsLength}</p>
-      <h3>ExistingChatListComponent</h3>
+
       {hasMore && (
-        <button onClick={() => fetchChatRooms(false)}>もっと見る</button>
+        <div className="chatrooms-more-read mb80">
+          <div onClick={() => fetchChatRooms(false)}>more read</div>
+        </div>
       )}
     </>
   );
