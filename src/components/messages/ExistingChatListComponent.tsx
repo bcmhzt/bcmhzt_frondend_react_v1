@@ -1,5 +1,5 @@
 /** fca76db0 */
-import React, { use, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
@@ -111,6 +111,7 @@ const ExistingChatListComponent: React.FC = () => {
     };
 
     fetchChatRoomCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   async function fetchPartnerProfile(uid: string) {
