@@ -1,9 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import type { MatchUser } from '../../types/match';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import { Link } from 'react-router-dom';
 import { ThreeDotsVertical, X } from 'react-bootstrap-icons';
-// import ChatRoomMessage from './ChatRoomMessage';
+import { firestore } from '../../firebaseConfig';
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  limit,
+  getDocs,
+  startAfter,
+  QueryDocumentSnapshot,
+} from 'firebase/firestore';
+
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log('[src/components/messages/ChatRoomCard.tsx:xx] ‼️debug:', debug);
+}
 
 interface ChatRoomCardProps {
   user: MatchUser;
@@ -12,11 +28,67 @@ interface ChatRoomCardProps {
 
 const ChatRoomCard: React.FC<ChatRoomCardProps> = ({ user, chatRoomId }) => {
   const [showToolModal, setShowToolModal] = useState(false);
-  // const [showChatModal, setShowChatModal] = useState(false);
+  const [latestMessage, setLatestMessage] =
+    useState<string>('no message yet ...');
+
+  /**
+   * チャットルームID（chatRoomId）から最新のメッセージを一件取得する
+   */
+  useEffect(() => {
+    const fetchLatestMessage = async () => {
+      try {
+        console.log(
+          '[src/components/messages/ChatRoomCard.tsx:40] Fetching latest message...'
+        );
+        const messagesRef = collection(
+          firestore,
+          'chats',
+          chatRoomId,
+          'messages'
+        );
+        const q = query(messagesRef, orderBy('created_at', 'desc'), limit(1));
+        const querySnapshot = await getDocs(q);
+        console.log(
+          '[src/components/messages/ChatRoomCard.tsx:40] Query result - empty:',
+          querySnapshot.empty,
+          'size:',
+          querySnapshot.size
+        );
+
+        console.log(
+          '[ChatRoomCard] Query result - empty:',
+          querySnapshot.empty,
+          'size:',
+          querySnapshot.size
+        );
+        if (!querySnapshot.empty) {
+          const latestMessageData = querySnapshot.docs[0].data();
+          console.log(
+            '[src/components/messages/ChatRoomCard.tsx:67] Latest message data:',
+            latestMessageData.sender_id
+          );
+          console.log(
+            '[src/components/messages/ChatRoomCard.tsx:71] Latest message data:',
+            latestMessageData.text
+          );
+          setLatestMessage(latestMessageData.text);
+        }
+      } catch (error) {
+        console.error(
+          '[src/components/messages/ChatRoomCard.tsx:32] ❌ Error fetching latest message:',
+          error
+        );
+
+        setLatestMessage('Error fetching message');
+      }
+    };
+    fetchLatestMessage();
+  }, [chatRoomId]);
 
   return (
     <>
       {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
+      {/* <pre>{JSON.stringify(chatRoomId, null, 2)}</pre> */}
       <div className="message-room">
         <div className="d-flex flex-row">
           <div className="avatar-area">
@@ -53,7 +125,7 @@ const ChatRoomCard: React.FC<ChatRoomCardProps> = ({ user, chatRoomId }) => {
         </div>
         <Link to={`/message/${chatRoomId}`} className="chat-link">
           <div className="chat-preview">
-            <span>no mesage yet ...</span>
+            <span>{latestMessage || 'たぶん画像'}</span>
           </div>
         </Link>
       </div>

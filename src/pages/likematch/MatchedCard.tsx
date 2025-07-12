@@ -242,6 +242,7 @@ const LikedMeCard = () => {
             </pre> */}
             <h2 className="section-title-h2 mb30">
               あなたとスケベマッチした人
+              <pre>{JSON.stringify(data, null, 2)}</pre>
               <span className="conut">
                 {data?.pages[0]?.badges?.total_count}
               </span>

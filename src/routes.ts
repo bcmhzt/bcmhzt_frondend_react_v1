@@ -22,11 +22,14 @@ import PostsBookmarks from "./pages/posts/PostsBookmarks";
 import PostsMedia from "./pages/posts/PostsMedia";
 import PostDetail from "./pages/posts/PostDetail"
 import Notice from "./pages/notice/Notice";
+/* messages */
 import Messages from "./pages/messages/Messages";
 import Messages2 from "./pages/messages/Messages2";
 import ExistingChatList from "./pages/messages/ExistingChatList";
 import NewMatchedChatList from "./pages/messages/NewMatchedChatList";
 import MessageRoom from "./pages/messages/MessageRoom";
+import MesageChats from "./pages/messages/MesageChats";
+/* messages end */
 import LoopTutorial from "./pages/develop/LoopTutorial";
 import DevArchtectPage from "./pages/develop/DevArchtectPage";
 import MyProfile from "./pages/user/MyProfile";
@@ -37,8 +40,6 @@ import Settings from "./pages/user/Settings";
 import Index from "./pages/Index";
 // import MetaAccount from "./pages/User/MetaAccount";
 //src/pages/user/MyProfile.tsx
-
-
 
 /** devRoutes */
 import List from "./pages/List";
@@ -93,6 +94,8 @@ const routes: RoutesObject = {
     { path: "/existing_chat_messages", component: ExistingChatList },// 既存のチャットルーム一覧
     { path: "/new_matched_chat_messages", component: NewMatchedChatList },// 新規のチャットルーム一覧
     { path: "/message/:chat_room_id", component: MessageRoom },// チャットルーム
+    { path: "/message_chats", component: MesageChats },
+    // else
     { path: "/loop_tutorial", component: LoopTutorial },// ループチュートリアル
     { path: "/myprofile", component: MyProfile },// マイプロフィール更新・変更
     { path: "/liked_me", component: LikedMeCard },// いいねしてくれた人（全量）

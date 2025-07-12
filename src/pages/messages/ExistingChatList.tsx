@@ -13,13 +13,13 @@ const ExistingChatList = () => {
         <div className="container bc-app">
           <div className="row">
             <div className="col-12 col-md-6 bc-left">
-              <h2 className="page-title mb20">Messages2</h2>
+              <h2 className="page-title mb20">Messages</h2>
               <div className="post-index-header d-flex justify-content-around mb20">
                 <div className="pih-posts pih active">
                   <Link to="/existing_chat_messages">最新メッセージ</Link>
                 </div>
                 <div className="pih-posts pih">
-                  <Link to="/new_matched_chat_messages">メッセージルーム</Link>
+                  <Link to="/new_matched_chat_messages">新規メッセージ</Link>
                 </div>
 
                 <div className="pih-posts pih">
