@@ -7,12 +7,12 @@ import { firestore } from '../../firebaseConfig';
 import {
   collection,
   query,
-  where,
+  // where,
   orderBy,
   limit,
   getDocs,
-  startAfter,
-  QueryDocumentSnapshot,
+  // startAfter,
+  // QueryDocumentSnapshot,
 } from 'firebase/firestore';
 
 /* debug */

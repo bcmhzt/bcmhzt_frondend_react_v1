@@ -1,7 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import { ThreeDotsVertical, X } from 'react-bootstrap-icons';
+import { firestore } from '../../firebaseConfig';
+import {
+  collection,
+  query,
+  // where,
+  orderBy,
+  limit,
+  getDocs,
+  // startAfter,
+  // QueryDocumentSnapshot,
+} from 'firebase/firestore';
+
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log(
+    '[src/components/messages/MesageChatRoomCard.tsx:xx] ‼️debug:',
+    debug
+  );
+}
 
 interface UserProps {
   user: ApiData;
@@ -55,6 +75,87 @@ interface ApiData {
 
 const MesageChatRoomCard: React.FC<UserProps> = ({ user, chatRoomId }) => {
   const [showToolModal, setShowToolModal] = useState(false);
+  const [latestMessage, setLatestMessage] = useState<string>('');
+  const [sender, setSender] = useState<string>('');
+
+  useEffect(() => {
+    const fetchLatestMessage = async () => {
+      if (!chatRoomId) return;
+
+      try {
+        console.log(
+          '[src/components/messages/MesageChatRoomCard.tsx:85] ✳️ start:',
+          debug
+        );
+        const messagesRef = collection(
+          firestore,
+          'chats',
+          chatRoomId,
+          'messages'
+        );
+        const q = query(messagesRef, orderBy('created_at', 'desc'), limit(1));
+        const querySnapshot = await getDocs(q);
+        console.log(
+          '[src/components/messages/MesageChatRoomCard.tsx:97] Query result - empty:',
+          querySnapshot.empty,
+          'size:',
+          querySnapshot.size
+        );
+        if (querySnapshot.size === 0) {
+          setLatestMessage('No messages yet');
+        } else if (querySnapshot.size > 0) {
+          if (!querySnapshot.empty) {
+            setSender(querySnapshot.docs[0].data().sender_id);
+            setLatestMessage(querySnapshot.docs[0].data().text);
+
+            console.log(
+              '[src/components/messages/MesageChatRoomCard.tsx:111] - sender:',
+              sender
+            );
+
+            // const latestMessageSenderId =
+            //   querySnapshot.docs[0].data().sender_id;
+            // console.log(
+            //   '[src/components/messages/MesageChatRoomCard.tsx:108 ☘️latestMessageData FULL]',
+            //   latestMessageData
+            // );
+            // const rawText = latestMessageData['text'];
+            // console.log(
+            //   '[src/components/messages/MesageChatRoomCard.tsx:107] ⏰️ Latest message data:',
+            //   [
+            //     latestMessageData.id,
+            //     latestMessageData.created_at,
+            //     latestMessageData.is_deleted,
+            //     latestMessageData.images[0]['thumbnail'],
+            //     latestMessageData.is_deleted,
+            //     latestMessageData.read_by,
+            //     latestMessageData.sender_id,
+            //     latestMessageData.text,
+            //   ]
+            // );
+            // console.log(
+            //   '[src/components/messages/MesageChatRoomCard.tsx:126 ☹️rawText]',
+            //   rawText
+            // );
+            // if (!latestMessageData || latestMessageData.trim() === '') {
+            //   const imageUrl = latestMessageData.images[0]['original'];
+            //   setLatestMessage(
+            //     `<img src="${imageUrl}" alt="Latest message image" className="chat-image-thumbnail" />`
+            //   );
+            // } else if (latestMessageData.text) {
+            //   console.log(
+            //     '[src/components/messages/MesageChatRoomCard.tsx:126 ☝️latestMessageData.text]',
+            //     latestMessageData
+            //   );
+            //   setLatestMessage(latestMessageData);
+            // }
+          }
+        }
+      } catch (error) {}
+    };
+    fetchLatestMessage();
+  }, [chatRoomId, sender]);
+
   return (
     <>
       <div className="message-room">
@@ -93,9 +194,15 @@ const MesageChatRoomCard: React.FC<UserProps> = ({ user, chatRoomId }) => {
             />
           </div>
         </div>
-        <Link to={`/message/${user?.matched_uid}`} className="chat-link">
+        {/* 最新メッセージの表示 */}
+        <Link to={`/message/${chatRoomId}`} className="chat-link">
           <div className="chat-preview">
-            <span>message</span>
+            <span>{latestMessage}</span>
+            {/* {latestMessage.startsWith('<img') ? (
+              <span dangerouslySetInnerHTML={{ __html: latestMessage }} />
+            ) : (
+              <span>{latestMessage}</span>
+            )} */}
           </div>
         </Link>
         {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}

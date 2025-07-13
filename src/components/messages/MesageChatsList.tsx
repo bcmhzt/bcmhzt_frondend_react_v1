@@ -115,7 +115,7 @@ const MesageChatsList = () => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     console.log(
-      '[src/components/messages/MesageChatsList.tsx:107] res.data:',
+      '[src/components/messages/MesageChatsList.tsx:107] 😑 res.data:',
       res.data
     );
     return res.data;
@@ -194,10 +194,12 @@ const MesageChatsList = () => {
 
   return (
     <div>
-      <h2>チャット対象ユーザー一覧</h2>
       {isLoading && <p>読み込み中...</p>}
       {isError && <p>エラー: {error.message}</p>}
-      {listDatas.length}
+
+      <div className="chat-room-count d-flex justify-content-end">
+        <p>mesages count: {listDatas.length}</p>
+      </div>
       <ul className="chat-room-list">
         {listDatas.map((user, index) => (
           <li

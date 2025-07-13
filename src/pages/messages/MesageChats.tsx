@@ -14,7 +14,7 @@ const MessageChats = () => {
             <h2 className="page-title mb20">Messages</h2>
             <div className="post-index-header d-flex justify-content-around mb20">
               <div className="pih-posts pih active">
-                <Link to="/message_chats">最新メッセージ</Link>
+                <Link to="/">最新メッセージ</Link>
               </div>
               <div className="pih-posts pih">
                 <Link to="/message_chats">新規メッセージ</Link>

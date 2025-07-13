@@ -67,7 +67,7 @@ const Footer = () => {
           <span className="withname">notice</span>
         </div>
         <div className="item">
-          <Link to="/existing_chat_messages">
+          <Link to="/message_chats">
             <Envelope className="footer-icon" />
           </Link>
           {/* <span className="badge bg-primary">+99</span> */}

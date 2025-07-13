@@ -1,3 +1,4 @@
+/** c8031bb6 page */
 // import { Link } from 'react-router-dom';
 // import { buildStorageUrl } from '../../utility/GetUseImage';
 import Header from '../../components/Header';
@@ -7,6 +8,11 @@ import { useEffect, useState } from 'react';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import ChatRoomMessage from '../../components/messages/ChatRoomMessage';
 
+/**
+ * c8031bb6
+ * ChatRoomMessageコンポーネントにchatRomIdを送信する
+ *
+ */
 const MessageRoom = () => {
   const { chat_room_id } = useParams<{ chat_room_id: string }>();
   const [chatRoomData, setChatRoomData] = useState<any>(null);
@@ -41,6 +47,7 @@ const MessageRoom = () => {
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left">
+            <h2 className="page-title mb20">Message Room</h2>
             {chat_room_id && <ChatRoomMessage chatRoomId={chat_room_id} />}
             {/* <div className="message-room-id">
               <pre>{JSON.stringify(chatRoomData, null, 2)}</pre>
