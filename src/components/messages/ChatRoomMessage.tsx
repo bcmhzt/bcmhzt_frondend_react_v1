@@ -15,6 +15,7 @@ import {
   // QueryDocumentSnapshot,
   getDoc,
 } from 'firebase/firestore';
+import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -208,7 +209,58 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       <div className="chat-room-message-content">
         ChatRoom: ChatRoomMessage {chatRoomId}
       </div>
-      <div className="chat-room-message-footer">footer</div>
+      <div className="chat-room-message-footer">
+        <div className="chat-input d-flex flex-column">
+          <div className="chat-input-textarea">
+            <div className="image-preview-list d-flex mt-2">foo</div>
+            <div className="text-count-alert">text count: 999</div>
+            <textarea
+              placeholder="メッセージを入力"
+              rows={3}
+              style={{
+                width: '100%',
+                fontSize: '16px',
+                padding: '10px',
+              }}
+              maxLength={1500}
+              value=""
+              // onChange={(e) => setInputText(e.target.value)}
+              // onInput={(e) => {
+              //   const t = e.currentTarget as HTMLTextAreaElement;
+              //   t.rows = Math.min(10, Math.max(3, t.scrollHeight / 20));
+              // }}
+            />
+            <div className="d-flex justify-content-end mt-2">
+              <button
+                className="btn btn-primary bcmhzt-btn-gray mr10"
+                // onClick={() => {
+                //   const fi = document.createElement('input');
+                //   fi.type = 'file';
+                //   fi.multiple = true;
+                //   fi.accept = 'image/*';
+                //   fi.onchange = (e) => handleImageChange(e as any);
+                //   fi.click();
+                // }}
+              >
+                <Image style={{ cursor: 'pointer', color: '#fff' }} />
+              </button>
+              <button
+                className="btn btn-primary bcmhzt-btn"
+                // onClick={handleSend}
+                // disabled={
+                //   isSending || (!inputText.trim() && selectedFiles.length === 0)
+                // }
+              >
+                {/* {isSending ? (
+                  <span className="spinner-border spinner-border-sm text-white" />
+                ) : (
+                  <SendFill style={{ cursor: 'pointer', color: '#fff' }} />
+                )} */}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
