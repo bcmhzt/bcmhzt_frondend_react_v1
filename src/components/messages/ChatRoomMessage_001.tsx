@@ -1,5 +1,5 @@
 /** 711e23e7 */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios, { AxiosResponse } from 'axios';
 import { firestore } from '../../firebaseConfig';
@@ -16,13 +16,9 @@ import {
   QueryDocumentSnapshot,
   getDoc,
   getCountFromServer,
-  onSnapshot,
-  QuerySnapshot,
-  DocumentData,
 } from 'firebase/firestore';
 import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
 import { buildStorageUrl } from '../../utility/GetUseImage';
-import ChatInputTool from './ChatInputTool';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -100,23 +96,6 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
     null
   );
   const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true);
-  const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  // const [messages, setMessages] = useState<ChatMessage[]>([]);
-  const [latestMessageId, setLatestMessageId] = useState<string | null>(null);
-
-  const handleSendComplete = (newMessage: ChatMessage) => {
-    setMessages((prev) => [...prev, newMessage]);
-    setLatestMessageId(newMessage.id); // 新しいメッセージにエフェクト付与
-    scrollToBottom(); // 自動スクロール
-
-    // 2秒後にエフェクト解除
-    setTimeout(() => setLatestMessageId(null), 2000);
-  };
 
   // ページネーション設定
   const MESSAGES_PER_PAGE = 30;
@@ -149,58 +128,65 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
     }
   };
 
-  // 🔽 最新のメッセージをリアルタイムで取得するリスナー（初回読み込み後）
-  useEffect(() => {
-    if (!chatRoomId) return;
+  // 最新のメッセージを取得する関数（初回読み込み用）
+  const fetchLatestMessages = async () => {
+    setIsLoadingMessages(true);
+    try {
+      const messagesRef = collection(
+        firestore,
+        'chats',
+        chatRoomId,
+        'messages'
+      );
+      const q = query(
+        messagesRef,
+        orderBy('created_at', 'desc'), // 最新から古い順
+        limit(MESSAGES_PER_PAGE)
+      );
 
-    const messagesRef = collection(firestore, 'chats', chatRoomId, 'messages');
-    const q = query(
-      messagesRef,
-      orderBy('created_at', 'desc'),
-      limit(MESSAGES_PER_PAGE)
-    );
+      const querySnapshot = await getDocs(q);
+      const fetchedMessages: ChatMessage[] = [];
 
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot: QuerySnapshot<DocumentData>) => {
-        const realTimeMessages: ChatMessage[] = [];
-
-        querySnapshot.forEach((doc) => {
-          const data = doc.data();
-          realTimeMessages.push({
-            id: doc.id,
-            created_at: data.created_at,
-            updated_at: data.updated_at,
-            image_url: data.image_url || [],
-            is_deleted: data.is_deleted || false,
-            last_read_at: data.last_read_at || {},
-            sender_id: data.sender_id || '',
-            text: data.text || '',
-          });
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        fetchedMessages.push({
+          id: doc.id,
+          created_at: data.created_at,
+          updated_at: data.updated_at,
+          image_url: data.image_url || [],
+          is_deleted: data.is_deleted || false,
+          last_read_at: data.last_read_at || {},
+          sender_id: data.sender_id || '',
+          text: data.text || '',
         });
+      });
 
-        // 古い順に並べて表示
-        const sortedMessages = realTimeMessages.reverse();
+      // 表示用に古い順に並び替え（チャットは古いメッセージが上、新しいメッセージが下）
+      const sortedMessages = fetchedMessages.reverse();
 
-        console.log(
-          '[src/components/messages/ChatRoomMessage.tsx] 🔁 リアルタイム更新メッセージ:',
-          sortedMessages
-        );
+      console.log(
+        '[src/components/messages/ChatRoomMessage.tsx] 📨 取得したメッセージ:',
+        sortedMessages
+      );
 
-        setMessages(sortedMessages);
+      setMessages(sortedMessages);
 
-        // 最後のドキュメントを更新（ページネーションに影響は与えない）
-        if (querySnapshot.docs.length > 0) {
-          setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
-        }
-
-        // まだメッセージがあるかを更新
-        setHasMoreMessages(querySnapshot.docs.length === MESSAGES_PER_PAGE);
+      // 最後のドキュメントを保存（ページネーション用）
+      if (querySnapshot.docs.length > 0) {
+        setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1]);
       }
-    );
 
-    return () => unsubscribe(); // クリーンアップ
-  }, [chatRoomId]);
+      // まだメッセージがあるかどうかを判定
+      setHasMoreMessages(querySnapshot.docs.length === MESSAGES_PER_PAGE);
+    } catch (error) {
+      console.error(
+        '[src/components/messages/ChatRoomMessage.tsx] メッセージ取得エラー:',
+        error
+      );
+    } finally {
+      setIsLoadingMessages(false);
+    }
+  };
 
   // 過去のメッセージを追加で取得する関数（スクロール時用）
   const fetchMoreMessages = async () => {
@@ -307,7 +293,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
           await fetchMessageCount();
 
           // 最新のメッセージを取得
-          await fetchMessages();
+          await fetchLatestMessages();
         } else {
           console.log(
             '[src/components/messages/ChatRoomMessage.tsx:41] チャットが見つかりません⛔️'
@@ -423,13 +409,6 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       </li>
     );
   };
-
-  useEffect(() => {
-    if (messages.length === 0) return;
-
-    // メッセージ受信後に最下部へスクロール
-    scrollToBottom();
-  }, [messages]);
 
   /**
    * 実装のベストプラクティス
@@ -553,7 +532,6 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
           </div>
         )}
         <ul className="message-list">{messages.map(renderMessage)}</ul>
-        <div ref={messagesEndRef} />
 
         {isLoadingMessages && messages.length === 0 && (
           <div className="text-center p-3">
@@ -564,13 +542,55 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       </div>
       <div className="chat-room-message-footer">
         <div className="chat-input d-flex flex-column">
-          <ChatInputTool
-            chatRoomId={chatRoomId}
-            partnerUid={partnerUid}
-            currentUserProfile={currentUserProfile?.user_profile}
-            chatRoomData={chatRoomData}
-            onSendComplete={handleSendComplete}
-          />
+          <div className="chat-input-textarea">
+            <div className="image-preview-list d-flex mt-2">foo</div>
+            <div className="text-count-alert">text count: 999</div>
+            <textarea
+              placeholder="メッセージを入力"
+              rows={3}
+              style={{
+                width: '100%',
+                fontSize: '16px',
+                padding: '10px',
+              }}
+              maxLength={1500}
+              value=""
+              // onChange={(e) => setInputText(e.target.value)}
+              // onInput={(e) => {
+              //   const t = e.currentTarget as HTMLTextAreaElement;
+              //   t.rows = Math.min(10, Math.max(3, t.scrollHeight / 20));
+              // }}
+            />
+            <div className="d-flex justify-content-end mt-2">
+              <button
+                className="btn btn-primary bcmhzt-btn-gray mr10"
+                // onClick={() => {
+                //   const fi = document.createElement('input');
+                //   fi.type = 'file';
+                //   fi.multiple = true;
+                //   fi.accept = 'image/*';
+                //   fi.onchange = (e) => handleImageChange(e as any);
+                //   fi.click();
+                // }}
+              >
+                <Image style={{ cursor: 'pointer', color: '#fff' }} />
+              </button>
+              <button
+                className="btn btn-primary bcmhzt-btn"
+                // onClick={handleSend}
+                // disabled={
+                //   isSending || (!inputText.trim() && selectedFiles.length === 0)
+                // }
+              >
+                {/* {isSending ? (
+                  <span className="spinner-border spinner-border-sm text-white" />
+                ) : (
+                  <SendFill style={{ cursor: 'pointer', color: '#fff' }} />
+                )} */}
+                <SendFill style={{ cursor: 'pointer', color: '#fff' }} />
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -74,18 +74,22 @@
   }
 }
 
+/** サイドバー */
 .sidebar {
   // background: #ffd700;
+  // sidebar scroller
+  overflow-y: auto;
+  height: 100vh;
+  //
   background: #222;
   opacity: 0.8;
   color: #fff;
   position: fixed; // ← fixedに変更
   top: 55px;
-  height: 100%;
   transition: right 0.1s;
   box-shadow: -2px 0 8px rgba(0,0,0,0.1);
   z-index: 500;
-  overflow-y: auto;
+  
   @media (max-width: 575px) { right: -80%; width: 80%; }
   @media (min-width: 576px) and (max-width: 768px) { right: -50%; width: 50%; }
   @media (min-width: 769px) { right: -350px; width: 350px; }

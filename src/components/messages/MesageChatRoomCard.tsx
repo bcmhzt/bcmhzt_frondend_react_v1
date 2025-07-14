@@ -160,7 +160,7 @@ const MesageChatRoomCard: React.FC<UserProps> = ({ user, chatRoomId }) => {
     <>
       <div className="message-room">
         {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
-        <pre>{JSON.stringify(chatRoomId, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(chatRoomId, null, 2)}</pre> */}
         <div className="d-flex flex-row">
           <div className="avatar-area">
             <Link to={`/member/${user?.bcuid}`}>

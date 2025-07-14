@@ -47,7 +47,17 @@ const MessageRoom = () => {
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left">
-            <h2 className="page-title mb20">Message Room</h2>
+            <h2 className="page-title">Message Room</h2>
+            <div className="back-button">
+              {' '}
+              <button
+                className="btn btn btn-light"
+                onClick={() => window.history.back()}
+              >
+                前のページへ戻る
+              </button>
+            </div>
+
             {chat_room_id && <ChatRoomMessage chatRoomId={chat_room_id} />}
             {/* <div className="message-room-id">
               <pre>{JSON.stringify(chatRoomData, null, 2)}</pre>

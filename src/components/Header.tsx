@@ -12,7 +12,7 @@ import {
   Gear,
   WindowDock,
   Book,
-  // Easel,
+  Easel,
   Mailbox,
   CodeSlash,
   Braces,
@@ -61,6 +61,9 @@ const Header = () => {
 
   const handleToggleSidebar = () => {
     setSidebarOpen((prev) => !prev);
+    if (!sidebarOpen) {
+      document.body.style.overflow = 'hidden';
+    }
     if (debug === 'true') {
       console.log('[src/components/Header.tsx:toggle] sidebar toggled');
     }
@@ -73,6 +76,7 @@ const Header = () => {
 
   const handleCloseSidebar = () => {
     setSidebarOpen(false);
+    document.body.style.overflow = '';
     console.log('[src/components/Header.tsx:32] close sidebar');
   };
 
@@ -275,6 +279,27 @@ const Header = () => {
                 <span style={{ cursor: 'pointer' }} onClick={handleLogout}>
                   ログアウト
                 </span>
+              </li>
+              <hr />
+              <li>
+                <Easel className="icon-lg" />
+                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+              </li>
+              <li>
+                <Easel className="icon-lg" />
+                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+              </li>
+              <li>
+                <Easel className="icon-lg" />
+                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+              </li>
+              <li>
+                <Easel className="icon-lg" />
+                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+              </li>
+              <li>
+                <Easel className="icon-lg" />
+                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
               </li>
             </ul>
           </div>
