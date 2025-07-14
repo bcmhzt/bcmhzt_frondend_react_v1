@@ -537,7 +537,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
                   読み込み中...
                 </>
               ) : (
-                '過去のメッセージを読み込む'
+                'Read more messages'
               )}
             </button>
           </div>
