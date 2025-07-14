@@ -220,23 +220,49 @@
     .message-list {
       .message-item {
         list-style: none;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
         display: block; // ブロック要素として表示
         width: 90%; // 幅を90%に設定
       }
       .own-message {
         margin-left: auto; // 右寄せ
-        background: #ffd700;
+        background: #dadada;
         text-align: left; // テキストは左寄せ
         border-radius: 10px 0 10px 10px; // 角丸を追加（任意）
-        padding: 10px; // 内側の余白を追加
+        padding: 15px; // 内側の余白を追加
+        .message-time {
+          font-size: 10px;
+          color: #888;
+          text-align: right;;
+        }
       }
       .other-message {
         margin-right: auto; // 左寄せ
-        background: #00d7ff;
+        background: #f7f7f7;
         text-align: left; // テキストは左寄せ
         border-radius: 0 10px 10px 10px; // 角丸を追加（任意）
         padding: 10px; // 内側の余白を追加
+        .message-time {
+          font-size: 10px;
+          color: #888;
+          text-align: left;
+        }
+      }
+      
+    }
+    .load-more-messages {
+      button.read-more-messages {
+        background: #f1f1f1;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+        color: #333;
+        &:hover {
+          background-color: #e1e1e1;
+          opacity: 0.8;
+        }
+
       }
     }
   }
