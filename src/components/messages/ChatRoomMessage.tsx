@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import {
   collection,
   query,
-  where,
+  // where,
   orderBy,
   limit,
   doc,
@@ -20,7 +20,7 @@ import {
   QuerySnapshot,
   DocumentData,
 } from 'firebase/firestore';
-import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
+// import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import ChatInputTool from './ChatInputTool';
 
@@ -269,79 +269,33 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
   useEffect(() => {
     if (!chatRoomId) return;
 
-    const fetchMessages = async () => {
+    const runInitialFetch = async () => {
       try {
-        /** chats */
         const docRef = doc(firestore, 'chats', chatRoomId);
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
           const chatData = docSnap.data();
           setChatRoomData(chatData);
-          // 相手のUIDを取得
+
           const currentUid = currentUserProfile?.user_profile?.uid;
           const otherUserUid = chatData.members.find(
             (uid: string) => uid !== currentUid
           );
-
-          console.log(
-            '[src/components/messages/ChatRoomMessage.tsx:41] 😑自分のUID:',
-            currentUid
-          );
-          console.log(
-            '[src/components/messages/ChatRoomMessage.tsx:41] 😑相手のUID:',
-            otherUserUid
-          );
-          console.log(
-            '[src/components/messages/ChatRoomMessage.tsx:41] chatData.members:✅',
-            chatData.members
-          );
-          console.log(
-            '[src/components/messages/ChatRoomMessage.tsx:41] currentUserProfile?.user_profile?.uid:✅',
-            currentUserProfile?.user_profile?.uid
-          );
-          // ここでchatDataを使用
           setPartnerUid(otherUserUid);
 
-          // メッセージ件数を取得
           await fetchMessageCount();
-
-          // 最新のメッセージを取得
-          await fetchMessages();
-        } else {
-          console.log(
-            '[src/components/messages/ChatRoomMessage.tsx:41] チャットが見つかりません⛔️'
-          );
+          // ❌ この1行が無限ループの原因
+          // await fetchMessages(); ← 消す or 初期表示ロジックと統合する
         }
-
-        // /** message */
-        // const messagesRef = collection(
-        //   firestore,
-        //   'chats',
-        //   chatRoomId,
-        //   'messages'
-        // );
-        // const messagesSnapshot = await getDocs(messagesRef);
-        // messagesSnapshot.forEach((doc) => {
-        //   console.log(
-        //     `[src/components/messages/ChatRoomMessage.tsx:41] 😑 Document ID: ${doc.id}`
-        //   );
-        //   console.log(
-        //     '[src/components/messages/ChatRoomMessage.tsx:41] 😑 Data:',
-        //     doc.data()
-        //   );
-        // });
       } catch (error) {
-        console.log(
-          '[src/components/messages/ChatRoomMessage.tsx:31] ‼️ error:',
-          error
-        );
+        console.log('fetchMessages error:', error);
         setChatRoomData(null);
         window.location.href = '/message_chats';
       }
     };
 
-    fetchMessages();
+    runInitialFetch();
   }, [chatRoomId, currentUserProfile]);
 
   /**
@@ -509,6 +463,11 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
                 <div>
                   さらに読み込み可能: {hasMoreMessages ? 'はい' : 'いいえ'}
                 </div>
+                {latestMessageId && (
+                  <>
+                    <div>最新メッセージID: {latestMessageId}</div>
+                  </>
+                )}
               </div>
             </div>
           </div>

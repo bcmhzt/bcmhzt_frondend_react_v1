@@ -3,7 +3,12 @@ import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
 import { serverTimestamp } from 'firebase/firestore';
 import { collection, doc, setDoc } from 'firebase/firestore';
-import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
+import {
+  // ThreeDotsVertical,
+  // X,
+  SendFill,
+  Image,
+} from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
