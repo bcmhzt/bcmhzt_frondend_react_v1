@@ -1,5 +1,5 @@
 /** 711e23e7 */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axios, { AxiosResponse } from 'axios';
 import { firestore } from '../../firebaseConfig';
@@ -102,6 +102,11 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
   const [hasMoreMessages, setHasMoreMessages] = useState<boolean>(true);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
+  // 自動スクロール制御用の状態を追加
+  const [shouldAutoScroll, setShouldAutoScroll] = useState<boolean>(true);
+  const [isLoadingOlderMessages, setIsLoadingOlderMessages] =
+    useState<boolean>(false);
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
@@ -109,9 +114,12 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
   // const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [latestMessageId, setLatestMessageId] = useState<string | null>(null);
 
+  const messageBodyRef = useRef<HTMLDivElement | null>(null);
+
   const handleSendComplete = (newMessage: ChatMessage) => {
     setMessages((prev) => [...prev, newMessage]);
     setLatestMessageId(newMessage.id); // 新しいメッセージにエフェクト付与
+    setShouldAutoScroll(true); // 新しいメッセージが送信されたら自動スクロールを有効にする
     scrollToBottom(); // 自動スクロール
 
     // 2秒後にエフェクト解除
@@ -122,7 +130,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
   const MESSAGES_PER_PAGE = 30;
 
   // メッセージ件数を取得する関数
-  const fetchMessageCount = async () => {
+  const fetchMessageCount = useCallback(async () => {
     try {
       const messagesRef = collection(
         firestore,
@@ -147,7 +155,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       );
       return 0;
     }
-  };
+  }, [chatRoomId]);
 
   // 🔽 最新のメッセージをリアルタイムで取得するリスナー（初回読み込み後）
   useEffect(() => {
@@ -206,7 +214,14 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
   const fetchMoreMessages = async () => {
     if (!hasMoreMessages || isLoadingMessages || !lastVisible) return;
 
+    const container = messageBodyRef.current;
+    const prevScrollHeight = container?.scrollHeight ?? 0;
+    const prevScrollTop = container?.scrollTop ?? 0;
+
     setIsLoadingMessages(true);
+    setIsLoadingOlderMessages(true); // 過去のメッセージを読み込み中であることを示す
+    setShouldAutoScroll(false); // 自動スクロールを無効にする
+
     try {
       const messagesRef = collection(
         firestore,
@@ -256,6 +271,15 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
 
       // まだメッセージがあるかどうかを判定
       setHasMoreMessages(querySnapshot.docs.length === MESSAGES_PER_PAGE);
+
+      // DOM更新後にスクロール位置を調整
+      setTimeout(() => {
+        if (container) {
+          const newScrollHeight = container.scrollHeight;
+          container.scrollTop =
+            newScrollHeight - prevScrollHeight + prevScrollTop;
+        }
+      }, 0);
     } catch (error) {
       console.error(
         '[src/components/messages/ChatRoomMessage.tsx] 追加メッセージ取得エラー:',
@@ -263,6 +287,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       );
     } finally {
       setIsLoadingMessages(false);
+      setIsLoadingOlderMessages(false); // 読み込み完了
     }
   };
 
@@ -296,7 +321,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
     };
 
     runInitialFetch();
-  }, [chatRoomId, currentUserProfile]);
+  }, [chatRoomId, currentUserProfile, fetchMessageCount]);
 
   /**
    * /v1/get/member/uid/{uid}
@@ -378,12 +403,15 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
     );
   };
 
+  // 自動スクロール処理を修正
   useEffect(() => {
-    if (messages.length === 0) return;
+    if (messages.length === 0 || isLoadingOlderMessages) return;
 
-    // メッセージ受信後に最下部へスクロール
-    scrollToBottom();
-  }, [messages]);
+    // 新しいメッセージが投稿された場合、または初回読み込み時のみ自動スクロール
+    if (shouldAutoScroll) {
+      scrollToBottom();
+    }
+  }, [messages, shouldAutoScroll, isLoadingOlderMessages]);
 
   /**
    * 実装のベストプラクティス
@@ -476,6 +504,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       </div>
       <div
         className="chat-room-message-body"
+        ref={messageBodyRef}
         style={{
           overflowY: 'scroll',
           maxHeight: 'calc(100vh - 400px)',
