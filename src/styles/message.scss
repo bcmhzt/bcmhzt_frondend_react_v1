@@ -179,7 +179,6 @@
 /* チャットルーム */
 
 .chat-room-message {
-
   // padding: 10px;
   border-bottom: 1px solid #eee;
   .chat-room-message-header {
@@ -217,7 +216,29 @@
   }
   .chat-room-message-body { 
     word-break: break-all;
-    background: #ffd700;
+    // background: #ffd700;
+    .message-list {
+      .message-item {
+        list-style: none;
+        margin-bottom: 10px;
+        display: block; // ブロック要素として表示
+        width: 90%; // 幅を90%に設定
+      }
+      .own-message {
+        margin-left: auto; // 右寄せ
+        background: #ffd700;
+        text-align: left; // テキストは左寄せ
+        border-radius: 10px 0 10px 10px; // 角丸を追加（任意）
+        padding: 10px; // 内側の余白を追加
+      }
+      .other-message {
+        margin-right: auto; // 左寄せ
+        background: #00d7ff;
+        text-align: left; // テキストは左寄せ
+        border-radius: 0 10px 10px 10px; // 角丸を追加（任意）
+        padding: 10px; // 内側の余白を追加
+      }
+    }
   }
   .chat-room-message-footer {}
 }

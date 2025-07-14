@@ -379,6 +379,8 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         className={`message-item ${isOwnMessage ? 'own-message' : 'other-message'}`}
       >
         <div className="message-content">
+          <pre>{JSON.stringify(message, null, 2)}</pre>
+          {/* メッセージ送信者によってデザインの振り分け */}
           <div className="message-text">{message.text}</div>
           {message.image_url && message.image_url.length > 0 && (
             <div className="message-images">
@@ -540,7 +542,13 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
             </button>
           </div>
         )}
-        <ul className="message-list">{messages.map(renderMessage)}</ul>
+        <ul className="message-list">
+          {messages.map(renderMessage)}
+          <li className="message-item own-message">hoge</li>
+          <li className="message-item other-message">huga</li>
+          <li className="message-item own-message">hoge</li>
+          <li className="message-item other-message">huga</li>
+        </ul>
         <div ref={messagesEndRef} />
 
         {isLoadingMessages && messages.length === 0 && (

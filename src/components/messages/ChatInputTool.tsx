@@ -119,12 +119,12 @@ const ChatInputTool: React.FC<ChatInputToolProps> = ({
           maxLength={1500}
           value={text}
           onChange={(e) => setText(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' && !e.shiftKey) {
-              e.preventDefault();
-              handleSend();
-            }
-          }}
+          // onKeyDown={(e) => {
+          //   if (e.key === 'Enter' && !e.shiftKey) {
+          //     e.preventDefault();
+          //     handleSend();
+          //   }
+          // }}
           disabled={sending}
         />
         <div className="d-flex justify-content-end mt-2">
