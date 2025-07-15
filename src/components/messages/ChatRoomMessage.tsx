@@ -441,6 +441,14 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       {/* <pre>{JSON.stringify(partnerUid, null, 2)}</pre> */}
       {/* <pre>{JSON.stringify(member, null, 2)}</pre> */}
       <div className="chat-room-message-header">
+        <div className="back-button">
+          <button
+            className="btn btn btn-light"
+            onClick={() => window.history.back()}
+          >
+            前のページへ戻る
+          </button>
+        </div>
         <div className="d-flex flex-row">
           <div className="avatar-area">
             {/* {member?.member?.profile_images} */}
@@ -509,7 +517,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         ref={messageBodyRef}
         style={{
           overflowY: 'scroll',
-          maxHeight: 'calc(100vh - 400px)',
+          maxHeight: 'calc(100vh - 50px)',
           scrollbarWidth: 'none', // For Firefox
           msOverflowStyle: 'none', // For IE and Edge
         }}

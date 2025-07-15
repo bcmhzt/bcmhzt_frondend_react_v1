@@ -1,8 +1,8 @@
 /** c8031bb6 page */
 // import { Link } from 'react-router-dom';
 // import { buildStorageUrl } from '../../utility/GetUseImage';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+// import Header from '../../components/Header';
+// import Footer from '../../components/Footer';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
@@ -43,21 +43,10 @@ const MessageRoom = () => {
 
   return (
     <div className="app-body">
-      <Header />
+      {/* <Header /> */}
       <div className="container bc-app">
         <div className="row">
-          <div className="col-12 col-md-6 bc-left">
-            <h2 className="page-title">Message Room</h2>
-            <div className="back-button">
-              {' '}
-              <button
-                className="btn btn btn-light"
-                onClick={() => window.history.back()}
-              >
-                前のページへ戻る
-              </button>
-            </div>
-
+          <div className="col-12 col-md-6 bc-left-no-footer">
             {chat_room_id && <ChatRoomMessage chatRoomId={chat_room_id} />}
             {/* <div className="message-room-id">
               <pre>{JSON.stringify(chatRoomData, null, 2)}</pre>
@@ -104,7 +93,7 @@ const MessageRoom = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </div>
   );
 };
