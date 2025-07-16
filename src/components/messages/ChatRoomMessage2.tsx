@@ -209,18 +209,8 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         <div />
       </div>
       <div className="chat-room-message-footer">
-        <div className="chat-input d-flex flex-column">
-          <ChatInputTool2
-          // chatRoomId={chatRoomId}
-          // partnerUid={partnerUid}
-          // currentUserProfile={currentUserProfile?.user_profile}
-          // chatRoomData={chatRoomData}
-          // onSendComplete={handleSendComplete}
-          />
-        </div>
-
         {/* meta info */}
-        {debug === 'false' && (
+        {/* {debug === 'true' && (
           <>
             <div
               className="accordion accordion-flush"
@@ -255,7 +245,16 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
               </div>
             </div>
           </>
-        )}
+        )} */}
+        <div className="chat-input d-flex flex-column">
+          <ChatInputTool2
+          // chatRoomId={chatRoomId}
+          // partnerUid={partnerUid}
+          // currentUserProfile={currentUserProfile?.user_profile}
+          // chatRoomData={chatRoomData}
+          // onSendComplete={handleSendComplete}
+          />
+        </div>
 
         {/* meta info end */}
       </div>

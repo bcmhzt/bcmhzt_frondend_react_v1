@@ -6,7 +6,7 @@ import './styles/main.scss';
 
 // React Query
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+// import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 // Loading & Auth
 import { LoadingProvider } from './contexts/LoadingContext';
@@ -25,10 +25,12 @@ root.render(
           <App />
         </LoadingProvider>
       </AuthProvider>
+
+      {/* useInfiniteQueryのデバッグツールを非表示にする
       {(process.env.REACT_APP_ENV === 'local' ||
         process.env.REACT_APP_ENV === 'dev') && (
         <ReactQueryDevtools initialIsOpen={false} />
-      )}
+      )} */}
     </QueryClientProvider>
   </React.StrictMode>
 );
