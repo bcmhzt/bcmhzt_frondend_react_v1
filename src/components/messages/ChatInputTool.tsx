@@ -107,9 +107,12 @@ const ChatInputTool: React.FC<ChatInputToolProps> = ({
       {/* <pre>{JSON.stringify(currentUserProfile, null, 2)}</pre>{' '} */}
       {/* <pre>{JSON.stringify(chatRoomData, null, 2)}</pre> */}
       <div className="chat-input-textarea">
-        <div className="text-count-alert">text count: 999</div>
+        {/* <div className="text-count-alert">text count: 999</div> */}
         <textarea
+          className="chat-textarea"
           placeholder="メッセージを入力"
+          name="hoge"
+          id="hoge"
           rows={3}
           style={{
             width: '100%',

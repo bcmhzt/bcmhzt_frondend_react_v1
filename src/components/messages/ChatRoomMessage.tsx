@@ -467,7 +467,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         ref={messageBodyRef}
         style={{
           overflowY: 'scroll',
-          maxHeight: 'calc(100vh - 50px)',
+          maxHeight: 'calc(100vh - 20px)',
           scrollbarWidth: 'none', // For Firefox
           msOverflowStyle: 'none', // For IE and Edge
         }}

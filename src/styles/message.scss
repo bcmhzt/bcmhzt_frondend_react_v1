@@ -6,33 +6,33 @@
   font-size: 12px;
   color: #c1c1c1;
 }
-.chat-room-list {
-  margin-left: -30px;
-  list-style: none;
-  .chat-room-item {
-    list-style: none !important;
-    padding: 0;
-    margin: 0;
-    .avatar-area {
+// .chat-room-list {
+//   margin-left: -30px;
+//   list-style: none;
+//   .chat-room-item {
+//     list-style: none !important;
+//     padding: 0;
+//     margin: 0;
+//     .avatar-area {
 
-    }
-    .nickname-area {
-      padding: 10px 2px;
-      .bcuid {
-        font-size:12px;
-        color: #888;
-      }
-    }
-  }
-}
-.chat-link {
-  text-decoration: none !important;
-  color: #333;
-  &:hover {
-    text-decoration: none !important;
-    color: #333;
-  }
-}
+//     }
+//     .nickname-area {
+//       padding: 10px 2px;
+//       .bcuid {
+//         font-size:12px;
+//         color: #888;
+//       }
+//     }
+//   }
+// }
+// .chat-link {
+//   text-decoration: none !important;
+//   color: #333;
+//   &:hover {
+//     text-decoration: none !important;
+//     color: #333;
+//   }
+// }
 .chat-preview {
   margin: 0px 10px;
   padding: 10px;
@@ -71,125 +71,36 @@
   }
 }
 
-.message-room-id {
-  background: #ffd700;
-  padding: 10px;
-  word-break: break-all;
-}
+// .message-room-id {
+//   background: #ffd700;
+//   padding: 10px;
+//   word-break: break-all;
+// }
 
 
-.message-room {
-  // background: #ffd700;
-  padding: 10px;
-  border: 1px solid #dee2e6;
-  border-radius: 0.5rem;
-  transition: background-color 0.2s;
-  cursor: pointer;
-  margin-bottom: 15px;
-  // &:hover {
-  //   background-color: rgba(0, 0, 0, 0.05);
-  // }
-}
+// .message-room {
+//   // background: #ffd700;
+//   padding: 10px;
+//   border: 1px solid #dee2e6;
+//   border-radius: 0.5rem;
+//   transition: background-color 0.2s;
+//   cursor: pointer;
+//   margin-bottom: 15px;
+//   // &:hover {
+//   //   background-color: rgba(0, 0, 0, 0.05);
+//   // }
+// }
 
-/* モーダル全体を画面いっぱいに */
-.modal-dialog-chat {
-  height: 100vh;
-  margin: 0 auto;
-}
 
-.modal-content-chat {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
 
-/* ここだけを伸び縮みさせる */
-.modal-body-chat {
-  flex: 1 1 auto;       /* ヘッダー・フッターを除いた残り全体 */
-  overflow-y: auto;     /* 縦スクロール */
-  /* padding や背景色などは既存スタイルを踏襲 */
-  .message-list {
-    list-style: none;
-    margin-left: -23px;
-    .text-left {
-      word-break: break-all;
-      width: 90%;
-      padding: 10px 15px;
-      
-      .message-box {
-        border-radius: 0px 10px 10px 10px !important;
-        border: #c1c1c1 1px solid !important;
-      }
-      .deletesd-message {
-        font-size: 10px !important;
-        color: #c1c1c1 !important;
-      }
-      .datetime {
-        margin-top: -10px;
-        font-size: 10px;
-        color: #c1c1c1;
-      }
-    }
-    .text-right {
-      word-break: break-all;
-      width: 90%;
-      margin-left: auto;
-      padding: 10px 15px;
-      
-      .message-box {
-        background: #c1c1c1;
-        border: #c1c1c1 1px solid !important;
-      }
-      .deletesd-message {
-        font-size: 10px !important;
-        color: #c1c1c1 !important;
-        text-align: right;
-      }
-      .datetime {
-        margin-top: -10px;
-        font-size: 10px;
-        color: #c1c1c1;
-        text-align: right;
-      }
-    }
-  }
-  // .chat-input {
-  //   margin-top: 50px;
-  //   background: #ffd700;
-  //   width: 100% !important;
-  //   .chat-input-textarea {
-  //     width: 100% !important;
-  //     .text-count-alert {
-  //       font-size: 10px;
-  //       color: #c1c1c1;
-  //     }
-  //     textarea.chat-textarea {
-  //       border-radius: 10px;
-  //       border: #c1c1c1 1px solid;
-  //       color: #333;
-  //       font-size: 16px;
-  //       &:focus {
-  //         border: #f1f1f1 5px solid;
-  //         outline: none;
-  //       }
-  //       &::placeholder {
-  //         color: #c1c1c1;
-  //       }
-  //     }
 
-  //   }
-  // }
-}
+
+
 
 
 /* チャットルーム */
-
 .chat-room-message {
   width: 100%;
-  // margin: 0 !important;
-  // padding: 0 !important;
-  // background: #f1f1f1;
-  // margin-top: 10px;
   .chat-room-message-header {
     position: fixed;
     z-index: 1;
@@ -221,8 +132,7 @@
   }
   .chat-room-message-body {
     margin-top: 100px;
-    // overflow-y: scroll;
-    margin-bottom: 200px;
+    margin-bottom: 250px;
     .message-list {
       .message-item {
         list-style: none;
@@ -241,107 +151,6 @@
           to {
             opacity: 1;
             transform: translateY(0);
-          }
-        }
-      }
-    }
-    .load-more-messages {
-      button.read-more-messages {
-        width: 100%;
-        background: #f1f1f1;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 5px;
-        margin-bottom: 20px;
-        cursor: pointer;
-        color: #888;
-        &:hover {
-          background-color: #e1e1e1;
-          opacity: 0.8;
-        }
-      }
-    }
-  }
-  .chat-room-message-footer {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #f1f1f1;
-    padding: 10px 10px 20px 10px;
-    .chat-input {
-      .chat-input-textarea {
-        textarea.chat-textarea {
-          background: #fefefe;
-          border-radius: 5px;
-          border: 1px solid #c1c1c1;
-          outline: none;
-          &::placeholder {
-            color: #c1c1c1;
-            font-size: 12px;
-          }
-          &:focus {
-            border: 3px solid #e6e6e6 !important;
-          }
-        }
-      }
-    }
-  }
-  // .chat-room-message-footer {
-  //   position: fixed;
-  //   bottom: 0;
-  //   left: 0;
-  //   width: 100%;
-  //   background: #f1f1f1;
-  //   padding: 10px;
-  // }
-  // padding: 10px;
-  // border-bottom: 1px solid #eee;
-  // .chat-room-message-header {
-  //   font-size: large;
-  //   color: #333;
-  //   .avatar-area {
-
-  //   }
-  //   .nickname-area {
-  //     // background: #c1c1c1;
-  //     padding: 15px 0px;
-  //     .bcuid {
-  //       font-size: 12px;
-  //       color: #888;
-  //     }
-  //   }
-  //   .accordion {
-  //     word-break: break-all;
-  //     font-size: 14px;
-  //     .accordion-item {
-  //       .accordion-header {
-          
-  //         button {
-  //           background: #fff !important;
-  //           border: none !important;
-  //           &:focus {
-  //             background: #fff !important;
-  //             border: none !important;
-  //             box-shadow: none !important;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-  // .chat-room-message-body { 
-  //   word-break: break-all;
-  //   // background: #ffd700;
-  //   .message-list {
-      .message-item {
-        list-style: none;
-        margin-bottom: 15px;
-        display: block; // ブロック要素として表示
-        width: 90%; // 幅を90%に設定
-        .message-images {
-          img {
-            width: 100%;
           }
         }
       }
@@ -369,29 +178,73 @@
           text-align: left;
         }
       }
-      
-  //   }
-    // .load-more-messages {
-    //   button.read-more-messages {
-    //     width: 100%;
-    //     background: #f1f1f1;
-    //     border: none;
-    //     padding: 10px 20px;
-    //     border-radius: 5px;
-    //     margin-bottom: 20px;
-    //     cursor: pointer;
-    //     color: #888;
-    //     &:hover {
-    //       background-color: #e1e1e1;
-    //       opacity: 0.8;
-    //     }
-    //   }
-    // }
-  // }
-  // .chat-room-message-footer {}
-
-  .chat-room-message-body {
-
+    }
+    .load-more-messages {
+      button.read-more-messages {
+        width: 100%;
+        background: #f1f1f1;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        color: #888;
+        &:hover {
+          background-color: #e1e1e1;
+          opacity: 0.8;
+        }
+      }
+    }
   }
+  .chat-room-message-footer {
+    opacity: 0.9;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #fff;
+    padding: 10px 10px 20px 10px;
+    .chat-input {
+      
+      .chat-input-textarea {
+        
+        textarea.chat-textarea {
+          border-radius: 5px;
+          border: 1px solid #c1c1c1;
+          outline: none;
+          &::placeholder {
+            color: #c1c1c1;
+            font-size: 12px;
+          }
+          &:focus {
+            border: 3px solid #e6e6e6 !important;
+          }
+        }
+      }
+    }
+    .accordion {
+      .accordion-item {
+        .accordion-header {
+          .accordion-button {
+            margin-top: 10px;
+            height: 17px;
+            border-radius: 15px;
+            &:focus {
+              box-shadow: none;
+              background: #f1f1f1;
+            }
+            &:active {
+              background: #f1f1f1;
+            }
+          }
+        }
+        .accordion-body {
+          word-wrap: break-word;
+        }
+        // background: #ffd700;
+      }
+    }
+  }
+
 }
 
