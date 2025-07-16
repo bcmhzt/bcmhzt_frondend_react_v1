@@ -1,27 +1,27 @@
 /** 711e23e7 */
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import axios, { AxiosResponse } from 'axios';
-import { firestore } from '../../firebaseConfig';
+// import React, { useState, useEffect, useRef, useCallback } from 'react';
+// import { useAuth } from '../../contexts/AuthContext';
+// import axios, { AxiosResponse } from 'axios';
+// import { firestore } from '../../firebaseConfig';
 import { Link } from 'react-router-dom';
-import {
-  collection,
-  query,
-  // where,
-  orderBy,
-  limit,
-  doc,
-  getDocs,
-  startAfter,
-  QueryDocumentSnapshot,
-  getDoc,
-  getCountFromServer,
-  onSnapshot,
-  QuerySnapshot,
-  DocumentData,
-} from 'firebase/firestore';
+// import {
+//   collection,
+//   query,
+//   // where,
+//   orderBy,
+//   limit,
+//   doc,
+//   getDocs,
+//   startAfter,
+//   QueryDocumentSnapshot,
+//   getDoc,
+//   getCountFromServer,
+//   onSnapshot,
+//   QuerySnapshot,
+//   DocumentData,
+// } from 'firebase/firestore';
 // import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
-import { buildStorageUrl } from '../../utility/GetUseImage';
+// import { buildStorageUrl } from '../../utility/GetUseImage';
 import ChatInputTool2 from './ChatInputTool2';
 
 /* debug */
@@ -208,7 +208,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         </ul>
         <div />
       </div>
-      <div className="chat-room-message-footer mb20">
+      <div className="chat-room-message-footer">
         <div className="chat-input d-flex flex-column">
           <ChatInputTool2
           // chatRoomId={chatRoomId}
@@ -220,7 +220,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         </div>
 
         {/* meta info */}
-        {debug === 'true' && (
+        {debug === 'false' && (
           <>
             <div
               className="accordion accordion-flush"

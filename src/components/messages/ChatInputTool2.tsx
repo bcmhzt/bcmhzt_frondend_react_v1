@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { useAuth } from '../../contexts/AuthContext';
-import { firestore } from '../../firebaseConfig';
-import { serverTimestamp } from 'firebase/firestore';
-import { collection, doc, setDoc } from 'firebase/firestore';
+// import React, { useState } from 'react';
+// import { useAuth } from '../../contexts/AuthContext';
+// import { firestore } from '../../firebaseConfig';
+// import { serverTimestamp } from 'firebase/firestore';
+// import { collection, doc, setDoc } from 'firebase/firestore';
 import {
   // ThreeDotsVertical,
   // X,
@@ -16,24 +16,24 @@ if (debug === 'true') {
   console.log('[src/components/messages/ChatInputTool.tsx:xx] ‼️debug:', debug);
 }
 
-interface ChatInputToolProps {
-  chatRoomId: string;
-  onSendComplete?: (newMessage: ChatMessage) => void;
-  partnerUid?: string;
-  currentUserProfile?: any;
-  chatRoomData?: any;
-}
+// interface ChatInputToolProps {
+//   chatRoomId: string;
+//   onSendComplete?: (newMessage: ChatMessage) => void;
+//   partnerUid?: string;
+//   currentUserProfile?: any;
+//   chatRoomData?: any;
+// }
 
-interface ChatMessage {
-  id: string;
-  created_at: any; // Firestore Timestamp - メッセージ送信日時
-  updated_at: any; // Firestore Timestamp - メッセージ送信日時（修正日時）
-  image_url: string[]; // 添付画像（複数枚対応）
-  is_deleted: boolean; // 論理削除フラグ
-  last_read_at: { [uid: string]: any }; // 各UIDごとの既読タイムスタンプ（Firestore Timestamp）
-  sender_id: string; // 送信者UID
-  text: string; // 本文メッセージ
-}
+// interface ChatMessage {
+//   id: string;
+//   created_at: any; // Firestore Timestamp - メッセージ送信日時
+//   updated_at: any; // Firestore Timestamp - メッセージ送信日時（修正日時）
+//   image_url: string[]; // 添付画像（複数枚対応）
+//   is_deleted: boolean; // 論理削除フラグ
+//   last_read_at: { [uid: string]: any }; // 各UIDごとの既読タイムスタンプ（Firestore Timestamp）
+//   sender_id: string; // 送信者UID
+//   text: string; // 本文メッセージ
+// }
 
 const ChatInputTool = () => {
   return (
@@ -41,6 +41,9 @@ const ChatInputTool = () => {
       <div className="chat-input-textarea">
         <div className="text-count-alert">text count: 999</div>
         <textarea
+          name="message"
+          id="chat-input-message"
+          className="chat-textarea"
           placeholder="メッセージを入力"
           rows={3}
           maxLength={1500}

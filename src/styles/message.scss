@@ -153,36 +153,34 @@
       }
     }
   }
-  .chat-input {
-    margin-top: 50px;
-    // background: #ffd700;
-    width: 100% !important;
-    .chat-input-textarea {
-      width: 100% !important;
-      .text-count-alert {
-        font-size: 10px;
-        color: #c1c1c1;
-      }
-      textarea {
-        border-radius: 7px;
-        border: #c1c1c1 1px solid;
-        color: #333;
-        font-size: 16px;
-        &:focus {
-          border: #f1f1f1 5px solid;
-          outline: none;
-        }
-        &::placeholder {
-          color: #c1c1c1;
-        }
-      }
+  // .chat-input {
+  //   margin-top: 50px;
+  //   background: #ffd700;
+  //   width: 100% !important;
+  //   .chat-input-textarea {
+  //     width: 100% !important;
+  //     .text-count-alert {
+  //       font-size: 10px;
+  //       color: #c1c1c1;
+  //     }
+  //     textarea.chat-textarea {
+  //       border-radius: 10px;
+  //       border: #c1c1c1 1px solid;
+  //       color: #333;
+  //       font-size: 16px;
+  //       &:focus {
+  //         border: #f1f1f1 5px solid;
+  //         outline: none;
+  //       }
+  //       &::placeholder {
+  //         color: #c1c1c1;
+  //       }
+  //     }
 
-    }
-  }
+  //   }
+  // }
 }
-.modal-footer-chat {
-  // height: 200px;
-}
+
 
 /* チャットルーム */
 
@@ -197,12 +195,42 @@
     left: 0;
     width: 100%;
     height: 100px;
-    background: #f1f1f1;
+    background: #fff;
+    opacity:0.9;
     padding: 10px;
     .back-button {
       
       button {
         font-size: 12px;
+      }
+    }
+  }
+  .chat-room-message-body {
+    margin-top: 100px;
+    // overflow-y: scroll;
+  }
+  .chat-room-message-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #f1f1f1;
+    padding: 10px 10px 20px 10px;
+    .chat-input {
+      .chat-input-textarea {
+        textarea.chat-textarea {
+          background: #fefefe;
+          border-radius: 5px;
+          border: 1px solid #c1c1c1;
+          outline: none;
+          &::placeholder {
+            color: #c1c1c1;
+            font-size: 12px;
+          }
+          &:focus {
+            border: 3px solid #e6e6e6 !important;
+          }
+        }
       }
     }
   }
