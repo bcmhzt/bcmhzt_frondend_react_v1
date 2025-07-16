@@ -192,6 +192,7 @@
   // margin-top: 10px;
   .chat-room-message-header {
     position: fixed;
+    z-index: 1;
     top: 0;
     left: 0;
     width: 100%;
@@ -200,15 +201,66 @@
     opacity:0.9;
     padding: 10px;
     .back-button {
-      
       button {
         font-size: 12px;
+      }
+    }
+    .avatar-area {
+      // background: #ffd700;
+    }
+    .nickname-area {
+      // background: #ffd700;
+      font-size: 18px;
+      padding: 13px 0px;
+      word-break: break-all;
+      .bcuid {
+        font-size: 12px;
+        color: #888;
       }
     }
   }
   .chat-room-message-body {
     margin-top: 100px;
     // overflow-y: scroll;
+    margin-bottom: 200px;
+    .message-list {
+      .message-item {
+        list-style: none;
+        margin-bottom: 15px;
+        display: block;
+        width: 90%;
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.5s ease forwards;
+
+        @keyframes fadeInUp {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      }
+    }
+    .load-more-messages {
+      button.read-more-messages {
+        width: 100%;
+        background: #f1f1f1;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        color: #888;
+        &:hover {
+          background-color: #e1e1e1;
+          opacity: 0.8;
+        }
+      }
+    }
   }
   .chat-room-message-footer {
     position: fixed;
@@ -282,60 +334,59 @@
   //   word-break: break-all;
   //   // background: #ffd700;
   //   .message-list {
-  //     .message-item {
-  //       list-style: none;
-  //       margin-bottom: 15px;
-  //       display: block; // ブロック要素として表示
-  //       width: 90%; // 幅を90%に設定
-  //       .message-images {
-  //         img {
-  //           width: 100%;
-  //         }
-  //       }
-  //     }
-  //     .own-message {
-  //       margin-left: auto; // 右寄せ
-  //       background: #dadada;
-  //       text-align: left; // テキストは左寄せ
-  //       border-radius: 10px 0 10px 10px; // 角丸を追加（任意）
-  //       padding: 15px; // 内側の余白を追加
-  //       .message-time {
-  //         font-size: 10px;
-  //         color: #888;
-  //         text-align: right;;
-  //       }
-  //     }
-  //     .other-message {
-  //       margin-right: auto; // 左寄せ
-  //       background: #f7f7f7;
-  //       text-align: left; // テキストは左寄せ
-  //       border-radius: 0 10px 10px 10px; // 角丸を追加（任意）
-  //       padding: 10px; // 内側の余白を追加
-  //       .message-time {
-  //         font-size: 10px;
-  //         color: #888;
-  //         text-align: left;
-  //       }
-  //     }
+      .message-item {
+        list-style: none;
+        margin-bottom: 15px;
+        display: block; // ブロック要素として表示
+        width: 90%; // 幅を90%に設定
+        .message-images {
+          img {
+            width: 100%;
+          }
+        }
+      }
+      .own-message {
+        margin-left: auto; // 右寄せ
+        background: #dadada;
+        text-align: left; // テキストは左寄せ
+        border-radius: 10px 0 10px 10px; // 角丸を追加（任意）
+        padding: 15px; // 内側の余白を追加
+        .message-time {
+          font-size: 10px;
+          color: #888;
+          text-align: right;;
+        }
+      }
+      .other-message {
+        margin-right: auto; // 左寄せ
+        background: #f7f7f7;
+        text-align: left; // テキストは左寄せ
+        border-radius: 0 10px 10px 10px; // 角丸を追加（任意）
+        padding: 10px; // 内側の余白を追加
+        .message-time {
+          font-size: 10px;
+          color: #888;
+          text-align: left;
+        }
+      }
       
   //   }
-  //   .load-more-messages {
-  //     button.read-more-messages {
-  //       width: 100%;
-  //       background: #f1f1f1;
-  //       border: none;
-  //       padding: 10px 20px;
-  //       border-radius: 5px;
-  //       margin-bottom: 20px;
-  //       cursor: pointer;
-  //       color: #888;
-  //       &:hover {
-  //         background-color: #e1e1e1;
-  //         opacity: 0.8;
-  //       }
-
-  //     }
-  //   }
+    // .load-more-messages {
+    //   button.read-more-messages {
+    //     width: 100%;
+    //     background: #f1f1f1;
+    //     border: none;
+    //     padding: 10px 20px;
+    //     border-radius: 5px;
+    //     margin-bottom: 20px;
+    //     cursor: pointer;
+    //     color: #888;
+    //     &:hover {
+    //       background-color: #e1e1e1;
+    //       opacity: 0.8;
+    //     }
+    //   }
+    // }
   // }
   // .chat-room-message-footer {}
 

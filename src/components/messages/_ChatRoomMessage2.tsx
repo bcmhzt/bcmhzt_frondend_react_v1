@@ -521,7 +521,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
           />
         </div>
         {/* meta info */}
-        <div className="accordion accordion-flush" id="accordionFlushExample">
+        {/* <div className="accordion accordion-flush" id="accordionFlushExample">
           <div className="accordion-item">
             <h2 className="accordion-header">
               <button
@@ -555,7 +555,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* meta info end */}
       </div>
     </div>

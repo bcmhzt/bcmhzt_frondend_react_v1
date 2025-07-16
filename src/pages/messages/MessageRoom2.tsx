@@ -6,7 +6,7 @@
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
-import ChatRoomMessage2 from '../../components/messages/ChatRoomMessage2';
+import ChatRoomMessage from '../../components/messages/ChatRoomMessage';
 
 /**
  * c8031bb6
@@ -47,7 +47,7 @@ const MessageRoom = () => {
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-12 bc-left-no-footer">
-            {chat_room_id && <ChatRoomMessage2 chatRoomId={chat_room_id} />}
+            {chat_room_id && <ChatRoomMessage chatRoomId={chat_room_id} />}
           </div>
         </div>
       </div>
