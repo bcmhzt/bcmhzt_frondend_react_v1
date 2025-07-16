@@ -280,27 +280,31 @@ const Header = () => {
                   ログアウト
                 </span>
               </li>
-              <hr />
-              <li>
-                <Easel className="icon-lg" />
-                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
-              </li>
-              <li>
-                <Easel className="icon-lg" />
-                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
-              </li>
-              <li>
-                <Easel className="icon-lg" />
-                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
-              </li>
-              <li>
-                <Easel className="icon-lg" />
-                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
-              </li>
-              <li>
-                <Easel className="icon-lg" />
-                <span style={{ cursor: 'pointer' }}>Dummy Index</span>
-              </li>
+              {env === 'local' || env === 'test' || env === 'dev' ? (
+                <>
+                  <hr />
+                  <li>
+                    <Easel className="icon-lg" />
+                    <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+                  </li>
+                  <li>
+                    <Easel className="icon-lg" />
+                    <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+                  </li>
+                  <li>
+                    <Easel className="icon-lg" />
+                    <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+                  </li>
+                  <li>
+                    <Easel className="icon-lg" />
+                    <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+                  </li>
+                  <li>
+                    <Easel className="icon-lg" />
+                    <span style={{ cursor: 'pointer' }}>Dummy Index</span>
+                  </li>
+                </>
+              ) : null}
             </ul>
           </div>
 

@@ -1,3 +1,4 @@
+/** fd3763f8 */
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { buildStorageUrl } from '../../utility/GetUseImage';
@@ -195,7 +196,7 @@ const MesageChatRoomCard: React.FC<UserProps> = ({ user, chatRoomId }) => {
           </div>
         </div>
         {/* 最新メッセージの表示 */}
-        <Link to={`/message/${chatRoomId}`} className="chat-link">
+        <Link to={`/message2/${chatRoomId}`} className="chat-link">
           <div className="chat-preview">
             <span>{latestMessage}</span>
             {/* {latestMessage.startsWith('<img') ? (
