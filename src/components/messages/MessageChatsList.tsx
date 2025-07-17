@@ -7,14 +7,14 @@ import {
   QueryFunctionContext,
   InfiniteData,
 } from '@tanstack/react-query';
-import MesageChatRoomCard from '../../components/messages/MesageChatRoomCard';
+import MeassageChatRoomCard from '../../components/messages/MeassageChatRoomCard';
 import { generateChatRoomId } from '../../utility/Chat';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
   console.log(
-    '[src/components/messages/MesageChatsList.tsx:xx] ‼️debug:',
+    '[src/components/messages/MessageChatsList.tsx:xx] ‼️debug:',
     debug
   );
 }
@@ -96,6 +96,10 @@ interface ApiData {
   user_profile_created_at: string;
 }
 
+/**
+ * チャットルーム一覧（マッチング）
+ * @returns
+ */
 const MesageChatsList = () => {
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
   const { currentUserProfile, token } = useAuth();
@@ -103,7 +107,7 @@ const MesageChatsList = () => {
     {}
   );
 
-  // console.log('[src/components/messages/MesageChatsList.tsx:97] token:', token);
+  // console.log('[src/components/messages/MessageChatsList.tsx:97] token:', token);
 
   async function fetchApiData(
     page: number,
@@ -115,7 +119,7 @@ const MesageChatsList = () => {
       { headers: { Authorization: `Bearer ${token}` } }
     );
     console.log(
-      '[src/components/messages/MesageChatsList.tsx:107] 😑 res.data:',
+      '[src/components/messages/MessageChatsList.tsx:107] 😑 res.data:',
       res.data
     );
     return res.data;
@@ -216,7 +220,7 @@ const MesageChatsList = () => {
             </pre> */}
             {/* {user.nickname} (@{user.bcuid}) - {user.location} */}
             {chatRoomIds[user.uid] ? (
-              <MesageChatRoomCard
+              <MeassageChatRoomCard
                 user={user}
                 chatRoomId={chatRoomIds[user.uid]}
               />

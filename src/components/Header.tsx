@@ -21,6 +21,7 @@ import {
   CardText,
   Bell,
   Envelope,
+  BoxArrowUpRight,
 } from 'react-bootstrap-icons';
 import LanguageSelector from '../utility/LanguageSelector';
 import { useAuth } from '../contexts/AuthContext';
@@ -233,6 +234,7 @@ const Header = () => {
                 <Link to="/myprofile">プロフィールの設定</Link>
               </li>
 
+              {/* ご利用方法 */}
               <li>
                 <Book className="icon-lg" />
                 <a
@@ -242,6 +244,10 @@ const Header = () => {
                   className="ms-2"
                 >
                   ご利用方法
+                  <BoxArrowUpRight
+                    className="ml10"
+                    style={{ fontSize: '0.8rem', color: '#888' }}
+                  />
                 </a>
               </li>
               <li>

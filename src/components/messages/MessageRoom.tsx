@@ -27,36 +27,36 @@ import { useAuth } from '../../contexts/AuthContext';
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
-  console.log('[src/components/messages/MessageRoom2.tsx:xx] debug:', debug);
+  console.log('[src/components/messages/MessageRoom.tsx:xx] debug:', debug);
 }
 
-interface MessageRoom2Props {
+interface MessageRoomProps {
   item: MatchUser;
   chatRoomId: string;
   latestMessage?: any;
   onClose: () => void;
 }
 
-const MessageRoom2 = ({
+const MessageRoom = ({
   item,
   chatRoomId,
   latestMessage,
   onClose,
-}: MessageRoom2Props) => {
+}: MessageRoomProps) => {
   const { currentUserProfile } = useAuth();
   console.log(
-    '[src/components/messages/MessageRoom2.tsx:xx] currentUserProfile:',
+    '[src/components/messages/MessageRoom.tsx:xx] currentUserProfile:',
     currentUserProfile.user_profile.uid
   );
   console.log(
-    '[src/components/messages/MessageRoom2.tsx:xx] item.matched_uid:',
+    '[src/components/messages/MessageRoom.tsx:xx] item.matched_uid:',
     item.matched_uid
   );
 
   return (
     <div className="message-room">
       <div className="d-flex flex-row">
-        {/* <pre>{JSON.stringify(item.profile_images, null, 2)}</pre> */}
+        <pre>{JSON.stringify(item.profile_images, null, 2)}</pre>
         <div className="avatar-area">
           <img
             src={
@@ -77,7 +77,9 @@ const MessageRoom2 = ({
           <span className="bcuid"> @ {item?.bcuid}</span>
         </div>
         <div className="tool-area" style={{ marginLeft: 'auto' }}>
-          <ThreeDotsVertical style={{ fontSize: '20px', color: '#333' }} />
+          <button>
+            <ThreeDotsVertical style={{ fontSize: '20px', color: '#333' }} />
+          </button>
         </div>
       </div>
       <div className="chat-preview">
@@ -91,4 +93,4 @@ const MessageRoom2 = ({
   );
 };
 
-export default MessageRoom2;
+export default MessageRoom;

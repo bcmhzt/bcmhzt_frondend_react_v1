@@ -29,7 +29,7 @@ import Messages from "./pages/messages/Messages";
 // import NewMatchedChatList from "./pages/messages/NewMatchedChatList";
 import MessageRoom from "./pages/messages/MessageRoom";
 // import MessageRoom2 from "./pages/messages/MessageRoom2";
-import MesageChats from "./pages/messages/MesageChats";
+import MessageChats from "./pages/messages/MessageChats";
 /* messages end */
 import LoopTutorial from "./pages/develop/LoopTutorial";
 import DevArchtectPage from "./pages/develop/DevArchtectPage";
@@ -96,7 +96,8 @@ const routes: RoutesObject = {
     // { path: "/new_matched_chat_messages", component: NewMatchedChatList },// 新規のチャットルーム一覧
     { path: "/message/:chat_room_id", component: MessageRoom },// チャットルーム
     // { path: "/message2/:chat_room_id", component: MessageRoom2 },// チャットルーム
-    { path: "/message_chats", component: MesageChats },
+    /** Chat Message */
+    { path: "/message_chats", component: MessageChats },
     // else
     { path: "/loop_tutorial", component: LoopTutorial },// ループチュートリアル
     { path: "/myprofile", component: MyProfile },// マイプロフィール更新・変更

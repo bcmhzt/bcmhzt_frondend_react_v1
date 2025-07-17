@@ -2,8 +2,13 @@
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { Link } from 'react-router-dom';
-import MesageChatsList from '../../components/messages/MesageChatsList';
+import MessageChatsList from '../../components/messages/MessageChatsList';
 
+/**
+ * /message_chats
+ * MessageChats
+ * @returns
+ */
 const MessageChats = () => {
   return (
     <div className="app-body">
@@ -14,18 +19,18 @@ const MessageChats = () => {
           <div className="col-12 col-md-6 bc-left">
             <h2 className="page-title mb20">Messages</h2>
             <div className="post-index-header d-flex justify-content-around mb20">
-              <div className="pih-posts pih active">
-                <Link to="/">最新メッセージ</Link>
-              </div>
               <div className="pih-posts pih">
+                <Link to="/message_chats_new">最新メッセージ</Link>
+              </div>
+              <div className="pih-posts pih active">
                 <Link to="/message_chats">新規メッセージ</Link>
               </div>
 
               <div className="pih-posts pih">
-                <Link to="/message_chats">ブックマーク</Link>
+                <Link to="/message_chats_bookmark">ブックマーク</Link>
               </div>
             </div>
-            <MesageChatsList />
+            <MessageChatsList />
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">
             <div
