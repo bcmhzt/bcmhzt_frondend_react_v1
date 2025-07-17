@@ -23,7 +23,7 @@ import {
 // import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import ChatInputTool from './ChatInputTool';
-import { ThreeDotsVertical, X } from 'react-bootstrap-icons';
+import { ThreeDotsVertical } from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -142,6 +142,11 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       );
 
       setTotalMessageCount(count);
+      console.log(
+        '[src/components/messages/ChatRoomMessage.tsx] 📊 総メッセージ件数(status):',
+        totalMessageCount
+      );
+
       return count;
     } catch (error) {
       console.error(
@@ -150,6 +155,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
       );
       return 0;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatRoomId]);
 
   // 🔽 最新のメッセージをリアルタイムで取得するリスナー（初回読み込み後）
@@ -568,8 +574,11 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
             onSendComplete={handleSendComplete}
           />
         </div>
+
+        {latestMessageId}
+
         {/* meta info */}
-        <div className="accordion accordion-flush" id="accordionFlushExample">
+        {/* <div className="accordion accordion-flush" id="accordionFlushExample">
           <div className="accordion-item">
             <h2 className="accordion-header">
               <button
@@ -603,7 +612,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
         {/* meta info end */}
       </div>
     </div>
