@@ -16,11 +16,19 @@ import {
   orderBy,
   limit,
   getDocs,
+  // addDoc,
+  // updateDoc,
   serverTimestamp,
   // Timestamp,
 } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
-import MessageRoom2 from './MessageRoom2';
+// import MessageRoom2 from './MessageRoom2';
+
+/* debug */
+let debug = process.env.REACT_APP_DEBUG;
+if (debug === 'true') {
+  console.log('[src/components/messages/MessageList2.tsx:xx] debug:', debug);
+}
 
 const fetchMatchedUsers = async ({
   pageParam,
@@ -38,6 +46,11 @@ const fetchMatchedUsers = async ({
         Authorization: `Bearer ${token}`,
       },
     }
+  );
+  console.log('[src/components/messages/MessageList2.tsx:44] page:', page);
+  console.log(
+    '[src/components/messages/MessageList2.tsx:45] response:',
+    res.data
   );
   return res.data as MatchListResponse;
 };
@@ -76,6 +89,7 @@ const MessageList2: React.FC = () => {
   });
 
   useEffect(() => {
+    const now = new Date(); // クライアント時刻を取得
     const fetchChats = async () => {
       if (!currentUserProfile?.user_profile?.uid || !data) return;
 
@@ -84,6 +98,7 @@ const MessageList2: React.FC = () => {
       const allUsers: MatchUser[] = data.pages.flatMap((p) => p.data.data);
       const results: ChatRoomDisplayData[] = [];
 
+      /** ChatRoomの作成、なければ作成・あればスキップ */
       for (const user of allUsers) {
         if (!user.uid) continue;
 
@@ -102,11 +117,13 @@ const MessageList2: React.FC = () => {
               [user.uid]: nickname,
             },
             created_at: serverTimestamp(),
-            updated_at: serverTimestamp(),
+            // updated_at: serverTimestamp(),
+            updated_at: now, // クライアント時刻を使用
           });
           chatSnap = await getDoc(chatDocRef); // 再取得
         }
 
+        /* Chat Roomリストに表示する最新メッセージを取得 */
         const msgQuery = query(
           collection(chatDocRef, 'messages'),
           orderBy('created_at', 'desc'),
@@ -115,6 +132,7 @@ const MessageList2: React.FC = () => {
         const msgSnap = await getDocs(msgQuery);
         const latestMessage = msgSnap.docs[0]?.data() ?? null;
 
+        /* Chat Roomを最新順で並べ替え */
         results.push({
           user,
           chatRoomId,
@@ -129,6 +147,22 @@ const MessageList2: React.FC = () => {
 
     fetchChats();
   }, [data, currentUserProfile]);
+
+  useEffect(() => {
+    if (!data) return;
+
+    console.log(
+      '[src/components/messages/MessageList2.tsx:152] ▼▼▼ useInfiniteQuery data ▼▼▼'
+    );
+    console.log(JSON.stringify(data, null, 2));
+    console.log(
+      '[src/components/messages/MessageList2.tsx:152] ▲▲▲ useInfiniteQuery data ▲▲▲'
+    );
+
+    data.pages.forEach((page, i) => {
+      console.log(`[Page ${i + 1}]`, page);
+    });
+  }, [data]);
 
   const observerRef = useRef<IntersectionObserver | null>(null);
 
@@ -167,7 +201,7 @@ const MessageList2: React.FC = () => {
           >
             {/* <pre>{JSON.stringify(chatDataList, null, 2)}</pre> */}
 
-            <MessageRoom2
+            {/* <MessageRoom2
               item={user}
               chatRoomId={chatRoomId}
               latestMessage={latestMessage}
@@ -176,7 +210,7 @@ const MessageList2: React.FC = () => {
                   prev.filter((chat) => chat.chatRoomId !== chatRoomId)
                 );
               }}
-            />
+            /> */}
           </li>
         );
       })}

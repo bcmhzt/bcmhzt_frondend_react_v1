@@ -20,7 +20,7 @@ import {
   // Timestamp,
 } from 'firebase/firestore';
 import { firestore } from '../../firebaseConfig';
-import MessageRoom2 from './MessageRoom2';
+import MessageRoom from './MessageRoom';
 
 const fetchMatchedUsers = async ({
   pageParam,
@@ -167,7 +167,7 @@ const MessageList2: React.FC = () => {
           >
             {/* <pre>{JSON.stringify(chatDataList, null, 2)}</pre> */}
 
-            <MessageRoom2
+            <MessageRoom
               item={user}
               chatRoomId={chatRoomId}
               latestMessage={latestMessage}
