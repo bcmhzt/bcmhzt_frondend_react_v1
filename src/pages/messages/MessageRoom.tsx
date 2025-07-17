@@ -1,8 +1,4 @@
-/** c8031bb6 page */
-// import { Link } from 'react-router-dom';
-// import { buildStorageUrl } from '../../utility/GetUseImage';
-// import Header from '../../components/Header';
-// import Footer from '../../components/Footer';
+/** c8031bb6 OK */
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';

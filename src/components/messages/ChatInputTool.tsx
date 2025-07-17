@@ -1,3 +1,4 @@
+/** ba4d1749 OK */
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';

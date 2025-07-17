@@ -23,7 +23,7 @@ import PostsMedia from "./pages/posts/PostsMedia";
 import PostDetail from "./pages/posts/PostDetail"
 import Notice from "./pages/notice/Notice";
 /* messages */
-import Messages from "./pages/messages/Messages";
+// import Messages from "./pages/messages/Messages";
 // import Messages2 from "./pages/messages/Messages2";
 // import ExistingChatList from "./pages/messages/ExistingChatList";
 // import NewMatchedChatList from "./pages/messages/NewMatchedChatList";
@@ -90,7 +90,7 @@ const routes: RoutesObject = {
     { path: "/post/:post_id", component: PostDetail },// 投稿詳細
     { path: "/notice", component: Notice },// 通知
     // Chat rooms
-    { path: "/messages", component: Messages },// メッセージルーム（チャット）会話の更新順
+    // { path: "/messages", component: Messages },// メッセージルーム（チャット）会話の更新順
     // { path: "/messages2", component: Messages2 },// メッセージルーム（チャット）会話の更新順
     // { path: "/existing_chat_messages", component: ExistingChatList },// 既存のチャットルーム一覧
     // { path: "/new_matched_chat_messages", component: NewMatchedChatList },// 新規のチャットルーム一覧
