@@ -4,12 +4,8 @@ import { useAuth } from '../../contexts/AuthContext';
 import { firestore } from '../../firebaseConfig';
 import { serverTimestamp } from 'firebase/firestore';
 import { collection, doc, setDoc } from 'firebase/firestore';
-import {
-  // ThreeDotsVertical,
-  // X,
-  SendFill,
-  Image,
-} from 'react-bootstrap-icons';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { SendFill, Image } from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -27,13 +23,13 @@ interface ChatInputToolProps {
 
 interface ChatMessage {
   id: string;
-  created_at: any; // Firestore Timestamp - メッセージ送信日時
-  updated_at: any; // Firestore Timestamp - メッセージ送信日時（修正日時）
-  image_url: string[]; // 添付画像（複数枚対応）
-  is_deleted: boolean; // 論理削除フラグ
-  last_read_at: { [uid: string]: any }; // 各UIDごとの既読タイムスタンプ（Firestore Timestamp）
-  sender_id: string; // 送信者UID
-  text: string; // 本文メッセージ
+  created_at: any;
+  updated_at: any;
+  image_url: string[];
+  is_deleted: boolean;
+  last_read_at: { [uid: string]: any };
+  sender_id: string;
+  text: string;
 }
 
 /**
@@ -54,29 +50,32 @@ const ChatInputTool: React.FC<ChatInputToolProps> = ({
   const { currentUser } = useAuth();
   const [text, setText] = useState('');
   const [sending, setSending] = useState(false);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+
+  const handleImageSelect = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.multiple = true;
+    input.onchange = (e: Event) => {
+      const files = (e.target as HTMLInputElement).files;
+      if (!files) return;
+      const newFiles = Array.from(files).slice(0, 5 - selectedImages.length);
+      setSelectedImages((prev) => [...prev, ...newFiles]);
+    };
+    input.click();
+  };
+
+  const handleRemoveImage = (index: number) => {
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+  };
 
   const handleSend = async () => {
-    console.log(
-      '[src/components/messages/ChatInputTool.tsx:50] ✳️ handleSend:',
-      text
-    );
-    if (!text.trim() || sending || !chatRoomId) return;
+    if ((!text.trim() && selectedImages.length === 0) || sending || !chatRoomId)
+      return;
 
-    const messageData: ChatMessage = {
-      id: '', // Placeholder ID, will be replaced later
-      created_at: serverTimestamp(),
-      updated_at: serverTimestamp(),
-      image_url: [], // 今は画像なし
-      is_deleted: false,
-      last_read_at: {
-        [currentUserProfile?.uid]: serverTimestamp(),
-      },
-      sender_id: currentUser?.uid || '',
-      text: text.trim(),
-    };
-
+    setSending(true);
     try {
-      setSending(true);
       const messagesRef = collection(
         firestore,
         'chats',
@@ -84,14 +83,54 @@ const ChatInputTool: React.FC<ChatInputToolProps> = ({
         'messages'
       );
       const newMessageRef = doc(messagesRef);
+      const messageId = newMessageRef.id;
+
+      // アップロード処理
+      const storage = getStorage();
+      const imageUrls: string[] = [];
+
+      for (let i = 0; i < selectedImages.length; i++) {
+        const file = selectedImages[i];
+        const storageRef = ref(
+          storage,
+          `chat_images/${chatRoomId}/${messageId}/${Date.now()}_${i}.jpg`
+        );
+        await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(storageRef);
+        imageUrls.push(url);
+      }
+
+      const messageData: ChatMessage = {
+        id: messageId,
+        created_at: serverTimestamp(),
+        updated_at: serverTimestamp(),
+        image_url: imageUrls,
+        is_deleted: false,
+        last_read_at: {
+          [currentUserProfile?.uid]: serverTimestamp(),
+        },
+        sender_id: currentUser?.uid || '',
+        text: text.trim(),
+      };
+
+      // try {
+      //   setSending(true);
+      //   const messagesRef = collection(
+      //     firestore,
+      //     'chats',
+      //     chatRoomId,
+      //     'messages'
+      //   );
+      //   const newMessageRef = doc(messagesRef);
       await setDoc(newMessageRef, messageData);
 
-      const newMessage = { ...messageData, id: newMessageRef.id };
+      // const newMessage = { ...messageData, id: newMessageRef.id };
       if (onSendComplete) {
-        onSendComplete(newMessage);
+        onSendComplete(messageData);
       }
 
       setText('');
+      setSelectedImages([]);
     } catch (error) {
       console.error('[ChatInputTool] メッセージ送信エラー:', error);
     } finally {
@@ -131,17 +170,46 @@ const ChatInputTool: React.FC<ChatInputToolProps> = ({
           // }}
           disabled={sending}
         />
+
+        {/* ✅ サムネイルプレビュー */}
+        {selectedImages.length > 0 && (
+          <div className="chat-image-preview d-flex flex-wrap mt-2">
+            {selectedImages.map((file, index) => (
+              <div key={index} className="position-relative m-1">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt="preview"
+                  style={{
+                    width: 80,
+                    height: 80,
+                    objectFit: 'cover',
+                    borderRadius: 8,
+                  }}
+                />
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger position-absolute"
+                  style={{
+                    top: -10,
+                    right: -10,
+                    borderRadius: '50%',
+                    padding: 0,
+                    width: 20,
+                    height: 20,
+                    fontSize: 12,
+                  }}
+                  onClick={() => handleRemoveImage(index)}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         <div className="d-flex justify-content-end mt-2">
           <button
             className="btn btn-primary bcmhzt-btn-gray mr10"
-            // onClick={() => {
-            //   const fi = document.createElement('input');
-            //   fi.type = 'file';
-            //   fi.multiple = true;
-            //   fi.accept = 'image/*';
-            //   fi.onchange = (e) => handleImageChange(e as any);
-            //   fi.click();
-            // }}
+            onClick={handleImageSelect}
           >
             <Image style={{ cursor: 'pointer', color: '#fff' }} />
           </button>
@@ -150,12 +218,15 @@ const ChatInputTool: React.FC<ChatInputToolProps> = ({
             onClick={handleSend}
             disabled={sending}
           >
-            {/* {isSending ? (
-                  <span className="spinner-border spinner-border-sm text-white" />
-                ) : (
-                  <SendFill style={{ cursor: 'pointer', color: '#fff' }} />
-                )} */}
-            <SendFill style={{ cursor: 'pointer', color: '#fff' }} />
+            {sending ? (
+              <span
+                className="spinner-border spinner-border-sm text-light"
+                role="status"
+                aria-hidden="true"
+              />
+            ) : (
+              <SendFill style={{ cursor: 'pointer', color: '#fff' }} />
+            )}
           </button>
         </div>
       </div>

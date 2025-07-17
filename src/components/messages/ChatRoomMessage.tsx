@@ -19,11 +19,19 @@ import {
   onSnapshot,
   QuerySnapshot,
   DocumentData,
+  deleteDoc,
 } from 'firebase/firestore';
-// import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
+import {
+  ThreeDotsVertical,
+  Trash,
+  // ReplyFill,
+  // BookmarkFill,
+  // X,
+  // SendFill,
+  // Image,
+} from 'react-bootstrap-icons';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import ChatInputTool from './ChatInputTool';
-import { ThreeDotsVertical } from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -110,6 +118,9 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
   };
   const [latestMessageId, setLatestMessageId] = useState<string | null>(null);
   const messageBodyRef = useRef<HTMLDivElement | null>(null);
+  const [messageToolOpenId, setMessageToolOpenId] = useState<string | null>(
+    null
+  );
 
   const handleSendComplete = (newMessage: ChatMessage) => {
     setMessages((prev) => [...prev, newMessage]);
@@ -360,7 +371,66 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [apiEndpoint, token, partnerUid]);
 
-  // メッセージをレンダリングする関数
+  /**
+   * メッセージのツールチップを開く関数
+   * @param messageId
+   * @param chatRoomId
+   * - メッセージの削除
+   * @returns void
+   */
+  function messageTools(messageId: string) {
+    setMessageToolOpenId((prevState) =>
+      prevState === messageId ? null : messageId
+    );
+    console.log(
+      `[src/components/messages/ChatRoomMessage.tsx] messageTool() called for messageId: ${messageId}`,
+      [chatRoomId, messageId]
+    );
+  }
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const toolsElement = document.querySelector('.message-tools');
+      if (toolsElement && !toolsElement.contains(event.target as Node)) {
+        setMessageToolOpenId(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  /**
+   * メッセージを削除する関数
+   * @param messageId 削除するメッセージのID
+   */
+  const handleDeleteMessage = async (messageId: string) => {
+    console.log(
+      '[src/components/messages/ChatRoomMessage.tsx] handleDeleteMessage() called',
+      [messageId, chatRoomId]
+    );
+    try {
+      await deleteDoc(
+        doc(firestore, 'chats', chatRoomId, 'messages', messageId)
+      );
+      console.log(
+        '[src/components/messages/ChatRoomMessage.tsx] Message deleted successfully'
+      );
+    } catch (error) {
+      console.error(
+        '[src/components/messages/ChatRoomMessage.tsx] Error deleting message:',
+        error
+      );
+    }
+  };
+
+  /**
+   *メッセージをレンダリングする関数
+   * @param message メッセージレンダリング
+   * @returns
+   */
   const renderMessage = (message: ChatMessage) => {
     const isOwnMessage =
       message.sender_id === currentUserProfile?.user_profile?.uid;
@@ -389,11 +459,6 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
               ))}
             </div>
           )}
-          {/* メッセージのリアクション */}
-
-          {/* <button className="reaction-button">
-            <ThreeDotsVertical />
-          </button> */}
 
           {/* 日時 */}
           <div className="message-time">
@@ -408,35 +473,36 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
               minute: '2-digit',
             })}
             <button
-              className="reaction-button"
-              onClick={() => {
-                const tooltip = document.getElementById(
-                  `tooltip-${message.id}`
-                );
-                if (tooltip) {
-                  tooltip.style.display =
-                    tooltip.style.display === 'block' ? 'none' : 'block';
-                }
-              }}
+              className={`reaction-button message-tool-item ${isOwnMessage ? 'own-message-item' : 'other-message-item'}`}
+              onClick={() => messageTools(message.id)}
             >
               <ThreeDotsVertical id={message.id} />
             </button>
-            {/* <div
-              id={`tooltip-${message.id}`}
-              className="tooltip-window"
-              style={{
-                display: 'none',
-                position: 'absolute',
-                backgroundColor: '#fff',
-                border: '1px solid #ccc',
-                padding: '10px',
-                borderRadius: '5px',
-                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
-                zIndex: 100000000000,
-              }}
-            >
-              <p>ツールチップの内容をここに記載</p>
-            </div> */}
+            {messageToolOpenId === message.id && (
+              <div className="message-tools">
+                <ul className="message-tools-list">
+                  <li
+                    className="message-tools-item trash"
+                    onClick={() => handleDeleteMessage(message.id)}
+                  >
+                    <Trash style={{ fontSize: '18px', cursor: 'pointer' }} />{' '}
+                    送信取消
+                  </li>
+                  {/* <li className="message-tools-item">
+                    <ReplyFill
+                      style={{ fontSize: '20px', cursor: 'pointer' }}
+                    />{' '}
+                    リプライ
+                  </li>
+                  <li className="message-tools-item">
+                    <BookmarkFill
+                      style={{ fontSize: '15px', cursor: 'pointer' }}
+                    />{' '}
+                    Keepメモ
+                  </li> */}
+                </ul>
+              </div>
+            )}
           </div>
         </div>
       </li>
@@ -517,7 +583,7 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         ref={messageBodyRef}
         style={{
           overflowY: 'scroll',
-          maxHeight: 'calc(100vh - 20px)',
+          maxHeight: 'calc(120vh - 10px)',
           scrollbarWidth: 'none', // For Firefox
           msOverflowStyle: 'none', // For IE and Edge
         }}
@@ -585,15 +651,16 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
                 className="accordion-button collapsed"
                 type="button"
                 data-bs-toggle="collapse"
-                data-bs-target="#flush-collapseOne"
+                // data-bs-target="#flush-collapseOne"
+                data-bs-target={`#${chatRoomId}`}
                 aria-expanded="false"
-                aria-controls="flush-collapseOne"
+                aria-controls={`#${chatRoomId}`}
               >
                 ...
               </button>
             </h2>
             <div
-              id="flush-collapseOne"
+              id={`#${chatRoomId}`}
               className="accordion-collapse collapse"
               data-bs-parent="#accordionFlushExample"
             >

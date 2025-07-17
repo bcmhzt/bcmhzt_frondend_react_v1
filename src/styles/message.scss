@@ -185,12 +185,30 @@
           text-align: left;
         }
       }
+      /*.tool */
       .reaction-button {
         border: none;
         background: transparent;
         cursor: pointer;
         color: #888;
         font-size: 18px;
+      }
+      .other-message-item {
+        display: none;
+      }
+      .message-tools {
+        padding: 10px;
+        font-size: 16px;
+        ul.message-tools-list {
+          list-style: none;
+          li.message-tools-item {
+            margin-bottom: 10px;
+            cursor: pointer;
+          }
+          .trash {
+            color: #880000;
+          }
+        }
       }
     }
     .load-more-messages {
