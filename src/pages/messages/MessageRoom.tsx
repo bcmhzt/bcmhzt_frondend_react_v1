@@ -48,37 +48,6 @@ const MessageRoom = () => {
         <div className="row">
           <div className="col-12 col-md-6 bc-left-no-footer">
             {chat_room_id && <ChatRoomMessage chatRoomId={chat_room_id} />}
-            {/* <div className="message-room-id">
-              <pre>{JSON.stringify(chatRoomData, null, 2)}</pre>
-              <div className="message-room-header">
-                <div className="d-flex flex-row">
-                  <div className="avatar-area">
-                    <Link to={`/member/${user?.bcuid}`}>
-                      <img
-                        src={
-                          user?.profile_images
-                            ? buildStorageUrl(
-                                process.env
-                                  .REACT_APP_FIREBASE_STORAGE_BASE_URL ?? '',
-                                user?.profile_images,
-                                '_small'
-                              )
-                            : `${process.env.PUBLIC_URL}/assets/images/dummy/dummy_avatar.png`
-                        }
-                        className="avatar-36"
-                        alt={user?.nickname || 'Unknown User'}
-                      />
-                    </Link>
-                  </div>
-                </div>
-              </div>
-              <div className="message-room-body">
-                <p>Chat Room ID: {chat_room_id}</p>
-              </div>
-              <div className="message-room-footer">
-                <p>Chat Room ID: {chat_room_id}</p>
-              </div>
-            </div> */}
           </div>
           <div className="d-none d-md-block col-md-6 bc-right">
             <div

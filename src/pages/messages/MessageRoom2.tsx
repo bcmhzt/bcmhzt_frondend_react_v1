@@ -10,7 +10,7 @@ import ChatRoomMessage from '../../components/messages/ChatRoomMessage';
 
 /**
  * c8031bb6
- * ChatRoomMessage2コンポーネントにchatRomIdを送信する
+ * ChatRoomMessageコンポーネントにchatRomIdを送信する
  *
  */
 const MessageRoom = () => {
@@ -46,8 +46,19 @@ const MessageRoom = () => {
       {/* <Header /> */}
       <div className="container bc-app">
         <div className="row">
-          <div className="col-12 col-md-12 bc-left-no-footer">
+          <div className="col-12 col-md-6 bc-left-no-footer">
             {chat_room_id && <ChatRoomMessage chatRoomId={chat_room_id} />}
+          </div>
+          <div className="d-none d-md-block col-md-6 bc-right">
+            <div
+              style={{
+                background: '#f1f1f1',
+                height: '100%',
+                padding: '20px',
+              }}
+            >
+              広告エリア / サブエリア
+            </div>
           </div>
         </div>
       </div>

@@ -2,7 +2,7 @@
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 // import MessageList2 from '../../components/messages/MessageList2';
-import ExistingChatListComponent from '../../components/messages/ExistingChatListComponent';
+// import ExistingChatListComponent from '../../components/messages/ExistingChatListComponent';
 import { Link } from 'react-router-dom';
 
 const ExistingChatList = () => {
@@ -26,7 +26,7 @@ const ExistingChatList = () => {
                   <Link to="/bookmark_messages">ブックマーク</Link>
                 </div>
               </div>
-              <ExistingChatListComponent />
+              {/* <ExistingChatListComponent /> */}
             </div>
             <div className="d-none d-md-block col-md-6 bc-right">
               <div

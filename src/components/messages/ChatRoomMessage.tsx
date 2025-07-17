@@ -23,6 +23,7 @@ import {
 // import { ThreeDotsVertical, X, SendFill, Image } from 'react-bootstrap-icons';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import ChatInputTool from './ChatInputTool';
+import { ThreeDotsVertical, X } from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -382,11 +383,54 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
               ))}
             </div>
           )}
+          {/* メッセージのリアクション */}
+
+          {/* <button className="reaction-button">
+            <ThreeDotsVertical />
+          </button> */}
+
+          {/* 日時 */}
           <div className="message-time">
+            {/* <pre>{JSON.stringify(messageTime, null, 2)}</pre> */}
+            {messageTime.toLocaleDateString('ja-JP', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            })}{' '}
             {messageTime.toLocaleTimeString('ja-JP', {
               hour: '2-digit',
               minute: '2-digit',
             })}
+            <button
+              className="reaction-button"
+              onClick={() => {
+                const tooltip = document.getElementById(
+                  `tooltip-${message.id}`
+                );
+                if (tooltip) {
+                  tooltip.style.display =
+                    tooltip.style.display === 'block' ? 'none' : 'block';
+                }
+              }}
+            >
+              <ThreeDotsVertical id={message.id} />
+            </button>
+            {/* <div
+              id={`tooltip-${message.id}`}
+              className="tooltip-window"
+              style={{
+                display: 'none',
+                position: 'absolute',
+                backgroundColor: '#fff',
+                border: '1px solid #ccc',
+                padding: '10px',
+                borderRadius: '5px',
+                boxShadow: '0 2px 5px rgba(0, 0, 0, 0.2)',
+                zIndex: 100000000000,
+              }}
+            >
+              <p>ツールチップの内容をここに記載</p>
+            </div> */}
           </div>
         </div>
       </li>
@@ -480,7 +524,6 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         }
           `}
         </style>
-
         {/* 過去のメッセージを読み込むボタン */}
         {hasMoreMessages && (
           <div className="load-more-messages text-center p-3">
@@ -502,7 +545,12 @@ const ChatRoomMessage = ({ chatRoomId }: { chatRoomId: string }) => {
         )}
         <ul className="message-list">{messages.map(renderMessage)}</ul>
         <div ref={messagesEndRef} />
-
+        <p
+          className=""
+          style={{ color: '#c1c1c1', fontSize: '12px', textAlign: 'center' }}
+        >
+          これ以上のメッセージはありません
+        </p>
         {isLoadingMessages && messages.length === 0 && (
           <div className="text-center p-3">
             <span className="spinner-border spinner-border-sm me-2" />
