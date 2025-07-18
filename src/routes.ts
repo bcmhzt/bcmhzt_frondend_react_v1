@@ -46,9 +46,11 @@ import Index from "./pages/Index";
 import List from "./pages/List";
 import Archtect from "./pages/Archtect";
 import DevAuthenticate from "./pages/develop/DevAuthenticate";
-import DevFirestoreSnapshot from "./pages/develop/DevFirestoreSnapshot"
+import DevFirestoreSnapshot from "./pages/develop/DevFirestoreSnapshot";
+import CompatibilityMatchingSystem from "./pages/compatibility/CompatibilityMatchingSystem";
 /** not fount 404 */
 import NotFound404 from "./pages/errors/NotFound404";
+
 
 
 type RouteItem = {
@@ -89,6 +91,7 @@ const routes: RoutesObject = {
     { path: "/posts_media", component: PostsMedia },// メディア一覧
     { path: "/post/:post_id", component: PostDetail },// 投稿詳細
     { path: "/notice", component: Notice },// 通知
+    { path: "/compatibility/matching/system", component: CompatibilityMatchingSystem },// 互換性マッチングシステム
     // Chat rooms
     // { path: "/messages", component: Messages },// メッセージルーム（チャット）会話の更新順
     // { path: "/messages2", component: Messages2 },// メッセージルーム（チャット）会話の更新順
