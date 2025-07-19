@@ -2,6 +2,31 @@
 import React from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import {
+  HouseDoor,
+  // List,
+  // ListUl,
+  // Power,
+  // XLg,
+  // Gear,
+  // WindowDock,
+  // Book,
+  // Easel,
+  // Mailbox,
+  // CodeSlash,
+  // Braces,
+  ChatText,
+  People,
+  CardText,
+  Bell,
+  Envelope,
+  // BoxArrowUpRight,
+  ArrowRightSquare,
+  PersonPlus,
+  Key,
+  FileEarmarkSlides,
+  Ban,
+} from 'react-bootstrap-icons';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -27,38 +52,53 @@ const Index = () => {
         <div className="container bc-app">
           <div className="row">
             <div className="col-12 col-md-6 bc-left">
-              <ul>
+              <ul className="index-menu">
                 <li>
+                  <HouseDoor style={{ fontSize: '20px' }} />{' '}
                   <a href="/dashboard">ダッシュボード</a>
                 </li>
                 <li>
+                  <People style={{ fontSize: '20px' }} />{' '}
                   <a href="/members">メンバー</a>
                 </li>
                 <li>
+                  <CardText style={{ fontSize: '20px' }} />{' '}
                   <a href="/posts">投稿</a>
                 </li>
                 <li>
+                  <Bell style={{ fontSize: '20px' }} />{' '}
                   <a href="/notice">通知</a>
                 </li>
                 <li>
+                  <Envelope style={{ fontSize: '20px' }} />{' '}
                   <a href="/messages">メッセージ</a>
                 </li>
                 <li>
+                  <ChatText style={{ fontSize: '20px' }} />{' '}
                   <a href="/">オープントーク</a>
                 </li>
                 <li>
+                  <PersonPlus style={{ fontSize: '20px' }} />{' '}
                   <a href="/register">新規登録</a>
                 </li>
                 <li>
+                  <ArrowRightSquare style={{ fontSize: '20px' }} />{' '}
                   <a href="/login">ログイン</a>
                 </li>
                 <li>
+                  <Key style={{ fontSize: '20px' }} />{' '}
                   <a href="/forgotmypassword">パスワードをお忘れた</a>
                 </li>
                 <li>
+                  <FileEarmarkSlides style={{ fontSize: '20px' }} />{' '}
                   <a href="/easy_sexual_profile_regist">簡単性癖登録</a>
                 </li>
                 <li>
+                  <Ban style={{ fontSize: '20px' }} />{' '}
+                  <a href="/members/blocks">ブロックリスト</a>
+                </li>
+                {/* <li>
+                  <HouseDoor style={{ fontSize: '20px' }} />{' '}
                   <a href="/">オープントーク</a>
                 </li>
                 <li>
@@ -81,10 +121,7 @@ const Index = () => {
                 </li>
                 <li>
                   <a href="/">オープントーク</a>
-                </li>
-                <li>
-                  <a href="/">オープントーク</a>
-                </li>
+                </li> */}
               </ul>
             </div>
             <div className="d-none d-md-block col-md-6 bc-right">

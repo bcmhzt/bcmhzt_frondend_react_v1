@@ -15,6 +15,7 @@ import EasySexualProfileRegist from "./pages/easysexualprofileregist/EasySexualP
 import Members from "./pages/members/Members";
 import MemberDetail from "./pages/members/MemberDetail";
 import MemberPosts from "./pages/members/MemberPosts";
+import Blocks from "./pages/members/Blocks";
 import Posts from "./pages/posts/Posts";
 import PostsLike from "./pages/posts/PostsLike";
 import PostsReply from "./pages/posts/PostsReply";
@@ -80,10 +81,12 @@ const routes: RoutesObject = {
     { path: "/develop/authenticate", component: DevAuthenticate },// 認証ページテスト(開発)
     { path: "/dashboard", component: Dashboard },// ダッシュボード
     { path: "/open_talks", component: OpenTalks },// チャットの開発
-    { path: "/easy_sexual_profile_regist", component: EasySexualProfileRegist},// お手軽プロフィール＆性癖登録
+    { path: "/easy_sexual_profile_regist", component: EasySexualProfileRegist},
+    /** members */
     { path: "/members", component: Members },// メンバー一覧
     { path: "/member/:bcuid", component: MemberDetail },// メンバー詳細
     { path: "/member/post/:bcuid", component: MemberPosts },// メンバー投稿一覧
+    { path: "/members/blocks", component: Blocks },// メンバーのブロック一覧
     { path: "/posts", component: Posts },// 投稿一覧
     { path: "/posts_like", component: PostsLike },// いいね一覧
     { path: "/posts_reply", component: PostsReply },// 返信一覧

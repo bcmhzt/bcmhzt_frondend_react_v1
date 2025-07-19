@@ -33,10 +33,12 @@ if (process.env.REACT_APP_ENV === 'local') {
           const bodyStyle = (mutation.target as HTMLElement).getAttribute(
             'style'
           );
+
           console.log(
             '[src/index.tsx] [MutationObserver] Body style attribute changed:',
             bodyStyle
           );
+
           if (bodyStyle && bodyStyle.includes('overflow')) {
             console.log(
               '[src/index.tsx] [MutationObserver] 🎯 OVERFLOW DETECTED:',
@@ -47,15 +49,20 @@ if (process.env.REACT_APP_ENV === 'local') {
               console.log(`[${index}] ${line}`);
             });
 
-            // React Developer Tools での情報
-            console.log('[src/index.tsx] [MutationObserver] React Fiber info:');
-            console.log(
-              (mutation.target as any)._reactInternalFiber ||
-                (mutation.target as any)._reactInternalInstance ||
-                'No React info'
-            );
+            // 👇 ここを追加
+            const error = new Error('[DETECTED] Body overflow style changed!');
+            console.error(error);
+            throw error;
 
-            debugger;
+            // React Developer Tools での情報
+            // console.log('[src/index.tsx] [MutationObserver] React Fiber info:');
+            // console.log(
+            //   (mutation.target as any)._reactInternalFiber ||
+            //     (mutation.target as any)._reactInternalInstance ||
+            //     'No React info'
+            // );
+
+            // debugger;
           }
         }
       }
@@ -78,6 +85,7 @@ if (process.env.REACT_APP_ENV === 'local') {
   }
 }
 console.log('[src/index.tsx] Body overflow debug end');
+
 /* <body style="overflow: hidden;">のデバック */
 
 const queryClient = new QueryClient();
