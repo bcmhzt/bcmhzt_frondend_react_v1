@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import bcmhztLogo from '../assets/images/icon/bcmhzt-logo.png';
 import dummyAvatar from '../assets/images/dummy/dummy-avatar.png';
 import {
-  HouseDoor,
+  // HouseDoor,
   // List,
   ListUl,
   Power,
@@ -16,11 +16,11 @@ import {
   Mailbox,
   CodeSlash,
   Braces,
-  ChatText,
-  People,
-  CardText,
-  Bell,
-  Envelope,
+  // ChatText,
+  // People,
+  // CardText,
+  // Bell,
+  // Envelope,
   BoxArrowUpRight,
 } from 'react-bootstrap-icons';
 import LanguageSelector from '../utility/LanguageSelector';
@@ -205,30 +205,30 @@ const Header = () => {
 
           <div className="sidebar-menu">
             <ul>
-              <li>
+              {/* <li>
                 <HouseDoor className="icon-lg" />
                 <Link to="/dashboard">ダッシュボード</Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <People className="icon-lg" />
                 <Link to="/members">メンバー</Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <CardText className="icon-lg" />
                 <Link to="/posts">投稿</Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Bell className="icon-lg" />
                 <Link to="/notice">通知</Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <Envelope className="icon-lg" />
                 <Link to="/messages">メッセージ</Link>
-              </li>
-              <li>
+              </li> */}
+              {/* <li>
                 <ChatText className="icon-lg" />
                 <Link to="/open_talks">オープントーク</Link>
-              </li>
+              </li> */}
               <li>
                 <WindowDock className="icon-lg" />
                 <Link to="/myprofile">プロフィールの設定</Link>

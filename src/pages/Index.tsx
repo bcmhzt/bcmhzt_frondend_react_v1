@@ -52,6 +52,7 @@ const Index = () => {
         <div className="container bc-app">
           <div className="row">
             <div className="col-12 col-md-6 bc-left">
+              <h2 className="page-title mb20">Index</h2>
               <ul className="index-menu">
                 <li>
                   <HouseDoor style={{ fontSize: '20px' }} />{' '}
@@ -73,10 +74,12 @@ const Index = () => {
                   <Envelope style={{ fontSize: '20px' }} />{' '}
                   <a href="/messages">メッセージ</a>
                 </li>
+                <hr />
                 <li>
                   <ChatText style={{ fontSize: '20px' }} />{' '}
                   <a href="/">オープントーク</a>
                 </li>
+                <hr />
                 <li>
                   <PersonPlus style={{ fontSize: '20px' }} />{' '}
                   <a href="/register">新規登録</a>
@@ -93,6 +96,7 @@ const Index = () => {
                   <FileEarmarkSlides style={{ fontSize: '20px' }} />{' '}
                   <a href="/easy_sexual_profile_regist">簡単性癖登録</a>
                 </li>
+                <hr />
                 <li>
                   <Ban style={{ fontSize: '20px' }} />{' '}
                   <a href="/members/blocks">ブロックリスト</a>

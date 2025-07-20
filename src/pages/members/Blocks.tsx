@@ -8,8 +8,7 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
 import { PersonStanding } from 'react-bootstrap-icons';
 import { buildStorageUrl } from '../../utility/GetUseImage';
-
-//
+import { useMessage } from '../../contexts/MessageContext';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -114,6 +113,7 @@ async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
 const Blocks = () => {
   const auth = useAuth();
   const token = auth?.token!;
+  const { showMessage } = useMessage();
 
   const {
     data,
@@ -183,7 +183,7 @@ const Blocks = () => {
   const totalCount = data?.pages[0]?.data?.blockList?.total ?? 0;
 
   async function handleReleaseBlock(id: number, bcuid: string) {
-    console.log('[src/pages/members/Blocks.tsx:xx] bcuid:', bcuid);
+    console.log('[src/pages/members/Blocks.tsx:186] bcuid:', bcuid);
     if (!window.confirm('本当にブロックを解除しますか？')) {
       return;
     }
@@ -196,14 +196,17 @@ const Blocks = () => {
       );
 
       if (response.data.success) {
-        alert('ブロックを解除しました。');
+        showMessage('ブロックを解除しました。', 'success', 3000);
         refetch(); // Refresh the list after successful unblock
       } else {
-        alert(`ブロック解除に失敗しました: ${response.data.message}`);
+        showMessage('ブロック解除に失敗しました。', 'error', 3000);
       }
     } catch (error) {
-      console.error('Error releasing block:', error);
-      alert('ブロック解除中にエラーが発生しました。');
+      console.error(
+        '[src/pages/members/Blocks.tsx:205] Error releasing block:',
+        error
+      );
+      showMessage('ブロック解除中にエラーが発生しました。', 'error', 3000);
     }
   }
   return (
@@ -243,7 +246,7 @@ const Blocks = () => {
                       <div className="member-avator-area">
                         <Link to={`/member/${member.bcuid}`}>
                           <img
-                            className="member-avator"
+                            className="avatar-36"
                             alt={`member_${member.bcuid}`}
                             src={
                               member.profile_images
