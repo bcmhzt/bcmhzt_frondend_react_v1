@@ -22,7 +22,7 @@
     "email_validation_error1": "Eメールアドレスを入力してください",
     "email_validation_error2": "有効なEメールアドレスを入力してください",
     "email_validation_error3": "このメールアドレスはすでに登録されています",
-    "email_validation_error4": "リクエスト回数が超過しました",
+    "email_validation_error4": "リクエスト回数が超過しました。しばらく時間をおいてから再度お試しください。",
     "password_validation_error1": "Tパスワードは8文字以上である必要があります",
     "password_validation_error2": "パスワードには少なくとも1つの大文字を含める必要があります",
     "password_validation_error3": "パスワードには少なくとも1つの小文字を含める必要があります",

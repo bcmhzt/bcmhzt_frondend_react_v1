@@ -3,6 +3,9 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import { useAuth } from '../../contexts/AuthContext';
 import axios from 'axios';
+import { Image } from 'react-bootstrap-icons';
+import { storage } from '../../firebaseConfig';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -27,7 +30,8 @@ if (debug === 'true') {
  * 07: どんな相手を探していますか？
  * 08: 性欲は強いですか？弱いですか？
  * 09: NGプレイを選択してください。
- * 10: ありがとうございました。
+ * 10: あなたのニックネームをおしえてください。あなたのプロフィール画像を設定してください。
+ * Ending: ありがとうございました。
  * 
 
 NG
@@ -115,15 +119,29 @@ const EasySexualProfileRegist: React.FC = () => {
   const [keepReplyBalloon08, setKeepReplyBalloon08] = useState(false);
   const [showReplyBlock08, setShowReplyBlock08] = useState(false);
 
-  // block09: 何かを聞く
+  // block09: NGプレイを選択してください。
   const [keepBalloon09, setKeepBalloon09] = useState(false);
   const [showBlock09, setShowBlock09] = useState(false);
   const [selectedValue09, setSelectedValue09] = useState<string[]>([]);
   // const [keepReplyBalloon09, setKeepReplyBalloon09] = useState(false);
   // const [showReplyBlock09, setShowReplyBlock09] = useState(false);
 
+  // block10: ニックネームとプロフィール画像
   const [keepBalloon10, setKeepBalloon10] = useState(false);
   const [showBlock10, setShowBlock10] = useState(false);
+  const [nickname, setNickname] = useState<string | null>(null);
+  // const [nicknameAndProfileImage, setNicknameAndProfileImage] = useState(false);
+  // const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
+    null
+  );
+  const [isReadyForNext, setIsReadyForNext] = useState(false);
+  // const [isImageUploadedToServer, setIsImageUploadedToServer] = useState(false);
+  const [uploadCompleted, setUploadCompleted] = useState(true); // アップロード完了フラグ
+
+  // Ending
+  const [keepBalloonEnding, setKeepBalloonEnding] = useState(false);
+  const [showBlockEnding, setShowBlockEnding] = useState(false);
 
   useLayoutEffect(() => {
     if (
@@ -178,7 +196,11 @@ const EasySexualProfileRegist: React.FC = () => {
       //10
       keepBalloon10 ||
       showBlock10 ||
-      (showBlock10 && modalBodyRef.current)
+      //11
+      keepBalloonEnding ||
+      showBlockEnding ||
+      // Ending
+      (showBlockEnding && modalBodyRef.current)
     ) {
       const el = modalBodyRef.current;
       // el.scrollTop = el.scrollHeight; // 一気に最下部へ
@@ -239,6 +261,9 @@ const EasySexualProfileRegist: React.FC = () => {
     //10
     keepBalloon10,
     showBlock10,
+    //11
+    keepBalloonEnding,
+    showBlockEnding,
   ]);
 
   function openBlock01() {
@@ -474,6 +499,10 @@ const EasySexualProfileRegist: React.FC = () => {
           err
         );
       }
+    } else {
+      console.log(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:418] action: わからない（この場合は、何も保存しない）'
+      );
     }
     //返信のバルーンを表示
     setTimeout(() => {
@@ -555,14 +584,25 @@ const EasySexualProfileRegist: React.FC = () => {
       counts06
     );
     // [11, 23, 57, 82, 83, 84, 85, 86, 87, 88]
+    console.log(
+      '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:588]',
+      token
+    );
     allIds.forEach((id) => {
       try {
         axios.post(
           `${apiEndpoint}/v1/update/propensity`,
           { propensity_id: Number(id), status: counts06[id] },
-          { headers: { Authorization: `Bearer ${token}` } }
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json', // 必要に応じて追加
+            },
+          }
         );
       } catch (err) {
+        // エラーメッセージを入れないと駄目かも。
+        alert('Errorが発生しました。リロードして最初からやり直してください。');
         console.error(
           `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:379] API error [Propensity]:`,
           err
@@ -760,6 +800,18 @@ const EasySexualProfileRegist: React.FC = () => {
     }, waitetime);
   }
 
+  function handleProgress10() {
+    console.log(
+      '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:369] handleProgress10'
+    );
+    setKeepBalloonEnding(true);
+    setShowBlockEnding(false);
+    setTimeout(() => {
+      setKeepBalloonEnding(false);
+      setShowBlockEnding(true);
+    }, waitetime);
+  }
+
   // ダミーのタイピングドット
   const TypingDots = () => {
     return (
@@ -855,6 +907,110 @@ const EasySexualProfileRegist: React.FC = () => {
     );
   };
 
+  /** nickname */
+  const handleNicknameBlur = async () => {
+    try {
+      console.log(
+        `[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:897] Saving nickname: ${nickname}`
+      );
+      const response = await axios.post(
+        `${apiEndpoint}/update/user/profile/nickname/${currentUserProfile.user_profile.uid}`,
+        { value: nickname, token },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.data.status === true) {
+        console.log(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx] Nickname saved successfully'
+        );
+        // setNicknameAndProfileImage(true);
+      } else {
+        console.error(
+          '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx] Failed to save nickname'
+        );
+        // setNicknameAndProfileImage(false);
+      }
+    } catch (error) {
+      console.error(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx] Error saving nickname:',
+        error
+      );
+    }
+  };
+
+  const checkReady = (nicknameValue: string, imageUploaded: boolean) => {
+    const isNicknameValid = nicknameValue.trim().length > 0;
+    setIsReadyForNext(isNicknameValid && imageUploaded);
+  };
+
+  const handleImageChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setUploadCompleted(false);
+    const file = event.target.files?.[0];
+    if (!file || !currentUserProfile?.user_profile?.uid) return;
+
+    // プレビュー表示
+    // setProfileImageFile(file);
+    setProfileImagePreview(URL.createObjectURL(file));
+
+    const uid = currentUserProfile.user_profile.uid;
+    const fileExtension = file.name.split('.').pop() || 'jpg';
+    const renamedFileName = `${uid}.${fileExtension}`;
+    const filePath = `profiles/${uid}/${renamedFileName}`;
+    const storageRef = ref(storage, filePath);
+
+    try {
+      // Firebase Storage へアップロード
+      const uploadTask = uploadBytesResumable(storageRef, file);
+      await new Promise<void>((resolve, reject) => {
+        uploadTask.on(
+          'state_changed',
+          null,
+          (error) => reject(error),
+          () => resolve()
+        );
+      });
+
+      // Firebase URLの代わりに、パスを API に保存（指定の形式）
+      // const token = currentUserProfile.token; // または useAuth() から取得した token を使用
+      const encodedPath = encodeURIComponent(filePath); // `profiles%2F...` の形式に変換
+      await axios.post(
+        `${apiEndpoint}/user/update/profileimage/${uid}`,
+        {
+          image_path: encodedPath,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      console.log(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:985] ✅ プロフィール画像を保存しました:',
+        encodedPath
+      );
+      // setIsImageUploadedToServer(true);
+      checkReady(nickname || '', true);
+    } catch (error) {
+      console.error(
+        '[src/pages/easysexualprofileregist/EasySexualProfileRegist.tsx:987] ❌ プロフィール画像アップロードエラー:',
+        error
+      );
+    } finally {
+      // setUploadCompoleted(true);
+      setUploadCompleted(true);
+    }
+    // ✅ 完了を通知
+    // setIsImageUploadedToServer(true);
+  };
+
+  // useEffect(() => {
+  //   const isNicknameValid = nickname && nickname.trim().length > 0;
+  //   setIsReadyForNext(isNicknameValid && isImageUploadedToServer);
+  // }, [nickname, isImageUploadedToServer]);
+
   return (
     <div className="app-body">
       <Header />
@@ -913,13 +1069,24 @@ const EasySexualProfileRegist: React.FC = () => {
                         {/* Start 00=======*/}
                         <div className="start mb30">
                           <p>開始ボタンを押してスタートしてください。</p>
+                          <p>
+                            プロフィール画像を用意してください。
+                            <br />
+                            ニックネームを考えておいてください。
+                          </p>
                           <button
                             type="button"
-                            className="btn btn-secondary btn-lg bcmhzt-btn"
+                            className="btn btn-secondary btn-lg bcmhzt-btn w-100 mt20 mb20"
                             onClick={() => openBlock01()}
                           >
-                            開始
+                            簡単性癖登録スタート
                           </button>
+                          <img
+                            src="/assets/images/easy-sexual-profile-regist.png"
+                            alt="hoge"
+                            className="mt30"
+                            style={{ width: '100%', height: 'auto' }}
+                          />
                         </div>
 
                         {/* あなたの年齢をおしえてください。01=======*/}
@@ -1230,7 +1397,7 @@ const EasySexualProfileRegist: React.FC = () => {
                             <div className="block block04 mt30">
                               <Advisor />
                               <div className="balloon">
-                                あなたはドミナントですか？サブミッシブですか？
+                                あなたは、どちらかというと、ドミナントですか？サブミッシブですか？
                               </div>
                               <div
                                 className="select-area bcmhztparts-radiobtn mt20"
@@ -1255,7 +1422,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                   }}
                                 />
                                 <label
-                                  className="btn btn-lg"
+                                  className="btn btn-lg fs14"
                                   htmlFor="dominanto"
                                 >
                                   ドミナント
@@ -1275,10 +1442,30 @@ const EasySexualProfileRegist: React.FC = () => {
                                   }}
                                 />
                                 <label
-                                  className="btn btn-lg"
+                                  className="btn btn-lg fs14"
                                   htmlFor="submissive"
                                 >
                                   サブミッシブ
+                                </label>
+                                <input
+                                  type="radio"
+                                  className="btn-check"
+                                  name="notsure"
+                                  id="notsure"
+                                  value="わからない"
+                                  autoComplete="off"
+                                  onChange={(e) => {
+                                    console.log(
+                                      `Selected notsure: ${e.target.value}`
+                                    );
+                                    updateBlock04(e.target.value);
+                                  }}
+                                />
+                                <label
+                                  className="btn btn-lg fs14"
+                                  htmlFor="notsure"
+                                >
+                                  わからない
                                 </label>
                               </div>
                             </div>
@@ -1344,7 +1531,7 @@ const EasySexualProfileRegist: React.FC = () => {
                               <div className="balloon">
                                 あなたはノーマル系ですか？それともアブノーマル系ですか？
                                 <br />
-                                複数の項目を選んでください。
+                                複数の項目を選んでください。（後からもっと詳細に設定できます）
                               </div>
                               {/* ノーマル|スイッチャー|DBSM/緊縛系|フェティッシュ|スパンキング|コスプレ|複数プレイ|NTR */}
                               <div className="select-area bcmhztparts-checkbox mt20">
@@ -1939,8 +2126,8 @@ const EasySexualProfileRegist: React.FC = () => {
                           )}
                         </div>
 
-                        {/* エンディング 10=======*/}
-                        <div className="ending">
+                        {/*  ニックネーム&プロフィール画像 10=======*/}
+                        <div className="nickname-profileimage">
                           {keepBalloon10 && !showBlock10 && (
                             <div className="block mt30">
                               <Advisor />
@@ -1948,6 +2135,82 @@ const EasySexualProfileRegist: React.FC = () => {
                             </div>
                           )}
                           {!keepBalloon10 && showBlock10 && (
+                            <div className="block block10 mt30">
+                              <Advisor />
+                              <div className="balloon">
+                                あなたのニックネームとプロフィール画像を設定してください。
+                              </div>
+                              <div className="nickname-profileimage mt30">
+                                <input
+                                  type="text"
+                                  placeholder="ニックネーム"
+                                  className="form-control"
+                                  value={nickname || ''}
+                                  onChange={(e) => setNickname(e.target.value)}
+                                  onBlur={handleNicknameBlur}
+                                />
+                                <label
+                                  className="mt10 ml10"
+                                  htmlFor="profile-image-upload"
+                                  style={{ cursor: 'pointer' }}
+                                >
+                                  プロフィール画像を選択:{' '}
+                                  <Image style={{ fontSize: '28px' }} />
+                                </label>
+                                <input
+                                  id="profile-image-upload"
+                                  type="file"
+                                  accept="image/*"
+                                  className="form-control"
+                                  style={{ display: 'none' }}
+                                  onChange={(e) => {
+                                    handleImageChange(e);
+                                  }}
+                                />
+                                {profileImagePreview && (
+                                  <div className="image-preview mt10">
+                                    <img
+                                      className="avatar-200"
+                                      src={profileImagePreview}
+                                      alt="プロフィール画像プレビュー"
+                                    />
+                                  </div>
+                                )}
+                              </div>
+                              {uploadCompleted === false && (
+                                <div
+                                  className="loading-indicator"
+                                  style={{ fontSize: '14px', color: '#888' }}
+                                >
+                                  <span
+                                    className="spinner-border text-secondary"
+                                    role="status"
+                                  ></span>{' '}
+                                  ローディング中...
+                                </div>
+                              )}
+                              <div>
+                                <button
+                                  onClick={handleProgress10}
+                                  className="btn btn-secondary bcmhzt-btn ml10 mt10"
+                                  disabled={!isReadyForNext}
+                                >
+                                  次に進む
+                                </button>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* エンディング 10=======*/}
+                        <div className="ending">
+                          {keepBalloonEnding && !showBlockEnding && (
+                            <div className="block mt30">
+                              <Advisor />
+                              <TypingDots />
+                            </div>
+                          )}
+                          {!keepBalloonEnding && showBlockEnding && (
                             <div className="block mt30">
                               <Advisor />
                               <div className="balloon">
@@ -1965,8 +2228,6 @@ const EasySexualProfileRegist: React.FC = () => {
                                 </a>
                                 から後から変更できます。
                                 <br />
-                                ニックネームとプロフィール画像、自己紹介文も書いてください。
-                                <br />
                                 楽しい性癖ライフをお楽しみください。
                               </div>
                             </div>
@@ -1974,7 +2235,7 @@ const EasySexualProfileRegist: React.FC = () => {
                         </div>
 
                         <div className="close">
-                          {showBlock10 && (
+                          {showBlockEnding && (
                             <div className="block">
                               <Advisor />
                               <div className="balloon">
