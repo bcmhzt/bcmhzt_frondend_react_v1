@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import bcmhztLogo from '../assets/images/icon/bcmhzt-logo.png';
 import dummyAvatar from '../assets/images/dummy/dummy-avatar.png';
 import {
-  // HouseDoor,
+  HouseDoor,
   // List,
   ListUl,
   Power,
@@ -205,10 +205,10 @@ const Header = () => {
 
           <div className="sidebar-menu">
             <ul>
-              {/* <li>
+              <li>
                 <HouseDoor className="icon-lg" />
                 <Link to="/dashboard">ダッシュボード</Link>
-              </li> */}
+              </li>
               {/* <li>
                 <People className="icon-lg" />
                 <Link to="/members">メンバー</Link>

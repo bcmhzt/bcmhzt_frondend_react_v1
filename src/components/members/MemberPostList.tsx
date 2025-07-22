@@ -197,7 +197,7 @@ const MemberPostList: React.FC<MemberPostListProps> = ({ bcuid }) => {
 
   return (
     <>
-      <pre>{JSON.stringify(loading, null, 2)}</pre>
+      {/* <pre>{JSON.stringify(loading, null, 2)}</pre> */}
       <div className="member-post-list">
         <div className="member-profile d-flex">
           {member && (
@@ -221,10 +221,10 @@ const MemberPostList: React.FC<MemberPostListProps> = ({ bcuid }) => {
                   />
                 </Link>
               </div>
-              <div>
+              <div className="profile-name">
                 <h2 className="nickname">
                   {member.nickname}
-                  <span>@{member.bcuid}</span>
+                  <span className="bcuid">@{member.bcuid}</span>
                 </h2>
                 <div className="location">
                   <GetGenderIcon genderId={member?.gender ?? ''} />　
@@ -234,7 +234,7 @@ const MemberPostList: React.FC<MemberPostListProps> = ({ bcuid }) => {
             </>
           )}
         </div>
-        <div>
+        <div className="profile-description">
           <span
             dangerouslySetInnerHTML={{
               __html: convertFormattedText(member?.description ?? ''),

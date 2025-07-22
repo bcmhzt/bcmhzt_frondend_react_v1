@@ -32,19 +32,6 @@ if (debug === 'true') {
  * 09: NGプレイを選択してください。
  * 10: あなたのニックネームをおしえてください。あなたのプロフィール画像を設定してください。
  * Ending: ありがとうございました。
- * 
-
-NG
-  撮影
-  録音
-  痛みを伴うプレイ
-  暴力的行為
-  流血を伴うプレイ
-  傷跡を残す行為
-  スカトロ
-  嘔吐プレイ
-  薬物使用
-  非同意のその他のプレイ
  */
 
 /** 簡易アンケート形式 */
@@ -123,21 +110,16 @@ const EasySexualProfileRegist: React.FC = () => {
   const [keepBalloon09, setKeepBalloon09] = useState(false);
   const [showBlock09, setShowBlock09] = useState(false);
   const [selectedValue09, setSelectedValue09] = useState<string[]>([]);
-  // const [keepReplyBalloon09, setKeepReplyBalloon09] = useState(false);
-  // const [showReplyBlock09, setShowReplyBlock09] = useState(false);
 
   // block10: ニックネームとプロフィール画像
   const [keepBalloon10, setKeepBalloon10] = useState(false);
   const [showBlock10, setShowBlock10] = useState(false);
   const [nickname, setNickname] = useState<string | null>(null);
-  // const [nicknameAndProfileImage, setNicknameAndProfileImage] = useState(false);
-  // const [profileImageFile, setProfileImageFile] = useState<File | null>(null);
   const [profileImagePreview, setProfileImagePreview] = useState<string | null>(
     null
   );
   const [isReadyForNext, setIsReadyForNext] = useState(false);
-  // const [isImageUploadedToServer, setIsImageUploadedToServer] = useState(false);
-  const [uploadCompleted, setUploadCompleted] = useState(true); // アップロード完了フラグ
+  const [uploadCompleted, setUploadCompleted] = useState(true);
 
   // Ending
   const [keepBalloonEnding, setKeepBalloonEnding] = useState(false);
@@ -999,17 +981,10 @@ const EasySexualProfileRegist: React.FC = () => {
         error
       );
     } finally {
-      // setUploadCompoleted(true);
+      // ✅ 完了を通知
       setUploadCompleted(true);
     }
-    // ✅ 完了を通知
-    // setIsImageUploadedToServer(true);
   };
-
-  // useEffect(() => {
-  //   const isNicknameValid = nickname && nickname.trim().length > 0;
-  //   setIsReadyForNext(isNicknameValid && isImageUploadedToServer);
-  // }, [nickname, isImageUploadedToServer]);
 
   return (
     <div className="app-body">
@@ -1115,7 +1090,7 @@ const EasySexualProfileRegist: React.FC = () => {
                               >
                                 <select
                                   style={{ width: '80%' }}
-                                  className="form-select form-select-lg"
+                                  className="form-select form-select-md"
                                   aria-label="Default select example"
                                   defaultValue=""
                                   onChange={(e) => {
@@ -1125,7 +1100,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     updateBlock01(e.target.value);
                                   }}
                                 >
-                                  <option value="" disabled>
+                                  <option value="">
                                     年齢を選択してください
                                   </option>
                                   <option value="20">20代</option>
@@ -1202,7 +1177,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     updateBlock02(e.target.value);
                                   }}
                                 />
-                                <label className="btn btn-lg" htmlFor="man">
+                                <label className="btn btn-sm" htmlFor="man">
                                   男性
                                 </label>
 
@@ -1220,7 +1195,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     updateBlock02(e.target.value);
                                   }}
                                 />
-                                <label className="btn btn-lg" htmlFor="woman">
+                                <label className="btn btn-sm" htmlFor="woman">
                                   女性
                                 </label>
                                 <input
@@ -1238,7 +1213,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                   }}
                                 />
                                 <label
-                                  className="btn btn-lg"
+                                  className="btn btn-sm"
                                   htmlFor="nogender"
                                 >
                                   どちらでもない
@@ -1297,7 +1272,7 @@ const EasySexualProfileRegist: React.FC = () => {
                               >
                                 <select
                                   style={{ width: '80%' }}
-                                  className="form-select form-select-lg"
+                                  className="form-select form-select-md"
                                   aria-label="Default select example"
                                   onChange={(e) => {
                                     console.log(
@@ -1407,46 +1382,51 @@ const EasySexualProfileRegist: React.FC = () => {
                                   alignItems: 'center',
                                 }}
                               >
-                                <input
-                                  type="radio"
-                                  className="btn-check"
-                                  name="domisub"
-                                  id="dominanto"
-                                  value="ドミナント"
-                                  autoComplete="off"
-                                  onChange={(e) => {
-                                    console.log(
-                                      `Selected domisub: ${e.target.value}`
-                                    );
-                                    updateBlock04(e.target.value);
-                                  }}
-                                />
-                                <label
-                                  className="btn btn-lg fs14"
-                                  htmlFor="dominanto"
-                                >
-                                  ドミナント
-                                </label>
-                                <input
-                                  type="radio"
-                                  className="btn-check"
-                                  name="domisub"
-                                  id="submissive"
-                                  value="サブミッシブ"
-                                  autoComplete="off"
-                                  onChange={(e) => {
-                                    console.log(
-                                      `Selected domisub: ${e.target.value}`
-                                    );
-                                    updateBlock04(e.target.value);
-                                  }}
-                                />
-                                <label
-                                  className="btn btn-lg fs14"
-                                  htmlFor="submissive"
-                                >
-                                  サブミッシブ
-                                </label>
+                                <div>
+                                  <input
+                                    type="radio"
+                                    className="btn-check"
+                                    name="domisub"
+                                    id="dominanto"
+                                    value="ドミナント"
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                      console.log(
+                                        `Selected domisub: ${e.target.value}`
+                                      );
+                                      updateBlock04(e.target.value);
+                                    }}
+                                  />
+                                  <label
+                                    className="btn btn-sm"
+                                    htmlFor="dominanto"
+                                  >
+                                    ドミナント
+                                  </label>
+                                </div>
+                                <div>
+                                  <input
+                                    type="radio"
+                                    className="btn-check"
+                                    name="domisub"
+                                    id="submissive"
+                                    value="サブミッシブ"
+                                    autoComplete="off"
+                                    onChange={(e) => {
+                                      console.log(
+                                        `Selected domisub: ${e.target.value}`
+                                      );
+                                      updateBlock04(e.target.value);
+                                    }}
+                                  />
+                                  <label
+                                    className="btn btn-sm"
+                                    htmlFor="submissive"
+                                  >
+                                    サブミッシブ
+                                  </label>
+                                </div>
+
                                 <input
                                   type="radio"
                                   className="btn-check"
@@ -1461,10 +1441,7 @@ const EasySexualProfileRegist: React.FC = () => {
                                     updateBlock04(e.target.value);
                                   }}
                                 />
-                                <label
-                                  className="btn btn-lg fs14"
-                                  htmlFor="notsure"
-                                >
+                                <label className="btn btn-sm" htmlFor="notsure">
                                   わからない
                                 </label>
                               </div>

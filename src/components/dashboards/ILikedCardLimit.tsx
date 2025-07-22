@@ -4,42 +4,10 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
-import {
-  // getAgeRangeJp,
-  // getBcmhzt,
-  getDateOnly,
-  chageAgeRange,
-} from '../../utility/GetCommonFunctions';
+import { getDateOnly, chageAgeRange } from '../../utility/GetCommonFunctions';
 import GetGenderIcon from '../commons/GetGenderIcon';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import { CircleFill } from 'react-bootstrap-icons';
-//
-
-/* debug */
-let debug = process.env.REACT_APP_DEBUG;
-if (debug === 'true') {
-  console.log(
-    '[src/components/dashboards/ILikedCardLimit.tsx:xx] debug:',
-    debug
-  );
-}
-
-/**
- * ae5b9d3a
- * [src/components/dashboards/ILikedCardLimit:xx]
- *
- * type: component
- *
- * [Order]
- * - あなたがナイススケベをした人（10件）ページネーションの1ページ目のみ取得
- * ① ファイル＆雛形作成
- * ② 必要な import
- * ③ 型定義
- * ④ static 定義
- * ⑤ fetch 関数実装
- * ⑥ 検索フォーム制御
- * ⑦ 認証情報の設定（Token）
- */
 
 /** APIの返り値のinterface */
 interface ApiResponse {
@@ -114,116 +82,79 @@ interface ApiData {
   profile_video: string | null;
   member_like_created_at: string;
   user_profile_created_at: string;
+  member_like_uid: string;
+  member_like_target_uid: string;
+  match_score: number;
 }
 
-/** ④ static 定義 */
 const apiEndpoint = process.env.REACT_APP_API_ENDPOINT!;
 const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL!;
+const debug = process.env.REACT_APP_DEBUG === 'true';
 
 async function fetchApiData(page: number, token: string): Promise<ApiResponse> {
   try {
     const res = await axios.post(
-      `${apiEndpoint}/v1/get/i_liked_list?page=1`,
+      `${apiEndpoint}/v1/get/i_liked_list?page=${page}`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
-    if (debug === 'true') {
-      console.log(
-        '[src/components/dashboards/ILikedCardLimit.tsx:119] res.data:',
-        res.data
-      );
+    if (debug) {
+      console.log('✅ API Response:', res.data);
     }
-
     return res.data;
   } catch (error) {
-    console.error(
-      '[src/components/dashboards/ILikedCardLimit.tsx:126] API error:',
-      error
-    );
+    console.error('❌ API Error:', error);
     throw error;
   }
 }
 
 const ILikedCardLimit = () => {
   const auth = useAuth();
-  const token = auth?.token!;
+  const token = auth?.token;
 
-  /** APIデータはdataで取得 */
   const { data, isLoading, isError, error, refetch } = useQuery<
     ApiResponse,
     Error
   >({
     queryKey: ['ilikedMemberList', token],
-    queryFn: () => fetchApiData(1, token),
-    retry: 1,
+    queryFn: () => fetchApiData(1, token!),
     enabled: !!token,
   });
 
-  useEffect(() => {
-    console.log(
-      '[src/components/dashboards/ILikedCardLimit.tsx:162] ILikedCardLimit data:',
-      data
-    );
-  }, [data]);
-
-  /** 401エラーのときはTokenの再発行をする */
   useEffect(() => {
     if (
       isError &&
       axios.isAxiosError(error) &&
       error.response?.status === 401 &&
-      typeof auth.refreshToken === 'function'
+      typeof auth?.refreshToken === 'function'
     ) {
       (async () => {
         await auth.refreshToken();
         refetch();
       })();
     }
-  }, [isError, error, auth, refetch]);
-
-  /** それ以外のエラーは例外処理 */
-  if (isLoading) return null;
-  if (isError) {
-    return (
-      <div className="alert alert-secondary">
-        データ取得失敗 ({error.message})
-      </div>
-    );
-  }
-
-  console.log(
-    '[src/components/dashboards/ILikedCardLimit.tsx:163] data?.data.total:',
-    data?.data.total
-  );
-  // setTotalCount(data?.data.total ?? 0);
+  }, [isError, error, refetch, auth]);
 
   const listData: ApiData[] = data?.data?.data ?? [];
-
-  /**
-   * 1. listDataの配列の1つ目の要素を取得
-   * 2. その要素から、member_like_created_atの値(a)を取得する
-   * 3. ローカルストレージのLikedMember(key)に日付が格納されているか確認する
-   * 4. 日付が格納されていたら(b)、その日付(b)と(a)を比較する。（必ず(a)の方が新しい）
-   * 5. listDataの配列で、(b)より新しいレコードを抽出して、件数をカウントする。
-   * 6. listDataの配列で、(b)より新しいレコードを抽出して、そのレコードにフラグを立てる(新しい配列の要素を加える)
-   * 7. フラグのあるレコードには新しい何等かのマークを追加する。
-   */
 
   const isNew = (createdAt: string): boolean => {
     const today = new Date();
     const createdDate = new Date(createdAt);
     const oneWeekAgo = new Date();
     oneWeekAgo.setDate(today.getDate() - 7);
-
     return createdDate.getTime() >= oneWeekAgo.getTime();
   };
 
+  if (isLoading) return null;
+  if (isError)
+    return (
+      <div className="alert alert-secondary">
+        データ取得失敗 ({error.message})
+      </div>
+    );
+
   return (
     <>
-      {/* <pre>{JSON.stringify(listData, null, 2)}</pre> */}
-      {/* <pre>{JSON.stringify(data?.data.total, null, 2)}</pre> */}
-      {/* success: {data?.success?.toString()} */}
-      {/* success: {data?.total?.toString()} */}
       <h2 className="section-title-h2">
         あなたがナイススケベをした人
         <span className="conut">{data?.data.total}</span>
@@ -234,7 +165,6 @@ const ILikedCardLimit = () => {
             <Link to="/i_liked">もっとみる...</Link>
           </p>
         )}
-
         {listData.length === 0 ? (
           <div className="alert alert-secondary" role="alert">
             まだ、あなたがナイスすけべをした人はいません。
@@ -242,16 +172,12 @@ const ILikedCardLimit = () => {
         ) : (
           listData.map((m) => (
             <li key={m.id} className="member">
-              {/* <pre>{JSON.stringify(m, null, 2)}</pre> */}
               <div className="member-flex d-flex justify-content-start">
                 <div className="member-avator-area">
                   {isNew(m.member_like_created_at) && (
                     <CircleFill className="new-mark" />
                   )}
                   <Link to={`/member/${m.bcuid}`}>
-                    {/* <pre>
-                    {JSON.stringify(m?.member_like_created_at, null, 2)}
-                  </pre> */}
                     <img
                       className="member-avator"
                       alt={`member_${m.bcuid}`}
@@ -268,7 +194,7 @@ const ILikedCardLimit = () => {
                 </div>
                 <div className="nickname-area">
                   <div className="nick-name">
-                    {`${m?.nickname}`}
+                    {m?.nickname}
                     <span className="bcuid">@{m.bcuid}</span>
                   </div>
                   <span className="member-property">
@@ -288,4 +214,5 @@ const ILikedCardLimit = () => {
     </>
   );
 };
+
 export default ILikedCardLimit;
