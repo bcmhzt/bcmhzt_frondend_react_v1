@@ -19,6 +19,9 @@ const firestore = new Firestore({
  * chatsコレクションからchatRoomsを取得して、membersにuidが含まれるドキュメントを取得（マッチ済チャットルーム）
  * Document IDとmembersをコンソールに出力
  * 
+ * -dのフラグを付けて、chatRoomIdを指定して削除
+ * % npx ts-node messages/delete_chatRoom.ts -d acc2481e2409807e80ddf99cf1a83792ef2342adaaca34228f0cea690896ab27
+ * 
  */
 const flag = process.argv[2]; // --delete or --show
 const chatRoomId = process.argv[3];

@@ -364,7 +364,7 @@ export const AuthProvider = ({
     return (
       <>
         {/* <pre>{JSON.stringify(error?.message, null, 2)}</pre> */}
-        <div className="alert alert-danger">
+        <div className="alert alert-danger mt10 ml10 mr10">
           認証で致命的なエラーが発生しました。[*cedba0f0]
           <br />
           {error?.message || String(error)}
