@@ -132,11 +132,12 @@ const MemberPostList: React.FC<MemberPostListProps> = ({ bcuid }) => {
         console.error('[ERROR] Failed to fetch member:', error);
       } finally {
         setLoading(false);
+        console.log('Loading state:', loading);
       }
     };
 
     fetchMember();
-  }, [apiEndpoint, token, bcuid]);
+  }, [apiEndpoint, token, bcuid, loading]);
 
   const {
     data,
