@@ -43,6 +43,7 @@ const MyPropensitiesCore = () => {
   const [searchWords, setSearchWords] = useState('');
   const [propensityTags, setPropensityTags] = useState<PropensityTag[]>([]);
   const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
+  const [showOnlyMyTags, setShowOnlyMyTags] = useState(false);
 
   useEffect(() => {
     fetchPropensityTagsFromApi('');
@@ -64,7 +65,7 @@ const MyPropensitiesCore = () => {
   const fetchPropensityTagsFromApi = async (keyword: string) => {
     try {
       const response = await axios.post(
-        `${apiEndpoint}/v1/get/propensity_tags`,
+        `${apiEndpoint}/v1/get/propensity_tags_core`,
         { words: keyword },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -128,9 +129,30 @@ const MyPropensitiesCore = () => {
       );
     }
   };
+
+  const handleSelectMyPropensityTag = async (checked: boolean) => {
+    setShowOnlyMyTags(checked);
+    console.log(
+      '[src/components/users/MyPropensitiesCore.tsx:114] ✅ handleSelectMyPropensityTag called with checked:',
+      [checked, showOnlyMyTags]
+    );
+
+    if (checked) {
+      const filteredTags = propensityTags.filter(
+        (tag) => tag.user_status === 1
+      );
+      setPropensityTags(filteredTags);
+    } else {
+      await fetchPropensityTagsFromApi(''); // 全件取得
+    }
+  };
+
   return (
     <>
       <div className="propensity-tags mb50 mt20">
+        <h3>
+          性癖詳細<span className="subtitle">core</span>
+        </h3>
         <div className="input-group">
           <input
             type="text"
@@ -168,9 +190,9 @@ const MyPropensitiesCore = () => {
               // name={`propensity-${item.id}`}
               // value={item.id}
               // checked={item.user_status === 1} // user_statusが1の場合ON、それ以外はOFF
-              // onChange={(e) =>
-              //   handlePropensityChange(item.id, e.target.checked ? 1 : 0)
-              // }
+              onChange={(e) => {
+                handleSelectMyPropensityTag(e.target.checked);
+              }}
             />
             <label className="form-check-label" htmlFor="my-propensity-switch">
               自分の性癖のみ表示する

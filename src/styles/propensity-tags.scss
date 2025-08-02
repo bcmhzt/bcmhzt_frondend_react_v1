@@ -1,5 +1,16 @@
 // fee0bab9
 .propensity-tags {
+  h3 {
+    .subtitle {
+      font-size:13px;
+      color: #888;
+      margin-left: 10px;
+      border:#c1c1c1 1px solid;
+      padding: 2px 5px;
+      border-radius: 3px;
+      background: #e6e6e6;;
+    }
+  }
   .input-group {
     input::placeholder {
       color: #c1c1c1;
