@@ -34,6 +34,7 @@ type PropensityTag = {
   delete_flag: boolean;
   created_at: string;
   updated_at: string;
+  user_status: number;
 };
 
 const MyPropensitiesCore = () => {
@@ -70,7 +71,7 @@ const MyPropensitiesCore = () => {
         }
       );
       console.log(
-        '[MyPropensitiesCore] ✅ API response:',
+        '[src/components/users/MyPropensitiesCore.tsx:74] ✅ fetchPropensityTagsFromApi API response:',
         response.data.data.data
       );
       setPropensityTags(response.data.data.data);
@@ -87,19 +88,45 @@ const MyPropensitiesCore = () => {
     fetchPropensityTagsFromApi('');
   };
   const handleSearch = () => {
-    // setPage(1);
     setSearchWords(inputKeyword);
+    fetchPropensityTagsFromApi(searchWords);
     console.log(
       '[src/components/users/MyPropensitiesCore.tsx:42] 🌼 e.target.value:',
       inputKeyword
     );
   };
 
-  const handleTagClick = (propensity_id: number) => {
+  const handleTagClick = async (propensity_id: number) => {
     console.log(
       '[src/components/users/MyPropensitiesCore.tsx:99] 🌼 handleTagClick called with propensity_id:',
       propensity_id
     );
+    try {
+      const response = await axios.post(
+        `${apiEndpoint}/v1/update/my_propensity_tags/${propensity_id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      console.log(
+        '[src/components/users/MyPropensitiesCore.tsx:114] ✅ handleTagClick API response:',
+        response.data
+      );
+      // ✅ 即時UI反映
+      setPropensityTags((prev) =>
+        prev.map((tag) =>
+          tag.propensity_id === propensity_id
+            ? { ...tag, user_status: tag.user_status === 1 ? 0 : 1 }
+            : tag
+        )
+      );
+    } catch (error) {
+      console.error(
+        '[src/components/users/MyPropensitiesCore.tsx:106] ❌ handleTagClick API error:',
+        error
+      );
+    }
   };
   return (
     <>
@@ -108,7 +135,7 @@ const MyPropensitiesCore = () => {
           <input
             type="text"
             className="form-control search-input"
-            placeholder="性癖検索"
+            placeholder="性癖 キーワードを入力して検索"
             value={inputKeyword}
             onChange={handleInputChange}
           />
@@ -154,13 +181,13 @@ const MyPropensitiesCore = () => {
           </div>
         </div>
         <div className="propensity-tags-area mt20">
-          <pre>{JSON.stringify(searchWords, null, 2)}</pre>
+          {/* <pre>{JSON.stringify(searchWords, null, 2)}</pre> */}
           {propensityTags.length > 0 ? (
             <>
               {propensityTags.map((tag, index) => (
                 <span
                   key={index}
-                  className="propensity-tags-word"
+                  className={`propensity-tags-word ${tag.user_status === 1 ? 'active' : ''}`}
                   style={{ cursor: 'pointer' }}
                   onClick={() => {
                     handleTagClick(tag?.propensity_id);
@@ -185,7 +212,7 @@ const MyPropensitiesCore = () => {
               </div>
             </>
           )}
-          <span className="propensity-tags-word" style={{ cursor: 'pointer' }}>
+          {/* <span className="propensity-tags-word" style={{ cursor: 'pointer' }}>
             歐派
           </span>
           <span
@@ -193,7 +220,7 @@ const MyPropensitiesCore = () => {
             style={{ cursor: 'pointer' }}
           >
             BDSM
-          </span>
+          </span> */}
         </div>
       </div>
     </>
