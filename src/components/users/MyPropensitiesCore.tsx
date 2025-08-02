@@ -7,7 +7,7 @@ import {
   // PersonArmsUp,
   // PersonWalking,
   X,
-  CardText,
+  // CardText,
   // CardImage,
   Search,
 } from 'react-bootstrap-icons';
@@ -45,6 +45,7 @@ const MyPropensitiesCore = () => {
 
   useEffect(() => {
     fetchPropensityTagsFromApi('');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,6 +154,7 @@ const MyPropensitiesCore = () => {
           </div>
         </div>
         <div className="propensity-tags-area mt20">
+          <pre>{JSON.stringify(searchWords, null, 2)}</pre>
           {propensityTags.length > 0 ? (
             <>
               {propensityTags.map((tag, index) => (
