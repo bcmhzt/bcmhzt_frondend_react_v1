@@ -8,6 +8,7 @@ import MyProfileDetails from '../../components/users/MyProfileDetails';
 import MyProfileBase from '../../components/users/MyProfileBase';
 import Propensity from '../../components/users/Propensity';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import MyPropensitiesBase from '../../components/users/MyPropensitiesBase';
 import MyPropensitiesCore from '../../components/users/MyPropensitiesCore';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
@@ -26,6 +27,7 @@ const MyProfile = () => {
             </div>
             <div className="myprofile-base mt50">
               <MyProfileBase />
+              <MyPropensitiesBase />
               <MyPropensitiesCore />
               <Propensity />
             </div>
