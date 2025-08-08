@@ -186,6 +186,9 @@ const MesageChatsList = () => {
         if (!myUid || !partnerUid) continue;
 
         const chatRoomId = await generateChatRoomId([myUid, partnerUid]);
+        console.log(
+          `[src/components/messages/MessageChatsList.tsx:188] chatRoomId: ${chatRoomId}`
+        );
         ids[partnerUid] = chatRoomId;
       }
       setChatRoomIds(ids);
