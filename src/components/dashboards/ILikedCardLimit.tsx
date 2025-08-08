@@ -1,4 +1,4 @@
-/** ae5b9d3a */
+/** cd309e89 */
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -116,7 +116,7 @@ const ILikedCardLimit = () => {
     ApiResponse,
     Error
   >({
-    queryKey: ['ilikedMemberList', token],
+    queryKey: ['memberList', token],
     queryFn: () => fetchApiData(1, token!),
     enabled: !!token,
   });
