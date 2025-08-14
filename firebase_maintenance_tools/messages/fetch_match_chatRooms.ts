@@ -37,6 +37,7 @@ try {
       console.log("⚠️ chats collection empty.");
     } else {
       console.log(`✅ chats collection retrieved successfully (${snapshot.size} items):`);
+      console.log(`✳️ ChatRoomsId count: ${snapshot.size}`);
 
       snapshot.forEach(doc => {
         const data = doc.data();
