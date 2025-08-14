@@ -9,6 +9,7 @@ import BcmhztLinkCollections from '../components/dashboards/BcmhztLinkCollection
 import ReferralEntries from '../components/dashboards/ReferralEntries';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import PortalNewsLimited from '../components/news/PortalNewsLimited';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -48,6 +49,7 @@ const Dashboard = () => {
           </div>
           <div className="col-12 col-md-6 bc-right dashboard">
             <ReferralEntries />
+            <PortalNewsLimited />
             <div
               style={{
                 background: '#f1f1f1',

@@ -9,6 +9,8 @@ import VisualBackground from '../components/VidualBackground';
 import DevelopBanner from '../components/DevelopBanner';
 // import NewsLimited from '../components/NewsLimited';
 import PortalNewsLimited from '../components/news/PortalNewsLimited';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -32,7 +34,19 @@ if (debug === 'true') {
 const Top = () => {
   const location = useLocation();
   const [showModal, setShowModal] = useState(false);
-  // const auth = useAuth();
+  const { token } = useAuth();
+
+  const navigate = useNavigate();
+
+  /**
+   * ログイン時はダッシュボードへリダイレクト
+   */
+  useEffect(() => {
+    console.log('[src/pages/Top.tsx:45] token:', token);
+    if (token) {
+      navigate('/dashboard');
+    }
+  }, [token, navigate]);
 
   /**
    * 年齢認証モーダルの表示
@@ -54,6 +68,7 @@ const Top = () => {
   /* No */
   const handleNoClick = () => {
     if (debug === 'true') {
+      /* noを選択した場合は何もしない */
       console.log(
         '[src/pages/Top.js:36] handleNoClick: 年齢認証でNoを選択した場合'
       );

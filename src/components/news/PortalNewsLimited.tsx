@@ -100,7 +100,12 @@ const PortalNewsLimited = () => {
                 <span
                   dangerouslySetInnerHTML={{ __html: item?.content?.rendered }}
                 />
-                <Link to={item?.link} className="read-more-link">
+                <Link
+                  to={item?.link}
+                  className="read-more-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   ...read more
                 </Link>
               </span>
