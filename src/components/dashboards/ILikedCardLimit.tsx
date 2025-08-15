@@ -113,11 +113,13 @@ const ILikedCardLimit = () => {
   const token = auth?.token;
 
   const { data, isLoading, isError, error, refetch } = useQuery<
-    ApiResponse,
-    Error
+    ApiResponse, // TData
+    Error, // TError
+    ApiResponse, // TQueryFnData
+    ['iLikedList', string | null] // TQueryKey ← ここがポイント
   >({
-    queryKey: ['memberList', token],
-    queryFn: () => fetchApiData(1, token!),
+    queryKey: ['iLikedList', token],
+    queryFn: ({ queryKey: [, tk] }) => fetchApiData(1, tk!), // tk は enabled:true の時だけ non-null
     enabled: !!token,
   });
 
@@ -145,22 +147,29 @@ const ILikedCardLimit = () => {
     return createdDate.getTime() >= oneWeekAgo.getTime();
   };
 
+  // ✅ 安全な total を1カ所で定義
+  const total = data?.data?.total ?? 0;
+
+  // ✅ token 未取得時は描画しない（idleで data が undefined のままになるのを防ぐ）
+  if (!token) return null;
+
   if (isLoading) return null;
-  if (isError)
+  if (isError) {
     return (
       <div className="alert alert-secondary">
         データ取得失敗 ({error.message})
       </div>
     );
+  }
 
   return (
     <>
       <h2 className="section-title-h2">
         あなたがナイススケベをした人
-        <span className="conut">{data?.data.total}</span>
+        <span className="count">{total}</span>
       </h2>
       <ul className="members-list mt10">
-        {data?.data?.total !== undefined && data.data.total > 10 && (
+        {total > 10 && (
           <p className="more-read">
             <Link to="/i_liked">もっとみる...</Link>
           </p>

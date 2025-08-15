@@ -13,7 +13,6 @@ const MessageChats = () => {
   return (
     <div className="app-body">
       <Header />
-      under debug
       <div className="container bc-app">
         <div className="row">
           <div className="col-12 col-md-6 bc-left">

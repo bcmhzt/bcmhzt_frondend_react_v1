@@ -415,7 +415,13 @@ const DevFirestoreSnapshot = () => {
                 {openTalks.length > 0 &&
                   openTalks.map((talk) => (
                     <div key={talk.id}>
-                      <OpenTalksChatCard talk={talk} key={talk.id} />
+                      {talk.deleted ? (
+                        <div className="alert alert-secondary" role="alert">
+                          このメッセージは削除されました
+                        </div>
+                      ) : (
+                        <OpenTalksChatCard talk={talk} />
+                      )}
                     </div>
                   ))}
 
