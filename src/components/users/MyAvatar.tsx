@@ -9,6 +9,7 @@ import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { Image } from 'react-bootstrap-icons';
 // import { storage } from '../../firebaseConfig';
 // import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { getImageWithSuffix } from '../../utility/GetUseImage';
 
 let debug = process.env.REACT_APP_DEBUG;
 if (debug === 'true') {
@@ -16,17 +17,6 @@ if (debug === 'true') {
 }
 
 const MyAvatar = () => {
-  const storageUrl = process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL;
-  /* Create Firebase Storage URL function */
-  interface GenerateImageUrl {
-    (filePath: string | null | undefined): string;
-  }
-
-  const generateImageUrl: GenerateImageUrl = (filePath) =>
-    filePath
-      ? `${storageUrl}${filePath.replace(/\//g, '%2F')}?alt=media`
-      : '/assets/dummy-user.png';
-
   /* update modal */
   const [showModal, setShowModal] = useState(false);
   const handleShowModal = () => {
@@ -195,9 +185,15 @@ const MyAvatar = () => {
           },
         }
       );
-      console.log('profileImage2:', myProfileImage);
-      const avavarImage = generateImageUrl(myProfileImage);
-      console.log('new profileImage2:', avavarImage);
+      console.log(
+        '[src/components/users/MyAvatar.tsx:198] profileImage2:',
+        myProfileImage
+      );
+      const avavarImage = getImageWithSuffix(myProfileImage ?? '', '_large');
+      console.log(
+        '[src/components/users/MyAvatar.tsx:200] new profileImage2:',
+        avavarImage
+      );
     } catch (error) {}
 
     console.log('uploadImageToFirebase');

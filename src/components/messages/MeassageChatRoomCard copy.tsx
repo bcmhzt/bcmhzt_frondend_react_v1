@@ -17,7 +17,6 @@ import {
   // startAfter,
   // QueryDocumentSnapshot,
 } from 'firebase/firestore';
-// import { generateChatRoomId } from '../../utility/Chat';
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;
@@ -161,18 +160,10 @@ const MesageChatRoomCard: React.FC<UserProps> = ({ user, chatRoomId }) => {
     fetchLatestMessage();
   }, [chatRoomId, sender]);
 
-  const goToChatRoom = (chatRoomId: string) => {
-    console.log(
-      '[src/components/messages/MeassageChatRoomCard.tsx:164] goToChatRoom'
-    );
-    // ensureChatRoom(chatRoomId);
-    // チャットルームに遷移する処理
-  };
-
   return (
     <>
       <div className="message-room">
-        <pre>{JSON.stringify(user, null, 2)}</pre>
+        {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
         {/* <pre>{JSON.stringify(chatRoomId, null, 2)}</pre> */}
         <div className="d-flex flex-row">
           <div className="avatar-area">
@@ -208,22 +199,16 @@ const MesageChatRoomCard: React.FC<UserProps> = ({ user, chatRoomId }) => {
           </div>
         </div>
         {/* 最新メッセージの表示 */}
-
-        <div
-          className="chat-preview"
-          onClick={() => {
-            if (chatRoomId) {
-              goToChatRoom(chatRoomId);
-            }
-          }}
-        >
-          <span>{!latestMessage ? '会話をはじめしょう！' : latestMessage}</span>
-          {/* {latestMessage.startsWith('<img') ? (
+        <Link to={`/message/${chatRoomId}`} className="chat-link">
+          <div className="chat-preview">
+            <span>{latestMessage}</span>
+            {/* {latestMessage.startsWith('<img') ? (
               <span dangerouslySetInnerHTML={{ __html: latestMessage }} />
             ) : (
               <span>{latestMessage}</span>
             )} */}
-        </div>
+          </div>
+        </Link>
         {/* <pre>{JSON.stringify(user, null, 2)}</pre> */}
       </div>
 
