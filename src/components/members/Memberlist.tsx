@@ -1,4 +1,7 @@
-/** 7b0ecf65 */
+/**
+ * 7b0ecf65
+ * 528287ec
+ */
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
@@ -368,9 +371,7 @@ const MemberList: React.FC = () => {
                   </div>
 
                   <div className="nickname-section mt60 ml10">
-                    <div className="nickname">
-                      {m.nickname ?? '(no nickname)'}
-                    </div>
+                    <div className="nickname">{m.nickname ?? 'No name'}</div>
                     <div className="bcuid">@{m.bcuid ?? 'no bcuid?'}</div>
                     <div className="location">
                       <GetGenderIcon genderId={m.user_details_gender ?? ''} />　

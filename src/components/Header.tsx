@@ -137,7 +137,7 @@ const Header = () => {
                 <Link to={`/member/${currentUserProfile?.user_profile?.bcuid}`}>
                   <span className="name">
                     {!currentUserProfile?.user_profile?.nickname
-                      ? 'NaN'
+                      ? 'No name'
                       : marumeru(
                           currentUserProfile?.user_profile?.nickname ?? 'Error'
                         )}

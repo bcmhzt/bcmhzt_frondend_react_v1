@@ -24,8 +24,8 @@ export async function generateChatRoomId(uids: string[]): Promise<string> {
  * @param chatRoomId 
  * @param members 
  */
-export async function ensureChatRoom(chatRoomId: string) {
-  console.log('[src/utility/Chat.ts:28] ensureChatRoom', chatRoomId);
-}
+// export async function ensureChatRoom(chatRoomId: string) {
+//   console.log('[src/utility/Chat.ts:28] ensureChatRoom', chatRoomId);
+// }
 
 

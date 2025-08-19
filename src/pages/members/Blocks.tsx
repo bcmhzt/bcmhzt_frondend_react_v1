@@ -1,5 +1,8 @@
-/** 69837228 */
-import React, { useRef, useCallback, useEffect } from 'react';
+/**
+ * 69837228
+ * 528287ec
+ * */
+import { useRef, useCallback, useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import axios from 'axios';
@@ -217,7 +220,7 @@ const Blocks = () => {
           <div className="col-12 col-md-6 bc-left">
             {/* <pre>{JSON.stringify(totalCount, null, 2)}</pre> */}
             <h2 className="section-title-h2 mb30">
-              ブロックした人
+              ブロックリスト
               {totalCount && (
                 <>
                   <span className="conut">{totalCount}</span>

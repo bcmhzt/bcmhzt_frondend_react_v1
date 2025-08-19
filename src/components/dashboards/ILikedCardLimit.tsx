@@ -166,7 +166,7 @@ const ILikedCardLimit = () => {
     <>
       <h2 className="section-title-h2">
         あなたがナイススケベをした人
-        <span className="count">{total}</span>
+        <span className="conut">{total}</span>
       </h2>
       <ul className="members-list mt10">
         {total > 10 && (

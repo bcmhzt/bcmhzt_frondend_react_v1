@@ -103,7 +103,19 @@ const MemberProfile: React.FC<MemberProfileProps> = ({ bcuid }) => {
 
         setMember(response.data.data ?? null);
       } catch (error) {
-        console.error('[MemberProfile] fetch error:', error);
+        if (axios.isAxiosError(error) && error.response) {
+          console.log(
+            '[src/components/members/MemberProfile.tsx:106] HTTP Status Code:',
+            error.response.status
+          );
+          window.location.href = '/dashboard';
+        }
+
+        console.log('[src/components/members/MemberProfile.tsx:106] hoge');
+        console.error(
+          '[src/components/members/MemberProfile.tsx:106] MemberProfile fetch error:',
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -161,7 +173,9 @@ const MemberProfile: React.FC<MemberProfileProps> = ({ bcuid }) => {
             />
           </div>
           <div className="member-header-text ml20">
-            <div className="nickname">{member?.member?.nickname ?? 'NaN'}</div>
+            <div className="nickname">
+              {member?.member?.nickname ?? 'No name'}
+            </div>
             <div className="bcuid mt10">@{member?.member?.bcuid}</div>
             <div className="location">
               <GetGenderIcon genderId={member?.member?.gender ?? ''} />　

@@ -1,5 +1,8 @@
-/** 201c651f */
-import React, { useEffect } from 'react';
+/**
+ * 201c651f
+ * 528287ec
+ */
+import { useEffect } from 'react';
 /* header */
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
