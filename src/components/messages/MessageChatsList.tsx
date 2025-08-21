@@ -224,6 +224,7 @@ const MesageChatsList = () => {
             {/* {user.nickname} (@{user.bcuid}) - {user.location} */}
             {/* <pre>{JSON.stringify(listDatas, null, 2)}</pre> */}
             <p>ここでchatRoomIdを確認して、なければ作成（しないと駄目）</p>
+            {/* <pre>{JSON.stringify(chatRoomIds, null, 2)}</pre> */}
             {chatRoomIds[user.uid] ? (
               <MeassageChatRoomCard
                 user={user}
