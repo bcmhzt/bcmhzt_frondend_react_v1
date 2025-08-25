@@ -1,6 +1,7 @@
 /**
  * fbfb2bb3
  * 21333628
+ * 8ca2ae1b お知らせ
  */
 import React from 'react';
 import Instructor from '../components/Instructor';
@@ -12,7 +13,7 @@ import BcmhztLinkCollections from '../components/dashboards/BcmhztLinkCollection
 import ReferralEntries from '../components/dashboards/ReferralEntries';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import PortalNewsLimited from '../components/news/PortalNewsLimited';
+import PortalNewsLimited from '../components/news/PortalNewsLimited'; //8ca2ae1b
 
 /* debug */
 let debug = process.env.REACT_APP_DEBUG;

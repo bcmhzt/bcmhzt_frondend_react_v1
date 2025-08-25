@@ -150,8 +150,9 @@ const Header = () => {
 
               <img
                 src={
-                  getImageWithSuffix(myProfileImage ?? '', '_thumbnail') ||
-                  dummyAvatar
+                  getImageWithSuffix(myProfileImage ?? '', '_thumbnail')
+                    ? `${getImageWithSuffix(myProfileImage ?? '', '_thumbnail')}&n=${Math.random()}`
+                    : dummyAvatar
                 }
                 alt="logo"
                 className="header-avatar"

@@ -1,4 +1,7 @@
-/** 9827f3b4 */
+/**
+ * 9827f3b4
+ * f4ad7440 (いいね)
+ */
 import React, { useEffect } from 'react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';

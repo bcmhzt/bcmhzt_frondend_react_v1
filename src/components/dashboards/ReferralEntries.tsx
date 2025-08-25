@@ -1,4 +1,7 @@
-/* 21333628 */
+/**
+ * 6c692462 紹介制度
+ * 21333628
+ */
 import { useEffect, useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useMessage } from '../../contexts/MessageContext';
@@ -51,6 +54,7 @@ const ReferralEntries = () => {
           );
         }
         setRestCount(data.data.rest_count);
+        // setRestCount(0);
       } catch (error) {
         console.error(
           '[src/components/dashboards/ReferralEntries.tsx:53] Error fetching restCount:',
@@ -205,6 +209,11 @@ const ReferralEntries = () => {
           error
         );
       }
+
+      /**
+       * 422 すでに登録されているメールアドレスの場合
+       * 400 紹介者が上限に達している場合
+       */
       if (axios.isAxiosError(error) && error.response?.status === 422) {
         showMessage(
           'すでに登録されているEmailアドレスです。招待メールの送信を中止しました。',
@@ -232,7 +241,7 @@ const ReferralEntries = () => {
   return (
     <>
       {/* <pre>{JSON.stringify(referralMethod, null, 2)}</pre> */}
-      {restCount >= 0 ? (
+      {restCount > 0 ? (
         <>
           <div className="referral-entries">
             <h2 className="referral-entries-title">紹介する</h2>
@@ -308,7 +317,7 @@ const ReferralEntries = () => {
           </div>
         </>
       ) : (
-        <div className="alert alert-warning" role="alert">
+        <div className="alert alert-secondary" role="alert">
           【紹介制度】
           <br />
           人数の上限に達しました。ご紹介ありがとうございました。

@@ -1,3 +1,6 @@
+/**
+ * 6dbde5d5 (post reply)
+ */
 import { useParams } from 'react-router-dom';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';

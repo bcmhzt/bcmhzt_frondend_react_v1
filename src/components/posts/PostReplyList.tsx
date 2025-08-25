@@ -1,3 +1,6 @@
+/**
+ * 6dbde5d5 (post reply)
+ */
 import {
   useInfiniteQuery,
   useQueryClient,
@@ -11,7 +14,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { PostData } from '../../types/post';
 import { buildStorageUrl } from '../../utility/GetUseImage';
 import GetGenderIcon from '../commons/GetGenderIcon';
-import { Send } from 'react-bootstrap-icons';
+import { Send, Image } from 'react-bootstrap-icons';
 import { useMessage } from '../../contexts/MessageContext';
 // src/utility/GetCommonFunctions.tsx
 import { convertFormattedText } from '../../utility/GetCommonFunctions';
@@ -243,6 +246,10 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
     }
   };
 
+  const handleImageUpload = () => {
+    console.log('Image upload triggered');
+  };
+
   const handleReplyTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const text = e.target.value;
     setReplyText(text);
@@ -283,6 +290,12 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           disabled={replyMutation.isPending}
         />
         <div className="d-flex justify-content-end mt10">
+          <button
+            className="btn btn-primary bcmhzt-btn"
+            onClick={handleImageUpload}
+          >
+            <Image />
+          </button>
           <button
             className="btn btn-primary bcmhzt-btn"
             onClick={handleSubmit}

@@ -1,3 +1,6 @@
+/**
+ * 8ca2ae1b お知らせ
+ */
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
@@ -56,12 +59,24 @@ const PortalNewsLimited = () => {
   return (
     <>
       <div className="news">
-        <h2 className="title mb30">
-          <span className="title1">お</span>
-          <span className="title2">知</span>
-          <span className="title3">ら</span>
-          <span className="title4">せ</span>
-          <span className="subtitle">news</span>
+        <h2 className="title mb30 d-flex justify-content-between">
+          <div>
+            <span className="title1">お</span>
+            <span className="title2">知</span>
+            <span className="title3">ら</span>
+            <span className="title4">せ</span>
+            <span className="subtitle">news</span>
+          </div>
+          <div>
+            <Link
+              to="https://portal.bcmhzt.net/news/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="portal-link"
+            >
+              お知らせポータル
+            </Link>
+          </div>
         </h2>
         <div className="top-news">
           {error && <div className="error">{error}</div>}

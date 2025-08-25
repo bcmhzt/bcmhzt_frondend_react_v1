@@ -87,12 +87,12 @@ const routes: RoutesObject = {
     { path: "/member/:bcuid", component: MemberDetail },// メンバー詳細
     { path: "/member/post/:bcuid", component: MemberPosts },// メンバー投稿一覧
     { path: "/members/blocks", component: Blocks },// メンバーのブロック一覧
-    { path: "/posts", component: Posts },// 投稿一覧
+    { path: "/posts", component: Posts },// 投稿一覧 f4ad7440 (いいね) | 3f63d299 (投稿)
     { path: "/posts_like", component: PostsLike },// いいね一覧
     { path: "/posts_reply", component: PostsReply },// 返信一覧
     { path: "/posts_bookmark", component: PostsBookmarks },// ブックマーク一覧
     { path: "/posts_media", component: PostsMedia },// メディア一覧
-    { path: "/post/:post_id", component: PostDetail },// 投稿詳細
+    { path: "/post/:post_id", component: PostDetail },// 投稿詳細 6dbde5d5 (post reply)
     { path: "/notice", component: Notice },// 通知
     { path: "/compatibility/matching/system", component: CompatibilityMatchingSystem },// 互換性マッチングシステム
     // Chat rooms

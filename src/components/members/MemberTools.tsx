@@ -1,5 +1,6 @@
 /**
- * 528287ec
+ * 528287ec ブロック
+ * 7546452d 通知
  */
 import { useState, useEffect, useCallback } from 'react';
 import {

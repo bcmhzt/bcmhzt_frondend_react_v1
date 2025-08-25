@@ -1,3 +1,6 @@
+/**
+ * 3f63d299 (投稿記事)
+ */
 import React, { useState } from 'react';
 import { Image, XCircleFill } from 'react-bootstrap-icons';
 import { Spinner } from 'react-bootstrap';
