@@ -121,6 +121,12 @@
         word-wrap: break-word;
         word-break: break-all;
       }
+      .reply-images {
+        background: #ffd700;
+        .reply-image {
+          width: 100%;
+        }
+      }
     }
   }
 }

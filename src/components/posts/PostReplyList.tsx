@@ -6,18 +6,22 @@ import {
   useQueryClient,
   useMutation,
 } from '@tanstack/react-query';
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 // import PostCard from './PostCard';
 import { PostData } from '../../types/post';
-import { buildStorageUrl } from '../../utility/GetUseImage';
+import {
+  buildStorageUrl,
+  buildStoragePostImageUrl,
+} from '../../utility/GetUseImage';
 import GetGenderIcon from '../commons/GetGenderIcon';
-import { Send, Image } from 'react-bootstrap-icons';
+import { Send, Image, XCircleFill } from 'react-bootstrap-icons';
 import { useMessage } from '../../contexts/MessageContext';
 // src/utility/GetCommonFunctions.tsx
 import { convertFormattedText } from '../../utility/GetCommonFunctions';
+import { usePostReplyImageUploader } from '../../utility/usePostImageUploader';
 
 //src/components/dashboards/BcmhztLinkCollections.tsx
 
@@ -70,6 +74,32 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
   const [replyTextCount, setReplyTextCount] = useState(0);
   const observerRef = useRef<IntersectionObserver | null>(null);
   const { showMessage } = useMessage();
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  // 画像アップロード用フック（posts と同じやり方）
+  const {
+    files: images,
+    addFiles,
+    removeFile,
+    uploadAll,
+    uploadProgress,
+    clear,
+  } = usePostReplyImageUploader({
+    baseDir: 'reply_uploads',
+    uid: currentUser?.uid || '',
+    limit: 10,
+  });
+
+  // プレビューURL（objectURL）を管理
+  const [previewUrls, setPreviewUrls] = useState<string[]>([]);
+  useEffect(() => {
+    const urls = images.map((f) => URL.createObjectURL(f));
+    setPreviewUrls(urls);
+    return () => {
+      urls.forEach((u) => URL.revokeObjectURL(u));
+    };
+  }, [images]);
 
   const {
     data,
@@ -92,14 +122,21 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
     initialPageParam: 1,
   });
 
+  interface ReplyPayload {
+    text: string | null;
+    urls: string[];
+  }
+
   const replyMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({ text, urls }: ReplyPayload) => {
+      console.log('[src/components/posts/PostReplyList.tsx:129] urls:', urls);
       const response = await axios.post(
         `${process.env.REACT_APP_API_ENDPOINT}/v1/create/reply`,
         {
           post_id: id,
           uid: currentUser?.uid,
-          post: replyText.trim(),
+          post: text,
+          reply_images: urls,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -107,7 +144,7 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
       );
       return response.data;
     },
-    onMutate: async () => {
+    onMutate: async (variables?: ReplyPayload) => {
       // 楽観的更新のために既存のキャッシュデータを取得
       const previousReplies = queryClient.getQueryData(['replies', id]);
 
@@ -118,7 +155,7 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
         const optimisticReply = {
           post_id: 'temp-' + new Date().getTime(),
           reply_id: 'temp-' + new Date().getTime(),
-          post: replyText,
+          post: variables?.text ?? (replyText.trim().length ? replyText : null),
           created_at: new Date().toISOString(),
           profile_images: currentUserProfile?.profile_images,
           nickname: currentUserProfile?.nickname,
@@ -126,6 +163,7 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           gender: currentUserProfile?.gender,
           location: currentUserProfile?.location,
           isOptimistic: true,
+          reply_images: variables?.urls ?? [], // ← 画像も即時表示
         };
 
         const newPages = [...old.pages];
@@ -153,8 +191,12 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
       alert('返信の投稿に失敗しました');
     },
     onSuccess: () => {
-      setReplyText(''); // フォームをクリア
-      setReplyTextCount(0);
+      setPreviewUrls([]);
+      clear();
+      if (fileInputRef.current) {
+        // 同じ画像の再選択でも onChange が発火するように
+        fileInputRef.current.value = '';
+      }
       showMessage('Replyが投稿されました。', 'success', 3000); // 必要なら
     },
     onSettled: () => {
@@ -193,61 +235,36 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
     );
   }
 
-  // const handleReplySubmit = async () => {
-  //   // ここに返信投稿のロジックを追加
-  //   const replyText = (
-  //     document.querySelector('.reply-form-textarea') as HTMLTextAreaElement
-  //   )?.value;
-
-  //   if (!replyText || replyText.trim() === '') {
-  //     alert('返信内容を入力してください。');
-  //     return;
-  //   }
-
-  //   try {
-  //     const response = await axios.post(
-  //       `${process.env.REACT_APP_API_ENDPOINT}/v1/create/reply`,
-  //       {
-  //         post_id: id,
-  //         uid: token, // Assuming `token` is the user's UID
-  //         post: replyText.trim(),
-  //       },
-  //       {
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     if (response.data.success) {
-  //       alert('返信が投稿されました。');
-  //       // Optionally clear the textarea after successful submission
-  //       (
-  //         document.querySelector('.reply-form-textarea') as HTMLTextAreaElement
-  //       ).value = '';
-  //     } else {
-  //       alert(`返信の投稿に失敗しました: ${response.data.message}`);
-  //     }
-  //   } catch (error) {
-  //     console.error('返信の投稿中にエラーが発生しました:', error);
-  //     alert('返信の投稿中にエラーが発生しました。');
-  //   }
-  //   if (debug === 'true') {
-  //     console.log(
-  //       '[src/components/posts/PostReplyList.tsx:xx] handleReplySubmit:'
-  //     );
-  //   }
-  // };
-
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (replyText.trim()) {
-      replyMutation.mutate();
+    if (!replyText.trim() && images.length === 0) return;
+    setIsUploading(true);
+    try {
+      const uploadedUrls = await uploadAll(); // Storage → URL[]
+
+      // アップロード全滅で本文も空なら何も作らない
+      const normalized = replyText.trim();
+      if (uploadedUrls.length === 0 && normalized.length === 0) {
+        setIsUploading(false);
+        return;
+      }
+      // replyMutation.mutate({ text: replyText.trim(), urls: uploadedUrls });
+      replyMutation.mutate({
+        text: normalized.length ? normalized : null, // ← 空なら null
+        urls: uploadedUrls,
+      });
+    } finally {
+      setIsUploading(false);
     }
   };
 
-  const handleImageUpload = () => {
-    console.log('Image upload triggered');
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(
+      '[src/components/posts/PostReplyList.tsx:250] handleImageChange'
+    );
+    if (e.target.files) {
+      addFiles(Array.from(e.target.files));
+    }
   };
 
   const handleReplyTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -256,21 +273,25 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
     setReplyTextCount(text.length);
   };
 
-  // if (replies.length === 0) {
-  //   return (
-  //     <div className="alert alert-secondary mt30">
-  //       この投稿にはまだ返信がありません。
-  //     </div>
-  //   );
-  // }
-
-  // if (isError) {
-  //   return (
-  //     <div className="alert alert-danger mt30">
-  //       エラーが発生しました: {error.message}
-  //     </div>
-  //   );
-  // }
+  // 画像配列を安全に取り出す（reply_images / post_images / JSON文字列 / 単一URL 全対応）
+  const getReplyImages = (r: any): string[] => {
+    const cand = r?.reply_images ?? r?.post_images ?? [];
+    if (Array.isArray(cand))
+      return cand.filter((x) => typeof x === 'string' && x);
+    if (typeof cand === 'string') {
+      try {
+        const arr = JSON.parse(cand);
+        return Array.isArray(arr)
+          ? arr.filter((x) => typeof x === 'string' && x)
+          : cand.startsWith('http')
+            ? [cand]
+            : [];
+      } catch {
+        return cand.startsWith('http') ? [cand] : [];
+      }
+    }
+    return [];
+  };
 
   return (
     <div className="post-replies mt30">
@@ -287,19 +308,62 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
           rows={3}
           value={replyText}
           onChange={handleReplyTextChange}
-          disabled={replyMutation.isPending}
+          disabled={replyMutation.isPending || isUploading}
         />
+        <div className="uploads mt10">
+          <input
+            type="file"
+            accept="image/*"
+            id="imageUpload"
+            hidden
+            multiple
+            onChange={handleImageChange}
+            ref={fileInputRef}
+          />
+          <label htmlFor="imageUpload" style={{ cursor: 'pointer' }}>
+            <Image size={30} />
+          </label>
+
+          {/* サムネイル */}
+          {previewUrls.length > 0 && (
+            <div className="image-thumbnails mt10 d-flex flex-wrap">
+              {previewUrls.map((src, idx) => (
+                <div
+                  key={idx}
+                  className="thumbnail-container me-2"
+                  style={{ position: 'relative' }}
+                >
+                  <img
+                    src={src}
+                    alt={`thumb-${idx}`}
+                    width={80}
+                    height={80}
+                    style={{ objectFit: 'cover', borderRadius: 5 }}
+                  />
+                  <XCircleFill
+                    className="position-absolute"
+                    style={{ top: -5, right: -5, cursor: 'pointer' }}
+                    onClick={() => removeFile(idx)}
+                  />
+                  {uploadProgress[idx] != null && uploadProgress[idx] < 100 && (
+                    <p className="small mb-0">{uploadProgress[idx]}%</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         <div className="d-flex justify-content-end mt10">
-          <button
-            className="btn btn-primary bcmhzt-btn"
-            onClick={handleImageUpload}
-          >
-            <Image />
-          </button>
+          {/* 送信ボタン */}
           <button
             className="btn btn-primary bcmhzt-btn"
             onClick={handleSubmit}
-            disabled={!replyText.trim() || replyMutation.isPending}
+            disabled={
+              (!replyText.trim() && images.length === 0) ||
+              replyMutation.isPending ||
+              isUploading
+            }
           >
             {replyMutation.isPending ? (
               <div className="spinner-border spinner-border-sm" />
@@ -354,11 +418,36 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
                   </div>
                 </div>
                 <div className="body">
-                  <div
+                  <p
                     dangerouslySetInnerHTML={{
-                      __html: convertFormattedText(reply.post),
+                      __html: convertFormattedText(reply.post ?? ''), // ← null/undefined を空文字に
                     }}
                   />
+                  {(() => {
+                    const imgs = getReplyImages(reply);
+                    return imgs.length ? (
+                      <div className="mt10 d-flex flex-wrap reply-images">
+                        {imgs.map((img, idx) => (
+                          <>
+                            {/* <pre>{JSON.stringify(img, null, 2)}</pre> */}
+                            <img
+                              key={idx}
+                              src={toReplyImageSrc(img)}
+                              alt={`reply-image-${idx}`}
+                              className="reply-image"
+                              loading="lazy"
+                              onError={(e) => {
+                                // 取得に失敗したら非表示にする（別URLへ差し替えない＝再試行ループ防止）
+                                const el = e.currentTarget as HTMLImageElement;
+                                el.onerror = null;
+                                el.style.display = 'none';
+                              }}
+                            />
+                          </>
+                        ))}
+                      </div>
+                    ) : null;
+                  })()}
                 </div>
                 <div className="footer"></div>
               </div>

@@ -196,6 +196,7 @@ const ReferralEntries = () => {
         document
           .querySelector('.email-input')
           ?.setAttribute('disabled', 'true');
+        setEmail('');
       }
       if (debug === 'true') {
         console.log('[src/components/dashboards/ReferralEntries.tsx:175]', [
@@ -301,6 +302,7 @@ const ReferralEntries = () => {
                     type="email"
                     placeholder="メールアドレスを入力"
                     className="email-input form-control mb10"
+                    value={email} // ← 追加
                     onChange={(e) => setEmail(e.target.value)}
                     onFocus={() => setEmailError('')}
                   />
