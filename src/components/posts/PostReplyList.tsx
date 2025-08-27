@@ -293,6 +293,19 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
     return [];
   };
 
+  // 画像URL正規化ヘルパーを追加（コンポーネント内の上の方に）
+  // 画像URL正規化ヘルパー
+  const toDisplayUrl = (u: string): string => {
+    if (!u) return '';
+    if (/^https?:\/\//i.test(u)) return u; // すでに完全URL
+
+    // ← 第3引数（suffix）は渡さない。buildStoragePostImageUrl は2引数想定
+    return buildStoragePostImageUrl(
+      process.env.REACT_APP_FIREBASE_STORAGE_BASE_URL || '',
+      u
+    );
+  };
+
   return (
     <div className="post-replies mt30">
       <hr />
@@ -432,7 +445,7 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
                             {/* <pre>{JSON.stringify(img, null, 2)}</pre> */}
                             <img
                               key={idx}
-                              src={toReplyImageSrc(img)}
+                              src={toDisplayUrl(img)}
                               alt={`reply-image-${idx}`}
                               className="reply-image"
                               loading="lazy"
