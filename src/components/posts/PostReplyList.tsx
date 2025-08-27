@@ -129,18 +129,22 @@ const PostReplyList: React.FC<PostReplyListProps> = ({ id }) => {
 
   const replyMutation = useMutation({
     mutationFn: async ({ text, urls }: ReplyPayload) => {
-      console.log('[src/components/posts/PostReplyList.tsx:129] urls:', urls);
+      // ← JSONではなくFormDataで送る
+      const fd = new FormData();
+      fd.append('post_id', String(id));
+      if (text !== null && text !== undefined) {
+        fd.append('post', text); // 空文字なら送らなくてもOKですが、そのまま入れても問題なし
+      }
+      // 期待形： post_images[0], post_images[1], ...
+      urls.forEach((u, i) => {
+        fd.append(`post_images[${i}]`, u);
+      });
+
+      // Content-Typeは明示しない（boundary付きでブラウザが自動指定）
       const response = await axios.post(
         `${process.env.REACT_APP_API_ENDPOINT}/v1/create/reply`,
-        {
-          post_id: id,
-          uid: currentUser?.uid,
-          post: text,
-          reply_images: urls,
-        },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
+        fd,
+        { headers: { Authorization: `Bearer ${token}` } }
       );
       return response.data;
     },
