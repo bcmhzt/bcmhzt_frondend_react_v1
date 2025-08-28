@@ -2,21 +2,21 @@
  * path: /forgotmypassword
  * Document
  * https://docs.google.com/document/d/1AuxLeXvjJMcbI1f8soyuEzzpuRFpXngHoVlBr_-zlkk/edit?tab=t.0
- * 
+ *
  * component: LanguageSelector
  * /locales/{{lng}}/translation.json
  */
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Header from "../../components/Header";
+import Header from '../../components/Header';
 import axios from 'axios';
 import LanguageSelector from '../../utility/LanguageSelector';
 import { useTranslation } from 'react-i18next';
 
 const ForgotMyPassword = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { t } = useTranslation();
 
@@ -31,8 +31,8 @@ const ForgotMyPassword = () => {
     const apiEndpoint = process.env.REACT_APP_API_ENDPOINT;
     console.log(apiEndpoint);
     e.preventDefault();
-    setError("");
-    setMessage("");
+    setError('');
+    setMessage('');
     try {
       /**
        * Firebaseのデフォルトの機能を利用していたが、オリジナルの機能に変更
@@ -41,24 +41,28 @@ const ForgotMyPassword = () => {
        * 2. リンクをクリックしてパスワードをリセット
        * 3. パスワードをリセットしたら、ログインページにリダイレクト
        */
-      const response: ForgotPasswordResponse = await axios.post(`${apiEndpoint}/user/forgotpassword`, {
-        email: email
-      });
+      const response: ForgotPasswordResponse = await axios.post(
+        `${apiEndpoint}/user/forgotpassword`,
+        {
+          email: email,
+        }
+      );
 
       if (response.status === 201) {
-        setMessage("パスワードリセットメールを送信しました。メールを確認してください。");
+        setMessage(
+          'パスワードリセットメールを送信しました。メールを確認してください。'
+        );
 
         // メール送信後にログインページにリダイレクト
         setTimeout(() => {
-          navigate("/login");
+          navigate('/login');
         }, 60000); // 1分後にリダイレクト
       } else {
-        setError("メール送信に失敗しました。再度お試しください。");
+        setError('メール送信に失敗しました。再度お試しください。');
       }
-
     } catch (error) {
-      console.error("Failed to send reset email", error);
-      setError("メール送信に失敗しました。再度お試しください。");
+      console.error('Failed to send reset email', error);
+      setError('メール送信に失敗しました。再度お試しください。');
     }
   };
 
@@ -68,8 +72,7 @@ const ForgotMyPassword = () => {
       <LanguageSelector />
 
       <div className="forgot-password container d-flex justify-content-center mt50">
-        <div className="card p-4" style={{ width: "100%", maxWidth: "400px" }}>
-
+        <div className="card p-4" style={{ width: '100%', maxWidth: '400px' }}>
           <h2 className="text-center mb-4">{t('forgotmypassword.title')}</h2>
           {message && <p className="text-success">{message}</p>}
           {error && <p className="text-danger">{error}</p>}
@@ -82,11 +85,14 @@ const ForgotMyPassword = () => {
                 className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('forgotmypassword.enter_your_email')}
+                placeholder={String(t('forgotmypassword.enter_your_email'))}
                 required
               />
             </div>
-            <button type="submit" className="btn btn-primary bcmhzt-btn w-100 mt30">
+            <button
+              type="submit"
+              className="btn btn-primary bcmhzt-btn w-100 mt30"
+            >
               {t('forgotmypassword.submit')}
             </button>
           </form>

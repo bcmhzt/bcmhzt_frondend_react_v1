@@ -62,12 +62,12 @@ const Login = () => {
 
         navigate('/dashboard');
       } else {
-        alert(t('login.login_error1'));
-        setError(t('login.login_error2'));
+        alert(String(t('login.login_error1')));
+        setError(String(t('login.login_error2')));
         await auth.signOut();
       }
     } catch (error: unknown) {
-      setError(t('login.login_error3'));
+      setError(String(t('login.login_error3')));
     } finally {
       setLoadingLogin(false); // 処理完了後に false に戻す
     }
@@ -93,7 +93,7 @@ const Login = () => {
                 className="form-control"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={t('login.placeholder_email')}
+                placeholder={String(t('login.placeholder_email'))}
                 required
               />
             </div>
@@ -107,7 +107,7 @@ const Login = () => {
                   id="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={t('login.placeholder_password')}
+                  placeholder={String(t('login.placeholder_password'))}
                   required
                 />
                 <Button
